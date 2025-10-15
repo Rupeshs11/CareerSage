@@ -31,4 +31,4 @@ frontend/build/
 # Ignore database files (if any local SQLite or temp DBs)
 *.db
 *.sqlite3
- 
+ venv/ 
