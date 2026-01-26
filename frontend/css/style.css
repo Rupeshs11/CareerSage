@@ -1,0 +1,308 @@
+/* Google font import */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+/* Basic body style */
+body {
+    font-family: 'Inter', sans-serif;
+}
+
+
+/* --- SHARED STYLES FOR ALL PAGES --- */
+
+/* Dropdown Menu (Header) */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #161b22;
+    min-width: 240px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.5);
+    z-index: 50;
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    padding: 8px;
+    margin-top: 8px;
+}
+.dropdown-content a {
+    color: #c9d1d9;
+    padding: 10px 12px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-radius: 6px;
+    font-size: 14px;
+}
+.dropdown-content a:hover {
+    background-color: #374151;
+}
+.show {
+    display: block;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #161b22; }
+::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #555; }
+
+
+/* --- LANDING PAGE (index.html) SPECIFIC STYLES --- */
+
+/* Animated Gradient Background */
+.animated-gradient {
+    background: linear-gradient(-45deg, #0d1117, #161b22, #0d1117, #1c2128);
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+}
+@keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+
+/* --- ROADMAPS PAGE (roadmaps.html) SPECIFIC STYLES --- */
+
+.side-nav-link.active {
+    color: white;
+    font-weight: 600;
+    background-color: #1f2937; /* A slightly lighter dark blue */
+}
+
+
+/* --- AISENSIE PAGE (aisensie.html) SPECIFIC STYLES --- */
+
+/* Sidebar Active Link (Light Theme) */
+.sidebar-link.active {
+    background-color: #eff6ff; /* light blue */
+    color: #2563eb; /* blue */
+    font-weight: 600;
+}
+
+/* Checkbox Section Animation */
+#questions-section {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease-in-out, margin-top 0.5s ease-in-out;
+}
+#questions-section.open {
+    max-height: 500px; /* Adjust as needed */
+    margin-top: 2rem;
+}
+
+
+/* ===== FLOWCHART VISUAL ROADMAP STYLES ===== */
+
+.flowchart-container {
+    position: relative;
+    width: 100%;
+    min-height: 1800px;
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 40px;
+    overflow-x: auto;
+}
+
+.flowchart-canvas {
+    position: relative;
+    min-width: 1100px;
+    min-height: 1800px;
+    margin: 0 auto;
+}
+
+/* SVG Lines for connections */
+.flowchart-canvas svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Flowchart Nodes */
+.flowchart-node {
+    position: absolute;
+    padding: 14px 20px;
+    border-radius: 10px;
+    border: 3px solid;
+    background: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-align: center;
+    min-width: 160px;
+    z-index: 10;
+    transform: translate(-50%, 0);
+}
+
+.flowchart-node:hover {
+    transform: translate(-50%, -4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    z-index: 20;
+}
+
+/* Node Types */
+.flowchart-node.required { 
+    border-color: #fbbf24; 
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.flowchart-node.recommended { 
+    border-color: #8b5cf6; 
+    background: #ede9fe;
+    color: #5b21b6;
+}
+
+.flowchart-node.alternative { 
+    border-color: #f97316; 
+    background: #ffedd5;
+    color: #9a3412;
+}
+
+.flowchart-node.anytime { 
+    border-color: #6b7280; 
+    background: #f3f4f6;
+    color: #374151;
+}
+
+/* Completed state */
+.flowchart-node.completed {
+    opacity: 0.65;
+    background: #d1fae5 !important;
+}
+
+.flowchart-node.completed::after {
+    content: '✓';
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background: #10b981;
+    color: white;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.4);
+}
+
+/* Tooltip for node details */
+.flowchart-tooltip {
+    position: absolute;
+    background: #1f2937;
+    color: white;
+    padding: 16px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    max-width: 320px;
+    z-index: 100;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.flowchart-tooltip.show {
+    opacity: 1;
+}
+
+.flowchart-tooltip h4 {
+    font-weight: 700;
+    margin-bottom: 8px;
+    font-size: 1rem;
+}
+
+.flowchart-tooltip ul {
+    list-style: none;
+    padding: 0;
+    margin: 8px 0 0 0;
+}
+
+.flowchart-tooltip li {
+    padding: 4px 0;
+    padding-left: 16px;
+    position: relative;
+}
+
+.flowchart-tooltip li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: #60a5fa;
+}
+
+/* Connection lines */
+.connection-line {
+    stroke: #d1d5db;
+    stroke-width: 3;
+    fill: none;
+}
+
+/* Legend styles improvement */
+.flowchart-legend {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    padding: 16px;
+    background: #f9fafb;
+    border-radius: 10px;
+}
+
+.flowchart-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+.flowchart-legend-box {
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+    border: 3px solid;
+}
+
+.flowchart-legend-box.required {
+    background: #fef3c7;
+    border-color: #fbbf24;
+}
+
+.flowchart-legend-box.recommended {
+    background: #ede9fe;
+    border-color: #8b5cf6;
+}
+
+.flowchart-legend-box.alternative {
+    background: #ffedd5;
+    border-color: #f97316;
+}
+
+.flowchart-legend-box.anytime {
+    background: #f3f4f6;
+    border-color: #6b7280;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .flowchart-container {
+        padding: 20px;
+    }
+    
+    .flowchart-node {
+        font-size: 0.8rem;
+        padding: 12px 16px;
+        min-width: 140px;
+    }
+}

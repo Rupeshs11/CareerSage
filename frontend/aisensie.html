@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Tutor - CareerSage</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="bg-[#0d1117] text-gray-300">
+
+    <div class="flex h-screen">
+        <!-- Left Sidebar (Dark Theme) -->
+        <nav class="w-72 bg-[#161b22] p-5 flex flex-col border-r border-gray-800">
+            <div class="mb-8">
+                <a href="index.html" class="flex items-center gap-3 mb-2">
+                    <div
+                        class="bg-white text-black font-bold text-xl rounded-md w-10 h-10 flex items-center justify-center">
+                        C</div>
+                    <h1 class="text-xl font-bold text-white">AI Tutor</h1>
+                </a>
+                <p class="text-sm text-gray-400">Your personalized learning companion</p>
+            </div>
+
+            <ul class="flex flex-col gap-1">
+                <li>
+                    <button onclick="toggleSidebarDropdown('create-ai-menu')"
+                        class="sidebar-link w-full flex justify-between items-center p-2 rounded-md hover:bg-gray-700 text-left font-semibold">
+                        <span>Create with AI</span>
+                        <svg id="create-ai-arrow" class="w-5 h-5 transition-transform" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </button>
+                    <div id="create-ai-menu" class="hidden pl-4 mt-1 space-y-1">
+                        <a href="#" class="block p-2 rounded-md text-gray-400 hover:bg-gray-700">Plan</a>
+                        <a href="#" class="block p-2 rounded-md text-gray-400 hover:bg-gray-700">Roadmap</a>
+                        <a href="#" class="block p-2 rounded-md text-gray-400 hover:bg-gray-700">Quiz</a>
+                    </div>
+                </li>
+                <li>
+                    <button onclick="toggleSidebarDropdown('my-learning-menu')"
+                        class="sidebar-link w-full flex justify-between items-center p-2 rounded-md hover:bg-gray-700 text-left font-semibold">
+                        <span>My Learnings</span>
+                        <svg id="my-learning-arrow" class="w-5 h-5 transition-transform" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </button>
+                    <div id="my-learning-menu" class="hidden pl-4 mt-1 space-y-1">
+                        <a href="#" class="block p-2 rounded-md text-gray-400 hover:bg-gray-700">My Plans</a>
+                        <a href="#" class="block p-2 rounded-md text-gray-400 hover:bg-gray-700">My Learnings</a>
+                        <a href="#" class="block p-2 rounded-md text-gray-400 hover:bg-gray-700">My Quizzes</a>
+                    </div>
+                </li>
+                <li><a href="#"
+                        class="sidebar-link flex items-center p-2 rounded-md hover:bg-gray-700 font-semibold">Ask
+                        Aisensie</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 p-8 overflow-y-auto">
+            <div class="max-w-3xl mx-auto text-center">
+                <h1 class="text-5xl font-extrabold text-white">What can I help you learn?</h1>
+                <p class="mt-4 text-lg text-gray-400">Enter a topic below to generate a personalized roadmap for it</p>
+
+                <div class="mt-10 bg-[#161b22] p-8 rounded-xl border border-gray-800 text-left">
+                    <!-- Topic Input -->
+                    <div class="mb-6">
+                        <label for="ai-topic" class="block mb-2 font-semibold text-gray-300">What do you want to
+                            learn?</label>
+                        <input type="text" id="ai-topic"
+                            class="w-full bg-[#0d1117] border border-gray-700 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none text-white"
+                            placeholder="e.g., Frontend Development, Machine Learning, DevOps">
+                    </div>
+
+                    <!-- Current Skills -->
+                    <div class="mb-6">
+                        <label class="block mb-2 font-semibold text-gray-300">Your Current Skills</label>
+                        <div id="skills-container" class="flex flex-wrap gap-2 mb-2">
+                            <!-- Skills will be added here -->
+                        </div>
+                        <div class="flex gap-2">
+                            <input type="text" id="skill-input"
+                                class="flex-1 bg-[#0d1117] border border-gray-700 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none text-white"
+                                placeholder="Add a skill (e.g., Python, HTML)">
+                            <button onclick="addSkill()"
+                                class="bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg">Add</button>
+                        </div>
+                        <div class="flex flex-wrap gap-2 mt-3">
+                            <span class="text-gray-500 text-sm">Quick add:</span>
+                            <button onclick="quickAddSkill('HTML')"
+                                class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 px-2 py-1 rounded">HTML</button>
+                            <button onclick="quickAddSkill('CSS')"
+                                class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 px-2 py-1 rounded">CSS</button>
+                            <button onclick="quickAddSkill('JavaScript')"
+                                class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 px-2 py-1 rounded">JavaScript</button>
+                            <button onclick="quickAddSkill('Python')"
+                                class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 px-2 py-1 rounded">Python</button>
+                            <button onclick="quickAddSkill('React')"
+                                class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 px-2 py-1 rounded">React</button>
+                            <button onclick="quickAddSkill('Git')"
+                                class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 px-2 py-1 rounded">Git</button>
+                        </div>
+                    </div>
+
+                    <!-- Experience Level -->
+                    <div class="mb-6">
+                        <label class="block mb-2 font-semibold text-gray-300">Your Experience Level</label>
+                        <div class="grid grid-cols-3 gap-3">
+                            <label class="cursor-pointer">
+                                <input type="radio" name="experience" value="beginner" class="hidden peer">
+                                <div
+                                    class="p-4 rounded-lg border border-gray-700 peer-checked:border-blue-500 peer-checked:bg-blue-500/10 hover:border-gray-600 transition text-center">
+                                    <div class="text-2xl mb-2">🌱</div>
+                                    <p class="text-white font-medium">Beginner</p>
+                                    <p class="text-gray-500 text-sm">Just starting out</p>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="experience" value="intermediate" class="hidden peer">
+                                <div
+                                    class="p-4 rounded-lg border border-gray-700 peer-checked:border-blue-500 peer-checked:bg-blue-500/10 hover:border-gray-600 transition text-center">
+                                    <div class="text-2xl mb-2">🚀</div>
+                                    <p class="text-white font-medium">Intermediate</p>
+                                    <p class="text-gray-500 text-sm">Some experience</p>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="experience" value="advanced" class="hidden peer">
+                                <div
+                                    class="p-4 rounded-lg border border-gray-700 peer-checked:border-blue-500 peer-checked:bg-blue-500/10 hover:border-gray-600 transition text-center">
+                                    <div class="text-2xl mb-2">⭐</div>
+                                    <p class="text-white font-medium">Advanced</p>
+                                    <p class="text-gray-500 text-sm">Looking to specialize</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Career Goal -->
+                    <div class="mb-6">
+                        <label for="career-goal" class="block mb-2 font-semibold text-gray-300">Your Career Goal</label>
+                        <select id="career-goal"
+                            class="w-full bg-[#0d1117] border border-gray-700 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none text-white">
+                            <option value="">Select your goal...</option>
+                            <option value="job">Get my first job in tech</option>
+                            <option value="switch">Switch careers to tech</option>
+                            <option value="freelance">Start freelancing</option>
+                            <option value="promotion">Get a promotion</option>
+                            <option value="project">Build a side project</option>
+                            <option value="learn">Learn for personal growth</option>
+                        </select>
+                    </div>
+
+                    <!-- Better Roadmap Checkbox -->
+                    <div class="mb-6">
+                        <label for="better-roadmap-checkbox" class="flex items-center space-x-3 cursor-pointer">
+                            <input type="checkbox" id="better-roadmap-checkbox"
+                                class="h-5 w-5 rounded border-gray-600 bg-gray-700 text-blue-600 focus:ring-blue-500">
+                            <span class="font-semibold text-gray-300">Answer more questions for a better roadmap</span>
+                        </label>
+                    </div>
+
+                    <!-- Additional Questions Section -->
+                    <div id="questions-section">
+                        <div class="bg-blue-900/20 p-6 rounded-lg border border-blue-800">
+                            <h4 class="font-semibold text-blue-300 mb-4" id="question-title">What is your primary goal
+                                for learning this topic?</h4>
+                            <div class="flex flex-wrap gap-2 mb-4" id="suggestion-chips"></div>
+                            <div class="relative">
+                                <input type="text" id="additional-input"
+                                    class="w-full bg-[#0d1117] border border-gray-700 rounded-lg p-3 pr-10 focus:ring-2 focus:ring-blue-500 focus:outline-none text-white"
+                                    placeholder="Type your answer...">
+                                <button
+                                    class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-blue-400">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Generate Button -->
+                    <button id="generate-btn"
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-lg text-lg flex items-center justify-center gap-2 mt-6 transition-transform transform hover:scale-[1.02]">
+                        <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z" />
+                        </svg>
+                        Generate My Roadmap
+                    </button>
+
+                    <!-- Loading State (Hidden initially) -->
+                    <div id="loading-state" class="hidden mt-6 text-center">
+                        <div
+                            class="inline-flex items-center gap-3 bg-blue-900/30 border border-blue-800 rounded-lg px-6 py-4">
+                            <svg class="animate-spin w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                </path>
+                            </svg>
+                            <span class="text-blue-300 font-medium">AI is generating your personalized roadmap...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/main.js" type="module"></script>
+</body>
+
+</html>

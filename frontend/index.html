@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareerSage - Your AI Career Planner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="bg-[#0d1117] text-gray-300">
+
+    <div class="flex flex-col h-screen">
+        <!-- Header-->
+        <div id="header-placeholder"></div>
+
+        <!-- Main Content-->
+        <main class="flex-1 overflow-y-auto animated-gradient">
+            <div class="container mx-auto px-6 py-16 md:py-24">
+
+                <!-- Hero Section -->
+                <section class="grid md:grid-cols-2 gap-12 items-center">
+                    <!-- Left Side: Text Content -->
+                    <div class="text-center md:text-left">
+                        <h1 class="text-5xl md:text-6xl font-extrabold leading-tight tracking-tight text-white">
+                            Chart Your Path <br> to Success
+                        </h1>
+                        <p class="mt-6 text-lg text-gray-400 max-w-lg mx-auto md:mx-0">
+                            Stop guessing, start growing. AI-powered roadmaps for your dream tech career.
+                        </p>
+                        <div class="mt-10 flex flex-col sm:flex-row justify-center md:justify-start gap-4">
+                            <a href="./aisensie.html"
+                                class="bg-blue-600 hover:bg-blue-700 font-bold py-3 px-8 rounded-lg text-lg transition-transform transform hover:scale-105">
+                                Generate My Roadmap
+                            </a>
+                            <a href="#features"
+                                class="bg-gray-700 hover:bg-gray-600 font-bold py-3 px-8 rounded-lg text-lg">
+                                Explore Roadmaps
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Right Side: Image Placeholder -->
+                    <div class="hidden md:flex justify-center items-center h-96">
+                        <!--landing page image-->
+                        <img src="assets/confused_student.png" alt="Illustration showing career confusion"
+                            class="rounded-2xl shadow-2xl shadow-blue-500/10 max-h-full w-auto">
+                    </div>
+                </section>
+
+                <!-- Feature Cards Section-->
+                <section id="features" class="py-24 md:py-32">
+                    <div class="text-center mb-16">
+                        <h2 class="text-4xl font-bold text-white">Everything You Need to Succeed</h2>
+                        <p class="mt-4 text-gray-400 max-w-2xl mx-auto">From personalized plans to skill tracking, our
+                            platform is designed to guide you at every step.</p>
+                    </div>
+                    <div id="features-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Footer Section-->
+        <div id="footer-placeholder"></div>
+    </div>
+
+    <!-- "type=module" addition-->
+    <script src="js/api.js"></script>
+    <script src="js/main.js" type="module"></script>
+</body>
+
+</html>

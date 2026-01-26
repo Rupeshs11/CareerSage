@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Developer Roadmap - CareerSage</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-white text-gray-800">
+
+    <div class="flex flex-col h-screen">
+        <!-- Header-->
+        <div id="header-placeholder"></div>
+
+        <!-- Main Content (scrollable) -->
+        <main class="flex-1 overflow-y-auto">
+            < class="container mx-auto px-4 py-8">
+                <!-- Page Title Section -->
+                <section id="header" class="text-center border-b pb-8">
+                    <h1 id="roadmap-title" class="text-5xl font-extrabold text-gray-900">Loading Roadmap...</h1>
+                    <p id="roadmap-description" class="mt-4 text-lg text-gray-600"></p>
+                </section>
+
+                <div class="flex mt-8">
+                    <!-- Left Sticky Sidebar -->
+                    <aside class="w-1/5 pr-8">
+                        <nav id="roadmap-visual-sidebar" class="sticky top-24 flex flex-col gap-3 text-gray-500 font-semibold">
+                        </nav>
+                    </aside>
+
+                    <!-- The Visual Roadmap -->
+                    <div class="w-4/5">
+                        <div class="flex justify-center gap-4 mb-12">
+                            <span class="inline-flex items-center gap-2 text-sm"><div class="w-4 h-4 rounded-full bg-yellow-300"></div> Required</span>
+                            <span class="inline-flex items-center gap-2 text-sm"><div class="w-4 h-4 rounded-full bg-blue-300"></div> Recommended</span>
+                            <span class="inline-flex items-center gap-2 text-sm"><div class="w-4 h-4 rounded-full bg-gray-300"></div> Optional</span>
+                        </div>
+                        <div id="visual-roadmap-container" class="relative">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- FAQ and Community Sections -->
+                <section id="faq" class="py-16 border-t mt-12">
+                    <h2 class="text-3xl font-extrabold text-gray-900 text-center mb-10">Frequently Asked Questions</h2>
+                    <div id="faq-container" class="max-w-3xl mx-auto space-y-4"></div>
+                </section>
+        </main>
+        
+        <!-- Footer-->
+        <div id="footer-placeholder"></div>
+    </div>
+
+    <script src="js/main.js" type="module"></script>
+</body>
+</html>
+
