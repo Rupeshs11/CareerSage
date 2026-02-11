@@ -17,7 +17,7 @@ export const headerHTML = `
                 </button>
                 <div id="roadmapsDropdown" class="dropdown-content">
                     <a href="./roadmaps.html"><span class="font-semibold">Official Roadmaps</span></a>
-                    <a href="#"><span class="font-semibold">AI Roadmaps</span></a>
+                    <a href="./dashboard.html"><span class="font-semibold">MY Roadmaps</span></a>
                 </div>
             </div>
             <div class="relative">
@@ -28,8 +28,7 @@ export const headerHTML = `
                     </svg></button>
                 <div id="aisensieDropdown" class="dropdown-content">
                     <a href="aisensie.html"><span class="font-semibold">Create with AI</span></a>
-                    <a href="#"><span class="font-semibold">Test my Skills</span></a>
-                    <a href="#"><span class="font-semibold">Ask AI Tutor</span></a>
+                    <a href="./skill-quiz.html"><span class="font-semibold">Test my Skills</span></a>
                 </div>
             </div>
             <a href="#" class="text-white font-semibold hover:text-gray-400">Resume</a>

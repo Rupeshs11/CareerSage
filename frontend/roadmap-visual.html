@@ -7,6 +7,17 @@
     <title>Developer Roadmap - CareerSage</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="css/style.css">
+    <!-- PDF Export Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dagre/0.8.5/dagre.min.js"></script>
+    <style>
+        html,
+        body {
+            height: 100vh;
+            overflow: hidden;
+        }
+    </style>
 </head>
 
 <body class="bg-white text-gray-800">
@@ -15,65 +26,142 @@
         <!-- Header-->
         <div id="header-placeholder"></div>
 
-        <!-- Main Content (Scrollable) -->
-        <main class="flex-1 overflow-y-auto">
-            <div class="container mx-auto px-4 py-8">
+        <!-- Main Content (Fixed, internal scroll only) -->
+        <main class="flex-1 overflow-hidden flex flex-col">
+            <div class="w-full h-full flex flex-col px-4 py-2">
                 <!-- Page Title Section-->
-                <section id="header" class="text-center border-b pb-8">
-                    <h1 id="roadmap-title" class="text-5xl font-extrabold text-gray-900">Loading Roadmap...</h1>
-                    <p id="roadmap-description" class="mt-4 text-lg text-gray-600"></p>
+                <section id="header" class="text-center border-b pb-2 flex-shrink-0">
+                    <h1 id="roadmap-title" class="text-2xl font-bold text-gray-900">Loading Roadmap...</h1>
+                    <p id="roadmap-description" class="mt-1 text-sm text-gray-600"></p>
                 </section>
 
-                <div class="flex mt-8">
+                <div class="flex mt-2 flex-1 overflow-hidden gap-6">
                     <!-- Left Sticky Sidebar -->
-                    <aside class="w-1/5 pr-8">
-                        <nav id="roadmap-visual-sidebar"
-                            class="sticky top-24 flex flex-col gap-3 text-gray-500 font-semibold">
-                        </nav>
+                    <aside
+                        class="w-72 h-full overflow-y-auto pr-2 custom-scrollbar flex-shrink-0 border-r border-gray-100">
+                        <div class="flex flex-col gap-3">
+                            <button onclick="downloadRoadmapPDF()"
+                                class="flex items-center gap-2 text-blue-500 hover:text-blue-400 mb-4 px-2 py-1 rounded hover:bg-blue-500/10 transition">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                    </path>
+                                </svg>
+                                Download PDF
+                            </button>
+                            <nav id="roadmap-visual-sidebar" class="flex flex-col gap-3 text-gray-500 font-semibold">
+                            </nav>
+                        </div>
                     </aside>
 
                     <!-- Right Content: The Visual Roadmap -->
-                    <div class="w-4/5">
-                        <div class="flowchart-legend">
-                            <div class="flowchart-legend-item">
-                                <div class="flowchart-legend-box required"></div>
-                                <span>Required</span>
-                            </div>
-                            <div class="flowchart-legend-item">
-                                <div class="flowchart-legend-box recommended"></div>
-                                <span>Recommended</span>
-                            </div>
-                            <div class="flowchart-legend-item">
-                                <div class="flowchart-legend-box alternative"></div>
-                                <span>Alternative</span>
-                            </div>
-                            <div class="flowchart-legend-item">
-                                <div class="flowchart-legend-box anytime"></div>
-                                <span>Learn Anytime</span>
-                            </div>
-                        </div>
+                    <div class="flex-1 flex flex-col h-full overflow-hidden">
+                        <!-- Flowchart Legend REMOVED as per user request -->
+                        <!-- Flowchart Container -->
 
                         <!-- Flowchart Container -->
-                        <div id="visual-roadmap-container" class="flowchart-container">
-                            <div class="flowchart-canvas" id="flowchart-canvas">
-                                <!-- Nodes and connections will be rendered here -->
+                        <!-- Canvas Visual Wrapper -->
+                        <div class="relative flex-1 border rounded-xl bg-slate-50 overflow-hidden">
+                            <!-- Scrollable Area -->
+                            <div id="roadmap-container" class="w-full h-full overflow-auto relative">
+                                <!-- SVG Layer -->
+                                <svg id="connections"></svg>
                             </div>
-                            <div class="flowchart-tooltip" id="flowchart-tooltip"></div>
+
+                            <!-- Floating Zoom Controls (Pinned to Wrapper) -->
+                            <div id="zoom-controls"
+                                class="absolute bottom-4 left-4 flex flex-col gap-2 bg-white/90 backdrop-blur shadow-lg border rounded-lg p-1.5 z-20">
+                                <button onclick="handleZoomIn()" class="p-2 hover:bg-gray-100 rounded text-gray-600"
+                                    title="Zoom In">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                    </svg>
+                                </button>
+                                <button onclick="handleZoomReset()" class="p-2 hover:bg-gray-100 rounded text-gray-600"
+                                    title="Reset Zoom">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4">
+                                        </path>
+                                    </svg>
+                                </button>
+                                <button onclick="handleZoomOut()" class="p-2 hover:bg-gray-100 rounded text-gray-600"
+                                    title="Zoom Out">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M18 12H6"></path>
+                                    </svg>
+                                </button>
+                            </div>
                         </div>
+
+                        <div class="flowchart-tooltip" id="flowchart-tooltip"></div>
                     </div>
 
-                    <!-- FAQ and Community Sections -->
-                    <section id="faq" class="py-16 border-t mt-12">
-                        <h2 class="text-3xl font-extrabold text-gray-900 text-center mb-10">Frequently Asked Questions
-                        </h2>
-                        <div id="faq-container" class="max-w-3xl mx-auto space-y-4"></div>
-                    </section>
+
                 </div>
         </main>
 
         <!-- Footer-->
         <div id="footer-placeholder"></div>
     </div>
+
+    <!-- Side Panel for Node Details -->
+    <div id="node-detail-panel"
+        class="fixed top-0 right-0 h-full w-96 bg-[#161b22] border-l border-gray-700 shadow-2xl transform translate-x-full transition-transform duration-300 z-50 overflow-y-auto">
+        <!-- Panel Header -->
+        <div class="sticky top-0 bg-[#161b22] border-b border-gray-700 p-4 flex justify-between items-center">
+            <h3 id="panel-title" class="text-xl font-bold text-white">Node Title</h3>
+            <button onclick="closeNodePanel()" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+        </div>
+
+        <!-- Panel Content -->
+        <div class="p-6 space-y-6">
+            <!-- Description -->
+            <div>
+                <h4 class="text-sm font-semibold text-gray-400 uppercase mb-2">Description</h4>
+                <p id="panel-description" class="text-gray-300">Node description will appear here.</p>
+            </div>
+
+            <!-- Estimated Time -->
+            <div class="flex items-center gap-2">
+                <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span id="panel-time" class="text-blue-400 font-medium">2 weeks</span>
+            </div>
+
+            <!-- Topics to Learn -->
+            <div>
+                <h4 class="text-sm font-semibold text-gray-400 uppercase mb-3">Topics to Learn</h4>
+                <ul id="panel-topics" class="space-y-2">
+                    <!-- Topics will be inserted here -->
+                </ul>
+            </div>
+
+            <!-- Resources -->
+            <div>
+                <h4 class="text-sm font-semibold text-gray-400 uppercase mb-3">Learning Resources</h4>
+                <div id="panel-resources" class="space-y-3">
+                    <!-- Resources will be inserted here -->
+                </div>
+            </div>
+
+            <!-- Mark as Complete Button -->
+            <button id="panel-complete-btn" onclick="toggleNodeComplete()"
+                class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition flex items-center justify-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+                Mark as Complete
+            </button>
+        </div>
+    </div>
+
+    <!-- Panel Overlay -->
+    <div id="panel-overlay" onclick="closeNodePanel()" class="fixed inset-0 bg-black/50 hidden z-40"></div>
 
     <script src="js/api.js"></script>
     <script src="js/main.js" type="module"></script>

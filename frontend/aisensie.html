@@ -80,6 +80,8 @@
                             placeholder="e.g., Frontend Development, Machine Learning, DevOps">
                     </div>
 
+
+
                     <!-- Current Skills -->
                     <div class="mb-6">
                         <label class="block mb-2 font-semibold text-gray-300">Your Current Skills</label>
@@ -110,54 +112,9 @@
                         </div>
                     </div>
 
-                    <!-- Experience Level -->
-                    <div class="mb-6">
-                        <label class="block mb-2 font-semibold text-gray-300">Your Experience Level</label>
-                        <div class="grid grid-cols-3 gap-3">
-                            <label class="cursor-pointer">
-                                <input type="radio" name="experience" value="beginner" class="hidden peer">
-                                <div
-                                    class="p-4 rounded-lg border border-gray-700 peer-checked:border-blue-500 peer-checked:bg-blue-500/10 hover:border-gray-600 transition text-center">
-                                    <div class="text-2xl mb-2">🌱</div>
-                                    <p class="text-white font-medium">Beginner</p>
-                                    <p class="text-gray-500 text-sm">Just starting out</p>
-                                </div>
-                            </label>
-                            <label class="cursor-pointer">
-                                <input type="radio" name="experience" value="intermediate" class="hidden peer">
-                                <div
-                                    class="p-4 rounded-lg border border-gray-700 peer-checked:border-blue-500 peer-checked:bg-blue-500/10 hover:border-gray-600 transition text-center">
-                                    <div class="text-2xl mb-2">🚀</div>
-                                    <p class="text-white font-medium">Intermediate</p>
-                                    <p class="text-gray-500 text-sm">Some experience</p>
-                                </div>
-                            </label>
-                            <label class="cursor-pointer">
-                                <input type="radio" name="experience" value="advanced" class="hidden peer">
-                                <div
-                                    class="p-4 rounded-lg border border-gray-700 peer-checked:border-blue-500 peer-checked:bg-blue-500/10 hover:border-gray-600 transition text-center">
-                                    <div class="text-2xl mb-2">⭐</div>
-                                    <p class="text-white font-medium">Advanced</p>
-                                    <p class="text-gray-500 text-sm">Looking to specialize</p>
-                                </div>
-                            </label>
-                        </div>
-                    </div>
 
-                    <!-- Career Goal -->
-                    <div class="mb-6">
-                        <label for="career-goal" class="block mb-2 font-semibold text-gray-300">Your Career Goal</label>
-                        <select id="career-goal"
-                            class="w-full bg-[#0d1117] border border-gray-700 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none text-white">
-                            <option value="">Select your goal...</option>
-                            <option value="job">Get my first job in tech</option>
-                            <option value="switch">Switch careers to tech</option>
-                            <option value="freelance">Start freelancing</option>
-                            <option value="promotion">Get a promotion</option>
-                            <option value="project">Build a side project</option>
-                            <option value="learn">Learn for personal growth</option>
-                        </select>
-                    </div>
+
+
 
                     <!-- Better Roadmap Checkbox -->
                     <div class="mb-6">
@@ -221,6 +178,131 @@
 
     <script src="js/api.js"></script>
     <script src="js/main.js" type="module"></script>
+    <script>
+        // Skills management
+        let currentSkills = [];
+
+        function addSkill() {
+            const input = document.getElementById('skill-input');
+            const skill = input.value.trim();
+            if (skill && !currentSkills.includes(skill)) {
+                currentSkills.push(skill);
+                renderSkills();
+                input.value = '';
+            }
+        }
+
+        function quickAddSkill(skill) {
+            if (!currentSkills.includes(skill)) {
+                currentSkills.push(skill);
+                renderSkills();
+            }
+        }
+
+        function removeSkill(skill) {
+            currentSkills = currentSkills.filter(s => s !== skill);
+            renderSkills();
+        }
+
+        function renderSkills() {
+            const container = document.getElementById('skills-container');
+            container.innerHTML = currentSkills.map(skill => `
+                <span class="bg-blue-600/20 border border-blue-500 text-blue-300 px-3 py-1 rounded-full text-sm flex items-center gap-2">
+                    ${skill}
+                    <button onclick="removeSkill('${skill}')" class="hover:text-red-400">&times;</button>
+                </span>
+            `).join('');
+        }
+
+        // Sidebar dropdown toggle
+        function toggleSidebarDropdown(menuId) {
+            const menu = document.getElementById(menuId);
+            menu.classList.toggle('hidden');
+        }
+
+        // Questions section toggle
+        document.getElementById('better-roadmap-checkbox')?.addEventListener('change', function () {
+            const section = document.getElementById('questions-section');
+            if (this.checked) {
+                section.classList.add('open');
+            } else {
+                section.classList.remove('open');
+            }
+        });
+
+        // Enter key to add skill
+        document.getElementById('skill-input')?.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addSkill();
+            }
+        });
+
+        // Generate roadmap button handler
+        document.getElementById('generate-btn')?.addEventListener('click', async function () {
+            const topic = document.getElementById('ai-topic').value.trim();
+
+            // Validation
+            if (!topic) {
+                alert('Please enter what you want to learn!');
+                return;
+            }
+
+            // Check authentication
+            if (!API.Auth.isAuthenticated()) {
+                alert('Please login to generate a personalized roadmap!');
+                window.location.href = './login.html';
+                return;
+            }
+
+            const generateBtn = this;
+            const loadingState = document.getElementById('loading-state');
+
+            // Show loading
+            generateBtn.classList.add('hidden');
+            loadingState.classList.remove('hidden');
+
+            // Clear previous roadmap data
+            localStorage.removeItem('generated_roadmap');
+
+            try {
+                const response = await API.AI.generateRoadmap(
+                    topic,
+                    currentSkills,
+                    'all', // Default to all levels
+                    'learn' // Default career goal
+                );
+
+                console.log('Roadmap generated:', response);
+
+                // Store the generated roadmap for viewing
+                if (response.roadmap) {
+                    localStorage.setItem('generated_roadmap', JSON.stringify(response.roadmap));
+                    // Redirect to view the roadmap with cache-busting timestamp
+                    const timestamp = Date.now();
+                    window.location.href = `./roadmap-visual.html?id=${response.roadmap.id}&ai=true&t=${timestamp}`;
+                }
+
+            } catch (error) {
+                console.error('Generation failed:', error);
+
+                // If token is invalid/expired, redirect to login
+                if (error.status === 401 || error.message?.includes('token') || error.message?.includes('Token')) {
+                    alert('Your session has expired. Please login again.');
+                    localStorage.removeItem('access_token');
+                    localStorage.removeItem('user');
+                    window.location.href = './login.html';
+                    return;
+                }
+
+                alert(error.message || 'Failed to generate roadmap. Please try again.');
+
+                // Hide loading and show button again
+                generateBtn.classList.remove('hidden');
+                loadingState.classList.add('hidden');
+            }
+        });
+    </script>
 </body>
 
 </html>

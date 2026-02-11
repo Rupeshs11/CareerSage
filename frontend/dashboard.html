@@ -289,7 +289,8 @@
                             </div>
                         `;
                         roadmapCard.onclick = () => {
-                            window.location.href = `./roadmap-visual.html?user_id=${roadmap.id}`;
+                            // Pass saved=true to indicate this is a saved roadmap from dashboard
+                            window.location.href = `./roadmap-visual.html?id=${roadmap.id}&saved=true`;
                         };
                         roadmapsList.appendChild(roadmapCard);
                     });
