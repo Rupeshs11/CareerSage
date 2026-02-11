@@ -5,34 +5,33 @@ from datetime import datetime
 from ..extensions import db
 
 
-class QuizResult(db.Model):
+class QuizResult(db.Document):
     """User's skill quiz result"""
-    __tablename__ = 'quiz_results'
+    meta = {'collection': 'quiz_results'}
     
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
+    user_id = db.ReferenceField('User', required=True)
     
     # Quiz metadata
-    category = db.Column(db.String(50), nullable=False, default='general')
-    quiz_type = db.Column(db.String(50), nullable=False, default='skill_assessment')
+    category = db.StringField(required=True, default='general')
+    quiz_type = db.StringField(required=True, default='skill_assessment')
     
     # Results
-    answers = db.Column(db.JSON, default=list)  # [{question_id, answer, is_correct}]
-    score = db.Column(db.Integer, default=0)
-    total_questions = db.Column(db.Integer, default=0)
-    percentage = db.Column(db.Float, default=0.0)
+    answers = db.ListField(db.DictField(), default=list)  # [{question_id, answer, is_correct}]
+    score = db.IntField(default=0)
+    total_questions = db.IntField(default=0)
+    percentage = db.FloatField(default=0.0)
     
     # Skill analysis
-    strong_skills = db.Column(db.JSON, default=list)
-    weak_skills = db.Column(db.JSON, default=list)
-    skill_gaps = db.Column(db.JSON, default=list)
+    strong_skills = db.ListField(db.StringField(), default=list)
+    weak_skills = db.ListField(db.StringField(), default=list)
+    skill_gaps = db.ListField(db.StringField(), default=list)
     
     # Recommendations
-    recommendations = db.Column(db.JSON, default=list)
+    recommendations = db.ListField(db.StringField(), default=list)
     
     # Timestamps
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    time_taken_seconds = db.Column(db.Integer, nullable=True)
+    created_at = db.DateTimeField(default=datetime.utcnow)
+    time_taken_seconds = db.IntField()
     
     def calculate_percentage(self):
         """Calculate score percentage"""
@@ -43,7 +42,7 @@ class QuizResult(db.Model):
     def to_dict(self):
         """Serialize quiz result to dictionary"""
         return {
-            'id': self.id,
+            'id': str(self.id),
             'category': self.category,
             'quiz_type': self.quiz_type,
             'score': self.score,

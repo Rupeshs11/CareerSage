@@ -1,6 +1,4 @@
-"""
-Quiz Routes
-"""
+"""Quiz Routes"""
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from ..extensions import db
@@ -9,7 +7,21 @@ from ..models.progress import UserProgress
 
 quiz_bp = Blueprint('quiz', __name__)
 
-# Sample quiz questions (in production, these would be in the database)
+
+from bson import ObjectId
+from bson.errors import InvalidId
+
+
+def safe_object_id(id_str):
+    """Safely convert string to ObjectId."""
+    if not id_str:
+        return None
+    try:
+        return ObjectId(str(id_str))
+    except (InvalidId, TypeError):
+        return None
+
+
 QUIZ_QUESTIONS = {
     'frontend': [
         {
@@ -160,12 +172,10 @@ QUIZ_QUESTIONS = {
 
 @quiz_bp.route('/questions', methods=['GET'])
 def get_questions():
-    """Get quiz questions by category"""
+    """Get quiz questions by category."""
     category = request.args.get('category', 'frontend')
     
     questions = QUIZ_QUESTIONS.get(category, QUIZ_QUESTIONS['frontend'])
-    
-    # Remove correct answers from response
     safe_questions = []
     for q in questions:
         safe_q = {k: v for k, v in q.items() if k != 'correct'}
@@ -181,7 +191,7 @@ def get_questions():
 @quiz_bp.route('/submit', methods=['POST'])
 @jwt_required()
 def submit_quiz():
-    """Submit quiz answers and get results"""
+    """Submit quiz answers and get results."""
     user_id = get_jwt_identity()
     data = request.get_json()
     
@@ -193,8 +203,6 @@ def submit_quiz():
         return jsonify({'error': 'Answers are required'}), 400
     
     questions = QUIZ_QUESTIONS.get(category, [])
-    
-    # Calculate results
     score = 0
     strong_skills = set()
     weak_skills = set()
@@ -222,12 +230,10 @@ def submit_quiz():
                 'skill': question['skill']
             })
     
-    # Remove skills that are in both (conflicting)
     final_strong = list(strong_skills - weak_skills)
     final_weak = list(weak_skills - strong_skills)
     skill_gaps = list(weak_skills)
     
-    # Generate recommendations
     recommendations = []
     for skill in skill_gaps:
         recommendations.append(f'Practice more {skill} fundamentals')
@@ -247,11 +253,8 @@ def submit_quiz():
             time_taken_seconds=time_taken
         )
         result.calculate_percentage()
-        
-        db.session.add(result)
-        
-        # Update user progress
-        progress = UserProgress.query.filter_by(user_id=user_id).first()
+        result.save()
+        progress = UserProgress.objects(user_id=safe_object_id(user_id)).first()
         if progress:
             progress.total_quizzes_taken += 1
             progress.add_activity(
@@ -260,11 +263,8 @@ def submit_quiz():
                 {'category': category, 'score': score}
             )
             
-            # Add strong skills
             for skill in final_strong:
                 progress.add_skill(skill)
-        
-        db.session.commit()
         
         return jsonify({
             'message': 'Quiz submitted successfully',
@@ -272,18 +272,17 @@ def submit_quiz():
         }), 201
         
     except Exception as e:
-        db.session.rollback()
         return jsonify({'error': 'Failed to save results', 'details': str(e)}), 500
 
 
 @quiz_bp.route('/results', methods=['GET'])
 @jwt_required()
 def get_quiz_results():
-    """Get user's quiz history"""
+    """Get user's quiz history."""
     user_id = get_jwt_identity()
     
-    results = QuizResult.query.filter_by(user_id=user_id)\
-        .order_by(QuizResult.created_at.desc()).all()
+    results = QuizResult.objects(user_id=safe_object_id(user_id))\
+        .order_by('-created_at').all()
     
     return jsonify({
         'results': [r.to_dict() for r in results],
@@ -291,15 +290,15 @@ def get_quiz_results():
     }), 200
 
 
-@quiz_bp.route('/results/<int:result_id>', methods=['GET'])
+@quiz_bp.route('/results/<result_id>', methods=['GET'])
 @jwt_required()
 def get_quiz_result(result_id):
-    """Get a specific quiz result"""
+    """Get a specific quiz result."""
     user_id = get_jwt_identity()
     
-    result = QuizResult.query.filter_by(
-        id=result_id, 
-        user_id=user_id
+    result = QuizResult.objects(
+        id=safe_object_id(result_id), 
+        user_id=safe_object_id(user_id)
     ).first()
     
     if not result:

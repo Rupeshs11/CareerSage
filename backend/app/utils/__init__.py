@@ -4,8 +4,8 @@ Utility Functions
 
 
 def paginate(query, page=1, per_page=20):
-    """Paginate a SQLAlchemy query"""
-    pagination = query.paginate(page=page, per_page=per_page, error_out=False)
+    """Paginate a MongoEngine query"""
+    pagination = query.paginate(page=page, per_page=per_page)
     return {
         'items': pagination.items,
         'total': pagination.total,

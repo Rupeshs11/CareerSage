@@ -5,37 +5,33 @@ from datetime import datetime
 from ..extensions import db
 
 
-class Roadmap(db.Model):
+class Roadmap(db.Document):
     """Official roadmap template"""
-    __tablename__ = 'roadmaps'
+    meta = {'collection': 'roadmaps'}
     
-    id = db.Column(db.Integer, primary_key=True)
-    slug = db.Column(db.String(100), unique=True, nullable=False, index=True)
-    title = db.Column(db.String(200), nullable=False)
-    description = db.Column(db.Text, nullable=True)
-    category = db.Column(db.String(50), nullable=False, default='general')
+    slug = db.StringField(required=True, unique=True)
+    title = db.StringField(required=True)
+    description = db.StringField()
+    category = db.StringField(default='general')
     
-    # Roadmap content stored as JSON
-    nodes = db.Column(db.JSON, default=list)
-    connections = db.Column(db.JSON, default=list)
-    faqs = db.Column(db.JSON, default=list)
+    # Roadmap content stored as List/Dict
+    nodes = db.ListField(db.DictField(), default=list)
+    connections = db.ListField(db.DictField(), default=list)
+    faqs = db.ListField(db.DictField(), default=list)
     
     # Metadata
-    is_official = db.Column(db.Boolean, default=True)
-    is_published = db.Column(db.Boolean, default=True)
-    view_count = db.Column(db.Integer, default=0)
+    is_official = db.BooleanField(default=True)
+    is_published = db.BooleanField(default=True)
+    view_count = db.IntField(default=0)
     
     # Timestamps
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-    
-    # Relationships
-    user_roadmaps = db.relationship('UserRoadmap', backref='roadmap', lazy='dynamic')
+    created_at = db.DateTimeField(default=datetime.utcnow)
+    updated_at = db.DateTimeField(default=datetime.utcnow)
     
     def to_dict(self, include_content=True):
         """Serialize roadmap to dictionary"""
         data = {
-            'id': self.id,
+            'id': str(self.id),
             'slug': self.slug,
             'title': self.title,
             'description': self.description,
@@ -56,30 +52,29 @@ class Roadmap(db.Model):
         return f'<Roadmap {self.slug}>'
 
 
-class UserRoadmap(db.Model):
+class UserRoadmap(db.Document):
     """User's saved/customized roadmap"""
-    __tablename__ = 'user_roadmaps'
+    meta = {'collection': 'user_roadmaps'}
     
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, index=True)
-    roadmap_id = db.Column(db.Integer, db.ForeignKey('roadmaps.id'), nullable=True)
+    user_id = db.ReferenceField('User', required=True)
+    roadmap_id = db.ReferenceField('Roadmap')
     
     # Custom roadmap data (for AI-generated ones)
-    title = db.Column(db.String(200), nullable=False)
-    description = db.Column(db.Text, nullable=True)
-    nodes = db.Column(db.JSON, default=list)
-    connections = db.Column(db.JSON, default=list)
+    title = db.StringField(required=True)
+    description = db.StringField()
+    nodes = db.ListField(db.DictField(), default=list)
+    connections = db.ListField(db.DictField(), default=list)
     
     # User's progress on this roadmap
-    completed_nodes = db.Column(db.JSON, default=list)
+    completed_nodes = db.ListField(db.StringField(), default=list)
     
     # Generation metadata
-    is_ai_generated = db.Column(db.Boolean, default=False)
-    generation_params = db.Column(db.JSON, nullable=True)  # Skills, goals, etc.
+    is_ai_generated = db.BooleanField(default=False)
+    generation_params = db.DictField()  # Skills, goals, etc.
     
     # Timestamps
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    created_at = db.DateTimeField(default=datetime.utcnow)
+    updated_at = db.DateTimeField(default=datetime.utcnow)
     
     def get_progress_percentage(self):
         """Calculate completion percentage"""
@@ -92,7 +87,7 @@ class UserRoadmap(db.Model):
     def to_dict(self):
         """Serialize user roadmap to dictionary"""
         return {
-            'id': self.id,
+            'id': str(self.id),
             'title': self.title,
             'description': self.description,
             'nodes': self.nodes or [],
@@ -100,7 +95,7 @@ class UserRoadmap(db.Model):
             'completed_nodes': self.completed_nodes or [],
             'progress': self.get_progress_percentage(),
             'is_ai_generated': self.is_ai_generated,
-            'roadmap_id': self.roadmap_id,
+            'roadmap_id': str(self.roadmap_id.id) if self.roadmap_id else None,
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None
         }
