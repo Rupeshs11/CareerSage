@@ -45,7 +45,7 @@ jobs:
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
 
@@ -53,8 +53,8 @@ jobs:
         run: |
           ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
             cd ~/careersage
-            sg docker -c "docker-compose pull"
-            sg docker -c "docker-compose up -d"
+            sg docker -c "docker compose pull"
+            sg docker -c "docker compose up -d"
             sg docker -c "docker image prune -f"
             echo "Deployment complete!"
             sg docker -c "docker ps"
