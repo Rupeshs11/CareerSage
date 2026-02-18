@@ -1,0 +1,159 @@
+# ============================================
+# CareerSage - Initial EC2 Setup (Run Manually)
+# Go to Actions tab → Select this workflow → Run
+# ============================================
+
+name: Initial EC2 Setup
+
+on:
+  workflow_dispatch:
+
+jobs:
+  setup:
+    name: Setup EC2 Server
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup Docker, Nginx & App on EC2
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            echo "=========================================="
+            echo "  CareerSage - EC2 Initial Setup"
+            echo "=========================================="
+
+            # --- Install Docker ---
+            echo "[1/5] Installing Docker..."
+            sudo yum update -y
+            sudo yum install docker -y
+            sudo systemctl start docker
+            sudo systemctl enable docker
+            sudo usermod -aG docker $USER
+
+            # Install Docker Compose plugin
+            sudo mkdir -p /usr/local/lib/docker/cli-plugins
+            sudo curl -SL https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64 \
+              -o /usr/local/lib/docker/cli-plugins/docker-compose
+            sudo chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
+
+            # --- Install Nginx ---
+            echo "[2/5] Installing Nginx..."
+            sudo yum install nginx -y
+            sudo systemctl start nginx
+            sudo systemctl enable nginx
+
+            # --- Install Certbot ---
+            echo "[3/5] Installing Certbot..."
+            sudo yum install certbot python3-certbot-nginx -y
+
+            # --- Create Project Directory & docker-compose.yml ---
+            echo "[4/5] Creating project files..."
+            mkdir -p /home/${{ secrets.EC2_USERNAME }}/careersage
+            cd /home/${{ secrets.EC2_USERNAME }}/careersage
+
+            cat > docker-compose.yml << 'COMPOSE'
+            services:
+              mongodb:
+                image: mongo:latest
+                container_name: careersage-db
+                ports:
+                  - "27017:27017"
+                volumes:
+                  - mongo_data:/data/db
+                environment:
+                  - MONGO_INITDB_DATABASE=careersage
+                healthcheck:
+                  test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+                  interval: 10s
+                  timeout: 5s
+                  retries: 5
+                  start_period: 10s
+                restart: unless-stopped
+                networks:
+                  - careersage-net
+
+              app:
+                image: ${{ secrets.DOCKERHUB_USERNAME }}/careersage:latest
+                container_name: careersage-app
+                ports:
+                  - "5000:5000"
+                env_file:
+                  - .env
+                environment:
+                  - FLASK_ENV=production
+                  - MONGODB_URI=mongodb://mongodb:27017/careersage
+                  - TZ=Asia/Kolkata
+                depends_on:
+                  mongodb:
+                    condition: service_healthy
+                restart: unless-stopped
+                networks:
+                  - careersage-net
+
+            volumes:
+              mongo_data:
+                driver: local
+
+            networks:
+              careersage-net:
+                driver: bridge
+            COMPOSE
+
+            # --- Configure Nginx ---
+            echo "[5/5] Configuring Nginx..."
+            sudo tee /etc/nginx/conf.d/careersage.conf > /dev/null << 'NGINX'
+            upstream flask_app {
+                server 127.0.0.1:5000;
+            }
+
+            server {
+                listen 80;
+                server_name knoxcloud.tech www.knoxcloud.tech;
+
+                location / {
+                    proxy_pass http://flask_app;
+                    proxy_set_header Host $host;
+                    proxy_set_header X-Real-IP $remote_addr;
+                    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                    proxy_set_header X-Forwarded-Proto $scheme;
+                    proxy_read_timeout 300s;
+                    proxy_connect_timeout 75s;
+                    proxy_send_timeout 300s;
+                }
+
+                location /socket.io/ {
+                    proxy_pass http://flask_app/socket.io/;
+                    proxy_http_version 1.1;
+                    proxy_set_header Upgrade $http_upgrade;
+                    proxy_set_header Connection "upgrade";
+                    proxy_set_header Host $host;
+                    proxy_set_header X-Real-IP $remote_addr;
+                    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                    proxy_read_timeout 86400s;
+                    proxy_send_timeout 86400s;
+                }
+            }
+            NGINX
+
+            sudo mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.disabled 2>/dev/null || true
+            sudo nginx -t
+            sudo systemctl restart nginx
+
+            echo ""
+            echo "=========================================="
+            echo "  Setup Complete!"
+            echo "=========================================="
+            echo ""
+            echo "MANUAL STEPS REMAINING:"
+            echo "1. SSH into EC2 and create .env file:"
+            echo "   nano /home/${{ secrets.EC2_USERNAME }}/careersage/.env"
+            echo ""
+            echo "2. Start containers:"
+            echo "   cd /home/${{ secrets.EC2_USERNAME }}/careersage && docker compose up -d"
+            echo ""
+            echo "3. Get SSL certificate:"
+            echo "   sudo certbot --nginx -d knoxcloud.tech -d www.knoxcloud.tech"
+            echo ""

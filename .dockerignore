@@ -1,20 +1,41 @@
+# Build artifacts
 __pycache__
 *.pyc
 *.pyo
+.pytest_cache/
+
+# Virtual environments
 venv/
+.venv/
+
+# Environment files (loaded via env_file in compose)
 .env
+
+# Version control
 .git
 .gitignore
+
+# IDE
 .vscode
 .idea
+.gemini/
+
+# Logs
 *.log
 logs.txt
-instance/
+
+# Data / Datasets
 backend/app/Dataset/
 backend/app/data/
+
+# Cached bytecode
 backend/app/__pycache__/
 backend/app/models/__pycache__/
 backend/app/routes/__pycache__/
+backend/app/services/__pycache__/
+backend/app/utils/__pycache__/
+
+# Backend dev files
 backend/venv/
 backend/instance/
 backend/logs.txt
@@ -23,6 +44,19 @@ backend/testAPI.py
 backend/quick_api_test.py
 backend/check_db.py
 backend/migrate_data.py
+backend/seed.py
+
+# Build / Dist
 .dist/
+node_modules/
+
+# Documentation (not needed in image)
 VANILLA_GUIDE.md
+README.md
 *.md
+!requirements.txt
+
+# Docker files (not needed inside image)
+Dockerfile
+docker-compose.yml
+nginx/

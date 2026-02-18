@@ -12,173 +12,188 @@
 
 <body class="bg-[#0d1117] text-gray-300">
 
-    <div class="flex h-screen">
-        <!-- Left Sidebar (Dark Theme) -->
-        <nav class="w-72 bg-[#161b22] p-5 flex flex-col border-r border-gray-800">
-            <div class="mb-8">
-                <a href="index.html" class="flex items-center gap-3 mb-2">
-                    <div
-                        class="bg-white text-black font-bold text-xl rounded-md w-10 h-10 flex items-center justify-center">
-                        C</div>
-                    <h1 class="text-xl font-bold text-white">AI Tutor</h1>
-                </a>
-                <p class="text-sm text-gray-400">Your personalized learning companion</p>
-            </div>
-
-            <ul class="flex flex-col gap-1">
-                <li>
-                    <button onclick="toggleSidebarDropdown('create-ai-menu')"
-                        class="sidebar-link w-full flex justify-between items-center p-2 rounded-md hover:bg-gray-700 text-left font-semibold">
-                        <span>Create with AI</span>
-                        <svg id="create-ai-arrow" class="w-5 h-5 transition-transform" fill="none" stroke="currentColor"
-                            viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
-                            </path>
-                        </svg>
-                    </button>
-                    <div id="create-ai-menu" class="hidden pl-4 mt-1 space-y-1">
-                        <a href="#" class="block p-2 rounded-md text-gray-400 hover:bg-gray-700">Plan</a>
-                        <a href="#" class="block p-2 rounded-md text-gray-400 hover:bg-gray-700">Roadmap</a>
-                        <a href="#" class="block p-2 rounded-md text-gray-400 hover:bg-gray-700">Quiz</a>
-                    </div>
-                </li>
-                <li>
-                    <button onclick="toggleSidebarDropdown('my-learning-menu')"
-                        class="sidebar-link w-full flex justify-between items-center p-2 rounded-md hover:bg-gray-700 text-left font-semibold">
-                        <span>My Learnings</span>
-                        <svg id="my-learning-arrow" class="w-5 h-5 transition-transform" fill="none"
-                            stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
-                            </path>
-                        </svg>
-                    </button>
-                    <div id="my-learning-menu" class="hidden pl-4 mt-1 space-y-1">
-                        <a href="#" class="block p-2 rounded-md text-gray-400 hover:bg-gray-700">My Plans</a>
-                        <a href="#" class="block p-2 rounded-md text-gray-400 hover:bg-gray-700">My Learnings</a>
-                        <a href="#" class="block p-2 rounded-md text-gray-400 hover:bg-gray-700">My Quizzes</a>
-                    </div>
-                </li>
-                <li><a href="#"
-                        class="sidebar-link flex items-center p-2 rounded-md hover:bg-gray-700 font-semibold">Ask
-                        Aisensie</a></li>
-            </ul>
-        </nav>
-
-        <!-- Main Content Area -->
-        <main class="flex-1 p-8 overflow-y-auto">
-            <div class="max-w-3xl mx-auto text-center">
-                <h1 class="text-5xl font-extrabold text-white">What can I help you learn?</h1>
-                <p class="mt-4 text-lg text-gray-400">Enter a topic below to generate a personalized roadmap for it</p>
-
-                <div class="mt-10 bg-[#161b22] p-8 rounded-xl border border-gray-800 text-left">
-                    <!-- Topic Input -->
-                    <div class="mb-6">
-                        <label for="ai-topic" class="block mb-2 font-semibold text-gray-300">What do you want to
-                            learn?</label>
-                        <input type="text" id="ai-topic"
-                            class="w-full bg-[#0d1117] border border-gray-700 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none text-white"
-                            placeholder="e.g., Frontend Development, Machine Learning, DevOps">
-                    </div>
+    <!-- Header -->
+    <div id="header-placeholder"></div>
 
 
+    <!-- Main Content Area -->
+    <main class="px-4 md:px-8 pb-8">
+        <div class="max-w-3xl mx-auto text-center mt-6">
+            <h1 class="text-3xl md:text-5xl font-extrabold text-white">What can I help you learn?</h1>
+            <p class="mt-3 md:mt-4 text-base md:text-lg text-gray-400">Enter a topic below to generate a personalized
+                roadmap for it</p>
 
-                    <!-- Current Skills -->
-                    <div class="mb-6">
-                        <label class="block mb-2 font-semibold text-gray-300">Your Current Skills</label>
-                        <div id="skills-container" class="flex flex-wrap gap-2 mb-2">
-                            <!-- Skills will be added here -->
-                        </div>
-                        <div class="flex gap-2">
-                            <input type="text" id="skill-input"
-                                class="flex-1 bg-[#0d1117] border border-gray-700 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none text-white"
-                                placeholder="Add a skill (e.g., Python, HTML)">
-                            <button onclick="addSkill()"
-                                class="bg-gray-700 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg">Add</button>
-                        </div>
-                        <div class="flex flex-wrap gap-2 mt-3">
-                            <span class="text-gray-500 text-sm">Quick add:</span>
-                            <button onclick="quickAddSkill('HTML')"
-                                class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 px-2 py-1 rounded">HTML</button>
-                            <button onclick="quickAddSkill('CSS')"
-                                class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 px-2 py-1 rounded">CSS</button>
-                            <button onclick="quickAddSkill('JavaScript')"
-                                class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 px-2 py-1 rounded">JavaScript</button>
-                            <button onclick="quickAddSkill('Python')"
-                                class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 px-2 py-1 rounded">Python</button>
-                            <button onclick="quickAddSkill('React')"
-                                class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 px-2 py-1 rounded">React</button>
-                            <button onclick="quickAddSkill('Git')"
-                                class="text-xs bg-gray-800 hover:bg-gray-700 text-gray-300 px-2 py-1 rounded">Git</button>
-                        </div>
-                    </div>
-
-
-
-
-
-                    <!-- Better Roadmap Checkbox -->
-                    <div class="mb-6">
-                        <label for="better-roadmap-checkbox" class="flex items-center space-x-3 cursor-pointer">
-                            <input type="checkbox" id="better-roadmap-checkbox"
-                                class="h-5 w-5 rounded border-gray-600 bg-gray-700 text-blue-600 focus:ring-blue-500">
-                            <span class="font-semibold text-gray-300">Answer more questions for a better roadmap</span>
-                        </label>
-                    </div>
-
-                    <!-- Additional Questions Section -->
-                    <div id="questions-section">
-                        <div class="bg-blue-900/20 p-6 rounded-lg border border-blue-800">
-                            <h4 class="font-semibold text-blue-300 mb-4" id="question-title">What is your primary goal
-                                for learning this topic?</h4>
-                            <div class="flex flex-wrap gap-2 mb-4" id="suggestion-chips"></div>
-                            <div class="relative">
-                                <input type="text" id="additional-input"
-                                    class="w-full bg-[#0d1117] border border-gray-700 rounded-lg p-3 pr-10 focus:ring-2 focus:ring-blue-500 focus:outline-none text-white"
-                                    placeholder="Type your answer...">
-                                <button
-                                    class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-blue-400">
-                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Generate Button -->
-                    <button id="generate-btn"
-                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-lg text-lg flex items-center justify-center gap-2 mt-6 transition-transform transform hover:scale-[1.02]">
-                        <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                            stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z" />
-                        </svg>
-                        Generate My Roadmap
-                    </button>
-
-                    <!-- Loading State (Hidden initially) -->
-                    <div id="loading-state" class="hidden mt-6 text-center">
-                        <div
-                            class="inline-flex items-center gap-3 bg-blue-900/30 border border-blue-800 rounded-lg px-6 py-4">
-                            <svg class="animate-spin w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                    stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                                </path>
+            <div class="mt-6 md:mt-10 bg-[#161b22] p-4 md:p-8 rounded-xl border border-gray-800 text-left">
+                <!-- Topic Input with Trending Dropdown -->
+                <div class="mb-6">
+                    <label for="ai-topic" class="block mb-2 font-semibold text-gray-300">What do you want to
+                        learn?</label>
+                    <div class="relative">
+                        <input type="text" id="ai-topic" autocomplete="off"
+                            class="w-full bg-[#0d1117] border border-gray-700 rounded-lg p-3 pr-10 focus:ring-2 focus:ring-blue-500 focus:outline-none text-white"
+                            placeholder="Type or select a topic...">
+                        <button type="button"
+                            onclick="document.getElementById('topic-dropdown').classList.toggle('hidden')"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M19 9l-7 7-7-7"></path>
                             </svg>
-                            <span class="text-blue-300 font-medium">AI is generating your personalized roadmap...</span>
+                        </button>
+                        <div id="topic-dropdown"
+                            class="hidden absolute z-50 w-full mt-1 bg-[#161b22] border border-gray-700 rounded-lg max-h-60 overflow-y-auto shadow-xl">
+                            <!-- Populated by JS -->
                         </div>
+                    </div>
+                    <div class="flex flex-wrap gap-2 mt-3">
+                        <span class="text-gray-500 text-sm">Trending:</span>
+                        <button type="button" onclick="selectTopic('Frontend Development')"
+                            class="text-xs bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 px-2.5 py-1 rounded-full border border-blue-500/30">Frontend
+                            Development</button>
+                        <button type="button" onclick="selectTopic('Backend Development')"
+                            class="text-xs bg-green-600/20 hover:bg-green-600/30 text-green-300 px-2.5 py-1 rounded-full border border-green-500/30">Backend
+                            Development</button>
+                        <button type="button" onclick="selectTopic('DevOps Engineer')"
+                            class="text-xs bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 px-2.5 py-1 rounded-full border border-purple-500/30">DevOps</button>
+                        <button type="button" onclick="selectTopic('Machine Learning')"
+                            class="text-xs bg-yellow-600/20 hover:bg-yellow-600/30 text-yellow-300 px-2.5 py-1 rounded-full border border-yellow-500/30">Machine
+                            Learning</button>
+                        <button type="button" onclick="selectTopic('Cyber Security')"
+                            class="text-xs bg-red-600/20 hover:bg-red-600/30 text-red-300 px-2.5 py-1 rounded-full border border-red-500/30">Cyber
+                            Security</button>
+                    </div>
+                </div>
+
+
+
+
+
+
+
+                <!-- Generate Button -->
+                <button id="generate-btn"
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-lg text-lg flex items-center justify-center gap-2 mt-6 transition-transform transform hover:scale-[1.02]">
+                    <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z" />
+                    </svg>
+                    Generate My Roadmap
+                </button>
+
+                <!-- Loading State (Hidden initially) -->
+                <div id="loading-state" class="hidden mt-6 text-center">
+                    <div
+                        class="inline-flex items-center gap-3 bg-blue-900/30 border border-blue-800 rounded-lg px-6 py-4">
+                        <svg class="animate-spin w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                            </circle>
+                            <path class="opacity-75" fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                            </path>
+                        </svg>
+                        <span class="text-blue-300 font-medium">AI is generating your personalized roadmap...</span>
                     </div>
                 </div>
             </div>
-        </main>
-    </div>
+        </div>
+    </main>
 
+    <!-- Footer -->
+    <div id="footer-placeholder"></div>
+
+    <script src="js/load-header-footer.js"></script>
     <script src="js/api.js"></script>
-    <script src="js/main.js" type="module"></script>
+    <script src="js/main.js?v=2" type="module"></script>
     <script>
+        // All suggested topics for dropdown
+        const SUGGESTED_TOPICS = [
+            'Frontend Development', 'Backend Development', 'Full Stack Development',
+            'React Developer', 'Angular Developer', 'Vue.js Developer',
+            'Node.js Developer', 'Python Developer', 'Java Developer',
+            'DevOps Engineer', 'Cloud Engineer (AWS)', 'Cloud Engineer (Azure)',
+            'Machine Learning', 'Data Science', 'Deep Learning',
+            'Cyber Security', 'Ethical Hacking', 'Network Security',
+            'Mobile App Development', 'Flutter Developer', 'React Native Developer',
+            'Android Developer', 'iOS Developer',
+            'Game Development', 'Unity Developer', 'Unreal Engine',
+            'Blockchain Developer', 'Web3 Developer',
+            'Linux Administration', 'System Administration',
+            'Database Administration', 'SQL & NoSQL',
+            'UI/UX Design', 'Product Design',
+            'Embedded Systems', 'IoT Developer',
+            'Kubernetes & Docker', 'Terraform & Infrastructure as Code',
+            'Software Testing & QA', 'Automation Testing'
+        ];
+
+        // Populate and filter dropdown
+        function renderTopicDropdown(filter = '') {
+            const dropdown = document.getElementById('topic-dropdown');
+            const filtered = filter
+                ? SUGGESTED_TOPICS.filter(t => t.toLowerCase().includes(filter.toLowerCase()))
+                : SUGGESTED_TOPICS;
+
+            if (filtered.length === 0) {
+                dropdown.innerHTML = '<div class="p-3 text-gray-500 text-sm">No matching topics. You can type your own!</div>';
+            } else {
+                dropdown.innerHTML = filtered.map(t => `
+                    <div class="px-4 py-2.5 hover:bg-gray-700 cursor-pointer text-gray-300 text-sm transition"
+                         onclick="selectTopic('${t}')">${t}</div>
+                `).join('');
+            }
+        }
+
+        // Select a topic from dropdown or chip
+        function selectTopic(topic) {
+            document.getElementById('ai-topic').value = topic;
+            document.getElementById('topic-dropdown').classList.add('hidden');
+        }
+
+        // Show filtered dropdown as user types
+        document.getElementById('ai-topic')?.addEventListener('input', function () {
+            const dropdown = document.getElementById('topic-dropdown');
+            renderTopicDropdown(this.value);
+            dropdown.classList.remove('hidden');
+        });
+
+        // Show full dropdown on focus
+        document.getElementById('ai-topic')?.addEventListener('focus', function () {
+            renderTopicDropdown(this.value);
+            document.getElementById('topic-dropdown').classList.remove('hidden');
+        });
+
+        // Close dropdown on outside click
+        document.addEventListener('click', function (e) {
+            const dropdown = document.getElementById('topic-dropdown');
+            const input = document.getElementById('ai-topic');
+            if (!dropdown.contains(e.target) && e.target !== input) {
+                dropdown.classList.add('hidden');
+            }
+        });
+
+        // Validate topic input - reject gibberish
+        function isValidTopic(text) {
+            if (text.length < 2) return false;
+            if (text.length > 100) return false;
+
+            // Must contain at least one vowel
+            const vowelRatio = (text.match(/[aeiouAEIOU]/g) || []).length / text.replace(/\s/g, '').length;
+            if (vowelRatio < 0.1) return false;
+
+            // No more than 5 consecutive consonants
+            if (/[^aeiou\s]{6,}/i.test(text)) return false;
+
+            // Must have at least one word with 2+ characters
+            const words = text.split(/\s+/);
+            if (!words.some(w => w.length >= 2)) return false;
+
+            // No excessive special characters
+            const specialCount = (text.match(/[^a-zA-Z0-9\s\-\/&().+#]/g) || []).length;
+            if (specialCount > 3) return false;
+
+            return true;
+        }
+
         // Skills management
         let currentSkills = [];
 
@@ -242,9 +257,15 @@
         document.getElementById('generate-btn')?.addEventListener('click', async function () {
             const topic = document.getElementById('ai-topic').value.trim();
 
-            // Validation
+            // Empty check
             if (!topic) {
                 alert('Please enter what you want to learn!');
+                return;
+            }
+
+            // Gibberish validation
+            if (!isValidTopic(topic)) {
+                alert('That doesn\'t look like a valid topic. Please enter something like "Frontend Development" or "Machine Learning".');
                 return;
             }
 

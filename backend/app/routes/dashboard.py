@@ -1,5 +1,5 @@
 """Dashboard Routes"""
-from flask import Blueprint, jsonify
+from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from ..extensions import db
 from ..models.user import User
@@ -32,13 +32,20 @@ def get_dashboard_stats():
     
     progress = UserProgress.objects(user_id=safe_object_id(user_id)).first()
     
-    total_roadmaps = UserRoadmap.objects(user_id=safe_object_id(user_id)).count()
-    
+    # Derive skills from completed nodes across all roadmaps
     roadmaps = UserRoadmap.objects(user_id=safe_object_id(user_id)).all()
     avg_progress = 0
+    derived_skills = set()
     if roadmaps:
         total_progress = sum(r.get_progress_percentage() for r in roadmaps)
         avg_progress = round(total_progress / len(roadmaps))
+        
+        # Extract skills from completed nodes
+        for r in roadmaps:
+            completed = set(r.completed_nodes or [])
+            for node in (r.nodes or []):
+                if node.get('id') in completed:
+                    derived_skills.add(node.get('title', node.get('id')))
     
     total_quizzes = QuizResult.objects(user_id=safe_object_id(user_id)).count()
     quiz_results = QuizResult.objects(user_id=safe_object_id(user_id)).all()
@@ -47,13 +54,11 @@ def get_dashboard_stats():
         total_score = sum(r.percentage for r in quiz_results)
         avg_quiz_score = round(total_score / len(quiz_results))
     
-    skills_count = len(progress.skills) if progress and progress.skills else 0
-    
     return jsonify({
         'stats': {
             'total_progress': avg_progress,
-            'active_roadmaps': total_roadmaps,
-            'skills_acquired': skills_count,
+            'active_roadmaps': len(roadmaps) if roadmaps else 0,
+            'skills_acquired': len(derived_skills),
             'quizzes_taken': total_quizzes,
             'avg_quiz_score': avg_quiz_score,
             'current_streak': progress.current_streak if progress else 0,
@@ -70,8 +75,7 @@ def get_dashboard_roadmaps():
     user_id = get_jwt_identity()
     
     roadmaps = UserRoadmap.objects(user_id=safe_object_id(user_id))\
-        .order_by('-updated_at')\
-        .limit(5).all()
+        .order_by('-updated_at').all()
     
     roadmap_data = []
     for r in roadmaps:
@@ -110,19 +114,65 @@ def get_recent_activity():
     }), 200
 
 
-@dashboard_bp.route('/skills', methods=['GET'])
+@dashboard_bp.route('/weekly-activity', methods=['GET'])
 @jwt_required()
-def get_user_skills():
-    """Get user's acquired skills."""
+def get_weekly_activity():
+    """Get user's activity count grouped by day for the last 7 days."""
     user_id = get_jwt_identity()
     
     progress = UserProgress.objects(user_id=safe_object_id(user_id)).first()
     
-    skills = []
-    if progress and progress.skills:
-        skills = progress.skills
+    # Build last 7 days
+    from datetime import datetime, timedelta
+    today = datetime.utcnow().date()
+    day_labels = []
+    day_counts = []
     
-    return jsonify({'skills': skills}), 200
+    for i in range(6, -1, -1):
+        d = today - timedelta(days=i)
+        day_labels.append(d.strftime('%a'))  # Mon, Tue, etc.
+        day_counts.append(0)
+    
+    if progress and progress.recent_activity:
+        for activity in progress.recent_activity:
+            ts = activity.get('timestamp')
+            if ts:
+                try:
+                    activity_date = datetime.fromisoformat(ts).date()
+                    diff = (today - activity_date).days
+                    if 0 <= diff <= 6:
+                        idx = 6 - diff
+                        day_counts[idx] += 1
+                except (ValueError, TypeError):
+                    pass
+    
+    return jsonify({
+        'labels': day_labels,
+        'counts': day_counts,
+        'max_count': max(day_counts) if day_counts else 0
+    }), 200
+
+
+@dashboard_bp.route('/skills', methods=['GET'])
+@jwt_required()
+def get_user_skills():
+    """Get user's acquired skills derived from completed roadmap nodes."""
+    user_id = get_jwt_identity()
+    
+    roadmaps = UserRoadmap.objects(user_id=safe_object_id(user_id)).all()
+    
+    derived_skills = []
+    seen = set()
+    for r in roadmaps:
+        completed = set(r.completed_nodes or [])
+        for node in (r.nodes or []):
+            if node.get('id') in completed:
+                skill_name = node.get('title', node.get('id'))
+                if skill_name not in seen:
+                    seen.add(skill_name)
+                    derived_skills.append(skill_name)
+    
+    return jsonify({'skills': derived_skills}), 200
 
 
 @dashboard_bp.route('/progress', methods=['GET'])
@@ -168,3 +218,76 @@ def get_leaderboard():
             })
     
     return jsonify({'leaderboard': leaderboard}), 200
+
+
+@dashboard_bp.route('/test-results', methods=['POST'])
+@jwt_required()
+def save_test_result():
+    """Save an AI skill-test result."""
+    user_id = get_jwt_identity()
+    data = request.get_json()
+
+    skill = data.get('skill', 'General')
+    score = data.get('score', 0)
+    total = data.get('total', 0)
+    percentage = data.get('percentage', 0)
+    feedback = data.get('feedback', '')
+
+    try:
+        result = QuizResult(
+            user_id=safe_object_id(user_id),
+            category=skill,
+            quiz_type='skill_test',
+            score=score,
+            total_questions=total,
+            percentage=percentage,
+            recommendations=[feedback] if feedback else []
+        )
+        result.save()
+
+        # Update user progress
+        progress = UserProgress.objects(user_id=safe_object_id(user_id)).first()
+        if not progress:
+            progress = UserProgress(user_id=safe_object_id(user_id))
+            progress.save()
+
+        progress.total_quizzes_taken += 1
+        progress.add_activity(
+            'skill_test',
+            f'Skill Test: {skill} — {percentage}%',
+            {'skill': skill, 'score': score, 'total': total}
+        )
+
+        return jsonify({
+            'message': 'Test result saved',
+            'result': result.to_dict()
+        }), 201
+
+    except Exception as e:
+        return jsonify({'error': 'Failed to save test result', 'details': str(e)}), 500
+
+
+@dashboard_bp.route('/test-history', methods=['GET'])
+@jwt_required()
+def get_test_history():
+    """Get user's skill-test history."""
+    user_id = get_jwt_identity()
+
+    results = QuizResult.objects(
+        user_id=safe_object_id(user_id),
+        quiz_type='skill_test'
+    ).order_by('-created_at').limit(20).all()
+
+    history = []
+    for r in results:
+        history.append({
+            'id': str(r.id),
+            'skill': r.category,
+            'score': r.score,
+            'total': r.total_questions,
+            'percentage': r.percentage,
+            'feedback': r.recommendations[0] if r.recommendations else '',
+            'date': r.created_at.isoformat() if r.created_at else None
+        })
+
+    return jsonify({'history': history}), 200

@@ -101,6 +101,18 @@ def generate_roadmap():
     if not topic:
         return jsonify({'error': 'Topic is required'}), 400
     
+    # Validate topic - reject gibberish
+    import re
+    topic_clean = topic.strip()
+    letters_only = re.sub(r'\s', '', topic_clean)
+    if len(letters_only) < 2:
+        return jsonify({'error': 'Please enter a valid learning topic'}), 400
+    vowels = len(re.findall(r'[aeiouAEIOU]', letters_only))
+    if len(letters_only) > 0 and (vowels / len(letters_only)) < 0.1:
+        return jsonify({'error': 'That doesn\'t look like a valid topic. Try something like "Frontend Development" or "Machine Learning".'}), 400
+    if re.search(r'[^aeiou\s]{6,}', topic_clean, re.IGNORECASE):
+        return jsonify({'error': 'That doesn\'t look like a valid topic. Try something like "Frontend Development" or "Machine Learning".'}), 400
+    
     try:
         current_app.logger.info(f"Starting roadmap generation for: {topic}")
         
@@ -128,6 +140,28 @@ def generate_roadmap():
         
         current_app.logger.info(f"Roadmap generated: {roadmap_data.get('title')}")
         
+        # Auto-mark nodes matching user's existing skills as completed
+        auto_completed = []
+        if skills:
+            skill_words = [s.lower().strip() for s in skills]
+            current_app.logger.info(f"Matching skills {skill_words} against {len(roadmap_data.get('nodes', []))} nodes")
+            
+            for node in roadmap_data.get('nodes', []):
+                node_title = node.get('title', '').lower()
+                node_id = node.get('id', '').lower()
+                node_desc = node.get('description', '').lower()
+                node_topics = [t.lower() for t in node.get('topics', [])]
+                
+                # Build a single searchable string from all node text
+                search_text = f"{node_id} {node_title} {node_desc} {' '.join(node_topics)}"
+                
+                for skill in skill_words:
+                    if skill in search_text:
+                        auto_completed.append(node.get('id'))
+                        current_app.logger.info(f"  Skill '{skill}' matched node '{node.get('id')}' ({node_title})")
+                        break
+            
+            current_app.logger.info(f"Auto-completed {len(auto_completed)} nodes: {auto_completed}")
 
         user_roadmap = UserRoadmap(
             user_id=safe_object_id(user_id),
@@ -136,6 +170,7 @@ def generate_roadmap():
             nodes=roadmap_data['nodes'],
             connections=roadmap_data['connections'],
             is_ai_generated=True,
+            completed_nodes=auto_completed,
             generation_params={
                 'topic': topic,
                 'skills': skills,
@@ -232,3 +267,46 @@ def suggest_resources():
         'topic': topic,
         'resources': topic_resources
     }), 200
+
+
+@ai_bp.route('/search-resources', methods=['POST'])
+@jwt_required()
+def search_resources_web():
+    data = request.get_json()
+    skill = data.get('skill', '')
+    
+    if not skill:
+        return jsonify({'error': 'Skill is required'}), 400
+    
+    try:
+        from ..services.search_service import search_service
+        results = search_service.search_resources(skill)
+        return jsonify({
+            'skill': skill,
+            'resources': results
+        }), 200
+    except Exception as e:
+        current_app.logger.error(f"Search failed: {e}")
+        return jsonify({'error': 'Search failed', 'details': str(e)}), 500
+
+
+@ai_bp.route('/generate-skill-test', methods=['POST'])
+@jwt_required()
+def generate_skill_test():
+    data = request.get_json()
+    skill = data.get('skill', '')
+    topics = data.get('topics', [])
+    
+    if not skill:
+        return jsonify({'error': 'Skill is required'}), 400
+    
+    try:
+        test_data = ai_service.generate_skill_test(skill, topics)
+        
+        if test_data is None:
+            return jsonify({'error': 'Failed to generate test. Please try again.'}), 500
+        
+        return jsonify(test_data), 200
+    except Exception as e:
+        current_app.logger.error(f"Skill test generation failed: {e}")
+        return jsonify({'error': 'Test generation failed', 'details': str(e)}), 500

@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skill Test - CareerSage</title>
+    <meta name="description" content="Test your skills with AI-generated quizzes based on your learning roadmap.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Skill Test Page Specific Styles */
+        .st-card {
+            background: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+        }
+
+        .st-card-inner {
+            padding: 2rem;
+        }
+
+        .st-option {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.875rem 1rem;
+            border-radius: 10px;
+            border: 1px solid #30363d;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: transparent;
+        }
+
+        .st-option:hover {
+            border-color: #8b5cf6;
+            background: rgba(139, 92, 246, 0.05);
+        }
+
+        .st-option.selected {
+            border-color: #8b5cf6;
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        .st-option-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px solid #30363d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #8b949e;
+        }
+
+        .st-option.selected .st-option-circle {
+            border-color: #8b5cf6;
+            background: #8b5cf6;
+            color: white;
+        }
+
+        .st-toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .st-toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .st-toast.warning {
+            background: #422006;
+            border: 1px solid #f59e0b;
+            color: #fbbf24;
+        }
+
+        .st-toast.error {
+            background: #450a0a;
+            border: 1px solid #ef4444;
+            color: #fca5a5;
+        }
+
+        .st-progress-bar {
+            height: 6px;
+            border-radius: 999px;
+            background: #21262d;
+            overflow: hidden;
+        }
+
+        .st-progress-fill {
+            height: 100%;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #8b5cf6, #6366f1);
+            transition: width 0.4s ease;
+        }
+
+        .st-score-card {
+            background: #0d1117;
+            border: 1px solid #30363d;
+            border-radius: 10px;
+            padding: 1.25rem;
+            text-align: center;
+        }
+
+        /* Circular score gauge */
+        .st-gauge-wrap {
+            position: relative;
+            width: 160px;
+            height: 160px;
+            margin: 0 auto 1.5rem;
+        }
+
+        .st-gauge-bg {
+            fill: none;
+            stroke: #21262d;
+            stroke-width: 10;
+        }
+
+        .st-gauge-fill {
+            fill: none;
+            stroke-width: 10;
+            stroke-linecap: round;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+            transition: stroke-dashoffset 1s ease-out;
+        }
+
+        .st-gauge-text {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .st-stat-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 1px solid;
+        }
+
+        .st-stat-pill.correct {
+            background: rgba(34, 197, 94, 0.08);
+            border-color: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+        }
+
+        .st-stat-pill.wrong {
+            background: rgba(239, 68, 68, 0.08);
+            border-color: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+        }
+
+        .st-stat-pill.total {
+            background: rgba(139, 92, 246, 0.08);
+            border-color: rgba(139, 92, 246, 0.2);
+            color: #a78bfa;
+        }
+
+        .st-review-item {
+            border-radius: 10px;
+            border: 1px solid #30363d;
+            overflow: hidden;
+        }
+
+        .st-review-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+
+        .st-review-header:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .st-review-correct {
+            border-color: rgba(34, 197, 94, 0.2);
+        }
+
+        .st-review-correct .st-review-header {
+            background: rgba(34, 197, 94, 0.04);
+        }
+
+        .st-review-wrong {
+            border-color: rgba(239, 68, 68, 0.2);
+        }
+
+        .st-review-wrong .st-review-header {
+            background: rgba(239, 68, 68, 0.04);
+        }
+
+        .st-review-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+            padding: 0 1rem;
+        }
+
+        .st-review-item.open .st-review-body {
+            max-height: 200px;
+            padding: 0 1rem 0.75rem;
+        }
+
+        .st-review-arrow {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+            transition: transform 0.25s ease;
+            color: #484f58;
+            margin-left: auto;
+        }
+
+        .st-review-item.open .st-review-arrow {
+            transform: rotate(180deg);
+        }
+
+        .st-topic-tag {
+            display: inline-block;
+            background: rgba(139, 92, 246, 0.12);
+            color: #a78bfa;
+            font-size: 0.75rem;
+            font-weight: 500;
+            padding: 4px 12px;
+            border-radius: 999px;
+            border: 1px solid rgba(139, 92, 246, 0.15);
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: -200% 0;
+            }
+
+            100% {
+                background-position: 200% 0;
+            }
+        }
+
+        .st-shimmer {
+            background: linear-gradient(90deg, #161b22 25%, #1c2333 50%, #161b22 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s ease-in-out infinite;
+        }
+    </style>
+</head>
+
+<body class="bg-[#0d1117] text-gray-300">
+
+    <div class="flex flex-col min-h-screen">
+        <div id="header-placeholder"></div>
+
+        <main class="flex-1 overflow-y-auto">
+            <div class="container mx-auto px-4 sm:px-6 py-8 sm:py-12 max-w-5xl">
+
+                <!-- Back Navigation -->
+                <a href="./roadmap-visual.html"
+                    class="inline-flex items-center gap-2 text-gray-500 hover:text-gray-300 text-sm mb-6 transition group">
+                    <svg class="w-4 h-4 group-hover:-translate-x-0.5 transition-transform" fill="none"
+                        stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7">
+                        </path>
+                    </svg>
+                    Back to Roadmap
+                </a>
+
+                <!-- Page Header -->
+                <div class="mb-8">
+                    <h1 class="text-3xl font-bold text-white mb-2">Skill Assessment</h1>
+                    <p class="text-gray-500">Test your knowledge with AI-generated questions based on your roadmap
+                        skills.</p>
+                </div>
+
+                <!-- ===== Skill Selection ===== -->
+                <div id="skill-selection" class="st-card">
+                    <div class="st-card-inner space-y-5">
+                        <div>
+                            <label for="skill-dropdown"
+                                class="block text-sm font-medium text-gray-400 mb-2">Skill</label>
+                            <select id="skill-dropdown"
+                                class="w-full bg-[#0d1117] border border-[#30363d] text-white rounded-lg px-4 py-3 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 outline-none transition appearance-none">
+                                <option value="">Select a skill to test</option>
+                            </select>
+                        </div>
+
+                        <div id="topics-display" class="hidden">
+                            <label class="block text-sm font-medium text-gray-400 mb-2">Topics Covered</label>
+                            <div id="topics-tags" class="flex flex-wrap gap-2"></div>
+                        </div>
+
+                        <button id="generate-btn" onclick="generateTest()"
+                            class="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-semibold py-3 px-6 rounded-lg transition-all transform hover:scale-[1.01] disabled:opacity-40 disabled:cursor-not-allowed disabled:transform-none disabled:hover:from-purple-600 disabled:hover:to-blue-600 flex items-center justify-center gap-2 shadow-lg shadow-purple-500/10"
+                            disabled>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                            Generate Test
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ===== Loading State ===== -->
+                <div id="loading-state" class="hidden">
+                    <div class="st-card">
+                        <div class="st-card-inner text-center py-12">
+                            <div
+                                class="w-14 h-14 border-[3px] border-purple-500/20 border-t-purple-500 rounded-full animate-spin mx-auto mb-6">
+                            </div>
+                            <h3 class="text-lg font-semibold text-white mb-1">Generating questions...</h3>
+                            <p class="text-gray-500 text-sm">This may take a few seconds.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ===== Quiz Section ===== -->
+                <div id="quiz-section" class="hidden space-y-5">
+                    <!-- Progress -->
+                    <div>
+                        <div class="flex justify-between text-xs text-gray-500 mb-2">
+                            <span>Question <span id="current-q" class="text-gray-300 font-medium">1</span> / <span
+                                    id="total-q" class="text-gray-300 font-medium">10</span></span>
+                            <span id="quiz-progress-pct" class="text-gray-300 font-medium">0%</span>
+                        </div>
+                        <div class="st-progress-bar">
+                            <div id="quiz-progress-bar" class="st-progress-fill" style="width: 0%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Question Card -->
+                    <div id="question-card" class="st-card">
+                        <div class="st-card-inner"></div>
+                    </div>
+
+                    <!-- Navigation -->
+                    <div class="flex justify-between gap-3">
+                        <button id="prev-q-btn" onclick="prevQuestion()"
+                            class="bg-[#21262d] hover:bg-[#30363d] text-gray-300 font-medium py-2.5 px-5 rounded-lg disabled:opacity-30 disabled:cursor-not-allowed transition text-sm border border-[#30363d]"
+                            disabled>
+                            ← Previous
+                        </button>
+                        <button id="next-q-btn" onclick="nextQuestion()"
+                            class="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-medium py-2.5 px-6 rounded-lg transition text-sm shadow-lg shadow-purple-500/10">
+                            Next →
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ===== Results ===== -->
+                <div id="results-section" class="hidden grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                    <!-- Score Summary -->
+                    <div class="st-card lg:col-span-4 lg:sticky lg:top-6">
+                        <div class="st-card-inner text-center">
+
+                            <!-- Circular Gauge -->
+                            <div class="st-gauge-wrap">
+                                <svg width="160" height="160" viewBox="0 0 160 160">
+                                    <circle class="st-gauge-bg" cx="80" cy="80" r="68"></circle>
+                                    <circle id="gauge-fill" class="st-gauge-fill" cx="80" cy="80" r="68"
+                                        stroke-dasharray="427.26" stroke-dashoffset="427.26"></circle>
+                                </svg>
+                                <div class="st-gauge-text">
+                                    <span id="result-score" class="text-3xl font-bold text-white">0%</span>
+                                    <span class="text-gray-500 text-xs mt-1">Score</span>
+                                </div>
+                            </div>
+
+                            <h2 class="text-xl font-bold text-white mb-1" id="result-title"></h2>
+                            <p class="text-gray-500 text-sm mb-5" id="result-subtitle"></p>
+
+                            <!-- Stat Pills -->
+                            <div class="flex justify-center gap-3 mb-6 flex-wrap">
+                                <div class="st-stat-pill correct">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M5 13l4 4L19 7"></path>
+                                    </svg>
+                                    <span id="result-correct">0</span> Correct
+                                </div>
+                                <div class="st-stat-pill wrong">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12"></path>
+                                    </svg>
+                                    <span id="result-wrong">0</span> Wrong
+                                </div>
+                                <div class="st-stat-pill total">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
+                                        </path>
+                                    </svg>
+                                    <span id="result-total">0</span> Total
+                                </div>
+                            </div>
+
+                            <div class="flex gap-3 justify-center">
+                                <button onclick="retakeTest()"
+                                    class="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-medium py-2.5 px-6 rounded-lg transition text-sm">
+                                    Retake Test
+                                </button>
+                                <button onclick="newTest()"
+                                    class="bg-[#21262d] hover:bg-[#30363d] text-gray-300 font-medium py-2.5 px-6 rounded-lg transition text-sm border border-[#30363d]">
+                                    New Test
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Answer Review -->
+                    <div class="st-card lg:col-span-8">
+                        <div class="st-card-inner">
+                            <div class="flex items-center justify-between mb-5">
+                                <h3 class="text-lg font-semibold text-white">Answer Review</h3>
+                                <button onclick="toggleAllReviews()"
+                                    class="text-xs text-gray-500 hover:text-gray-300 transition">Expand All</button>
+                            </div>
+                            <div id="review-container" class="space-y-2"></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+        <div id="footer-placeholder"></div>
+    </div>
+
+    <!-- Toast notification -->
+    <div id="st-toast" class="st-toast"></div>
+
+    <script src="js/load-header-footer.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/main.js?v=2" type="module"></script>
+    <script>
+        // State
+        let questions = [];
+        let currentIndex = 0;
+        let userAnswers = {};
+        let roadmapNodes = [];
+        let selectedSkill = '';
+        let selectedTopics = [];
+
+        document.addEventListener('DOMContentLoaded', function () {
+            loadRoadmapNodes();
+            handleUrlParams();
+
+            document.getElementById('skill-dropdown').addEventListener('change', function () {
+                const val = this.value;
+                const btn = document.getElementById('generate-btn');
+                const topicsDisplay = document.getElementById('topics-display');
+                const topicsTags = document.getElementById('topics-tags');
+
+                if (val) {
+                    btn.disabled = false;
+                    selectedSkill = val;
+
+                    const node = roadmapNodes.find(n => n.title === val);
+                    if (node && node.topics && node.topics.length > 0) {
+                        selectedTopics = node.topics;
+                        topicsTags.innerHTML = node.topics.map(t =>
+                            `<span class="st-topic-tag">${t}</span>`
+                        ).join('');
+                        topicsDisplay.classList.remove('hidden');
+                    } else {
+                        selectedTopics = [];
+                        topicsDisplay.classList.add('hidden');
+                    }
+                } else {
+                    btn.disabled = true;
+                    selectedTopics = [];
+                    topicsDisplay.classList.add('hidden');
+                }
+            });
+        });
+
+        function loadRoadmapNodes() {
+            const dropdown = document.getElementById('skill-dropdown');
+            let nodes = [];
+
+            const storedRoadmap = localStorage.getItem('generated_roadmap');
+            if (storedRoadmap) {
+                try {
+                    const parsed = JSON.parse(storedRoadmap);
+                    if (parsed.nodes) nodes = parsed.nodes;
+                } catch (e) { }
+            }
+
+            roadmapNodes = nodes;
+
+            if (nodes.length > 0) {
+                nodes.forEach(node => {
+                    const opt = document.createElement('option');
+                    opt.value = node.title;
+                    opt.textContent = node.title;
+                    dropdown.appendChild(opt);
+                });
+            } else {
+                const opt = document.createElement('option');
+                opt.value = "";
+                opt.textContent = "No roadmap found — generate one first";
+                opt.disabled = true;
+                dropdown.appendChild(opt);
+            }
+        }
+
+        function handleUrlParams() {
+            const params = new URLSearchParams(window.location.search);
+            const nodeTitle = params.get('node');
+            const topicsParam = params.get('topics');
+
+            if (nodeTitle) {
+                const dropdown = document.getElementById('skill-dropdown');
+
+                let found = false;
+                for (let i = 0; i < dropdown.options.length; i++) {
+                    if (dropdown.options[i].value === nodeTitle) {
+                        dropdown.value = nodeTitle;
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    const opt = document.createElement('option');
+                    opt.value = nodeTitle;
+                    opt.textContent = nodeTitle;
+                    dropdown.appendChild(opt);
+                    dropdown.value = nodeTitle;
+                }
+
+                dropdown.dispatchEvent(new Event('change'));
+
+                if (topicsParam) {
+                    try {
+                        selectedTopics = JSON.parse(topicsParam);
+                    } catch (e) { }
+                }
+            }
+        }
+
+        // Toast notification instead of alert()
+        function showToast(message, type = 'warning') {
+            const toast = document.getElementById('st-toast');
+            toast.textContent = message;
+            toast.className = `st-toast ${type} show`;
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        async function generateTest() {
+            if (!selectedSkill) return;
+
+            document.getElementById('skill-selection').classList.add('hidden');
+            document.getElementById('loading-state').classList.remove('hidden');
+            document.getElementById('quiz-section').classList.add('hidden');
+            document.getElementById('results-section').classList.add('hidden');
+
+            try {
+                const data = await API.AI.generateSkillTest(selectedSkill, selectedTopics);
+                questions = data.questions || [];
+
+                if (questions.length === 0) {
+                    showToast('Could not generate questions. Please try again.', 'error');
+                    showSelection();
+                    return;
+                }
+
+                currentIndex = 0;
+                userAnswers = {};
+
+                document.getElementById('total-q').textContent = questions.length;
+                document.getElementById('loading-state').classList.add('hidden');
+                document.getElementById('quiz-section').classList.remove('hidden');
+
+                renderQuestion();
+            } catch (e) {
+                showToast('Failed to generate test: ' + (e.message || 'Please try again.'), 'error');
+                showSelection();
+            }
+        }
+
+        function renderQuestion() {
+            const q = questions[currentIndex];
+            const card = document.getElementById('question-card');
+
+            card.innerHTML = `
+                <div class="st-card-inner">
+                    <div class="mb-5">
+                        <span class="st-topic-tag mb-3 inline-block">${q.category || selectedSkill}</span>
+                        <h2 class="text-xl font-semibold text-white leading-relaxed">${q.question}</h2>
+                    </div>
+                    <div class="space-y-2.5">
+                        ${q.options.map((opt, i) => `
+                            <div class="st-option ${userAnswers[currentIndex] === i ? 'selected' : ''}" onclick="selectAnswer(${i})">
+                                <div class="st-option-circle">
+                                    ${userAnswers[currentIndex] === i
+                    ? '<svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>'
+                    : String.fromCharCode(65 + i)}
+                                </div>
+                                <span class="text-gray-300 text-sm">${opt}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            updateProgress();
+            updateNav();
+        }
+
+        function selectAnswer(idx) {
+            userAnswers[currentIndex] = idx;
+            renderQuestion();
+        }
+
+        function updateProgress() {
+            const pct = Math.round(((currentIndex + 1) / questions.length) * 100);
+            document.getElementById('quiz-progress-bar').style.width = pct + '%';
+            document.getElementById('quiz-progress-pct').textContent = pct + '%';
+            document.getElementById('current-q').textContent = currentIndex + 1;
+        }
+
+        function updateNav() {
+            document.getElementById('prev-q-btn').disabled = currentIndex === 0;
+            const nextBtn = document.getElementById('next-q-btn');
+
+            if (currentIndex === questions.length - 1) {
+                nextBtn.innerHTML = `<span class="flex items-center gap-1.5">Submit <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></span>`;
+                nextBtn.onclick = submitTest;
+            } else {
+                nextBtn.textContent = 'Next →';
+                nextBtn.onclick = nextQuestion;
+            }
+        }
+
+        function nextQuestion() {
+            if (userAnswers[currentIndex] === undefined) {
+                showToast('Please select an answer before continuing.');
+                return;
+            }
+            if (currentIndex < questions.length - 1) {
+                currentIndex++;
+                renderQuestion();
+            }
+        }
+
+        function prevQuestion() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderQuestion();
+            }
+        }
+
+        function submitTest() {
+            if (userAnswers[currentIndex] === undefined) {
+                showToast('Please select an answer before submitting.');
+                return;
+            }
+
+            let correct = 0;
+            questions.forEach((q, i) => {
+                if (userAnswers[i] === q.correct) correct++;
+            });
+
+            const wrong = questions.length - correct;
+            const pct = Math.round((correct / questions.length) * 100);
+
+            document.getElementById('quiz-section').classList.add('hidden');
+            document.getElementById('results-section').classList.remove('hidden');
+
+            document.getElementById('result-correct').textContent = correct;
+            document.getElementById('result-wrong').textContent = wrong;
+            document.getElementById('result-total').textContent = questions.length;
+            document.getElementById('result-score').textContent = pct + '%';
+
+            // Animate circular gauge
+            const circumference = 2 * Math.PI * 68; // r=68
+            const offset = circumference - (pct / 100) * circumference;
+            const gaugeFill = document.getElementById('gauge-fill');
+
+            let gaugeColor;
+            if (pct >= 80) gaugeColor = '#22c55e';
+            else if (pct >= 50) gaugeColor = '#f59e0b';
+            else gaugeColor = '#ef4444';
+
+            gaugeFill.style.stroke = gaugeColor;
+            gaugeFill.style.filter = `drop-shadow(0 0 6px ${gaugeColor}40)`;
+            // Trigger animation after a frame
+            requestAnimationFrame(() => {
+                gaugeFill.style.strokeDashoffset = offset;
+            });
+
+            const title = document.getElementById('result-title');
+            const subtitle = document.getElementById('result-subtitle');
+
+            if (pct >= 80) {
+                title.textContent = 'Excellent Work!';
+                subtitle.textContent = `You scored ${pct}% on ${selectedSkill} — you have a strong grasp of this skill.`;
+            } else if (pct >= 50) {
+                title.textContent = 'Good Effort!';
+                subtitle.textContent = `You scored ${pct}% on ${selectedSkill} — review the topics you missed.`;
+            } else {
+                title.textContent = 'Keep Practicing!';
+                subtitle.textContent = `You scored ${pct}% on ${selectedSkill} — revisit the fundamentals.`;
+            }
+
+            // Render answer review (collapsible)
+            const review = document.getElementById('review-container');
+            review.innerHTML = questions.map((q, i) => {
+                const isCorrect = userAnswers[i] === q.correct;
+                const iconSvg = isCorrect
+                    ? '<svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>'
+                    : '<svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>';
+
+                return `
+                    <div class="st-review-item ${isCorrect ? 'st-review-correct' : 'st-review-wrong'}">
+                        <div class="st-review-header" onclick="this.parentElement.classList.toggle('open')">
+                            <span class="text-gray-500 text-xs font-mono w-5 text-center flex-shrink-0">${i + 1}</span>
+                            ${iconSvg}
+                            <p class="text-gray-300 text-sm font-medium flex-1 truncate">${q.question}</p>
+                            <svg class="st-review-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                        </div>
+                        <div class="st-review-body">
+                            ${!isCorrect ? `<p class="text-red-400 text-xs mb-1">Your answer: <span class="text-red-300">${q.options[userAnswers[i]] || 'Not answered'}</span></p>` : ''}
+                            <p class="text-green-400 text-xs">Correct: <span class="text-green-300">${q.options[q.correct]}</span></p>
+                            ${q.explanation ? `<p class="text-gray-500 text-xs mt-2">${q.explanation}</p>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Save test result to backend
+            try {
+                let feedback = '';
+                if (pct >= 80) feedback = 'Excellent — strong grasp of ' + selectedSkill;
+                else if (pct >= 50) feedback = 'Good effort — review weak areas in ' + selectedSkill;
+                else feedback = 'Needs improvement — revisit ' + selectedSkill + ' fundamentals';
+
+                API.Dashboard.saveTestResult({
+                    skill: selectedSkill,
+                    score: correct,
+                    total: questions.length,
+                    percentage: pct,
+                    feedback: feedback
+                });
+            } catch (e) {
+                console.warn('Could not save test result:', e);
+            }
+        }
+
+        function toggleAllReviews() {
+            const items = document.querySelectorAll('.st-review-item');
+            const isAnyOpen = Array.from(items).some(item => item.classList.contains('open'));
+
+            items.forEach(item => {
+                if (isAnyOpen) item.classList.remove('open');
+                else item.classList.add('open');
+            });
+        }
+
+        function retakeTest() {
+            currentIndex = 0;
+            userAnswers = {};
+            // Reset gauge animation
+            const gaugeFill = document.getElementById('gauge-fill');
+            if (gaugeFill) gaugeFill.style.strokeDashoffset = '427.26';
+
+            document.getElementById('results-section').classList.add('hidden');
+            document.getElementById('quiz-section').classList.remove('hidden');
+            renderQuestion();
+        }
+
+        function newTest() {
+            showSelection();
+        }
+
+        function showSelection() {
+            // Reset gauge animation
+            const gaugeFill = document.getElementById('gauge-fill');
+            if (gaugeFill) gaugeFill.style.strokeDashoffset = '427.26';
+
+            document.getElementById('skill-selection').classList.remove('hidden');
+            document.getElementById('loading-state').classList.add('hidden');
+            document.getElementById('quiz-section').classList.add('hidden');
+            document.getElementById('results-section').classList.add('hidden');
+        }
+    </script>
+</body>
+
+</html>

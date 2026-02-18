@@ -49,6 +49,19 @@ async function apiRequest(endpoint, options = {}) {
     const data = await response.json();
 
     if (!response.ok) {
+      // Auto-redirect to login on 401 (expired/missing token)
+      if (response.status === 401 && !endpoint.includes("/auth/")) {
+        console.warn("🔒 Session expired, redirecting to login...");
+        TokenManager.removeToken();
+        localStorage.removeItem("user");
+        if (
+          !window.location.pathname.includes("login.html") &&
+          !window.location.pathname.includes("index.html")
+        ) {
+          window.location.href = "./login.html?expired=1";
+          return;
+        }
+      }
       throw {
         status: response.status,
         message: data.error || "Request failed",
@@ -230,8 +243,23 @@ const DashboardAPI = {
     return await apiRequest("/dashboard/skills");
   },
 
+  async getWeeklyActivity() {
+    return await apiRequest("/dashboard/weekly-activity");
+  },
+
   async getProgress() {
     return await apiRequest("/dashboard/progress");
+  },
+
+  async saveTestResult(data) {
+    return await apiRequest("/dashboard/test-results", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
+  },
+
+  async getTestHistory() {
+    return await apiRequest("/dashboard/test-history");
   },
 };
 
@@ -267,6 +295,82 @@ const AIAPI = {
       body: JSON.stringify({ topic, skill_level: skillLevel }),
     });
   },
+
+  async searchResources(skill) {
+    return await apiRequest("/ai/search-resources", {
+      method: "POST",
+      body: JSON.stringify({ skill }),
+    });
+  },
+
+  async generateSkillTest(skill, topics = []) {
+    return await apiRequest("/ai/generate-skill-test", {
+      method: "POST",
+      body: JSON.stringify({ skill, topics }),
+    });
+  },
+};
+
+// ============ Battle API ============
+const BattleAPI = {
+  async getLeaderboard() {
+    return await apiRequest("/battle/leaderboard");
+  },
+
+  async getStats() {
+    return await apiRequest("/battle/stats");
+  },
+
+  async getHistory() {
+    return await apiRequest("/battle/history");
+  },
+
+  async getActiveBattles() {
+    return await apiRequest("/battle/active");
+  },
+};
+
+// ============ Friends & Notifications API ============
+const FriendsAPI = {
+  async getFriends() {
+    return await apiRequest("/friends/list");
+  },
+
+  async sendFriendRequest(emailOrId) {
+    const body = emailOrId.includes("@")
+      ? { email: emailOrId }
+      : { target_id: emailOrId };
+    return await apiRequest("/friends/add", {
+      method: "POST",
+      body: JSON.stringify(body),
+    });
+  },
+
+  async acceptFriendRequest(notificationId) {
+    return await apiRequest("/friends/accept", {
+      method: "POST",
+      body: JSON.stringify({ notification_id: notificationId }),
+    });
+  },
+
+  async removeFriend(friendId) {
+    return await apiRequest("/friends/remove", {
+      method: "POST",
+      body: JSON.stringify({ friend_id: friendId }),
+    });
+  },
+
+  async getNotifications() {
+    return await apiRequest("/friends/notifications");
+  },
+
+  async markNotificationsRead(notificationId) {
+    const body = notificationId ? { notification_id: notificationId } : {};
+    return await apiRequest("/friends/notifications/read", {
+      method: "POST",
+      body: JSON.stringify(body),
+    });
+  },
 };
 
 // Export for use in other scripts
@@ -276,7 +380,9 @@ window.API = {
   Quiz: QuizAPI,
   Dashboard: DashboardAPI,
   AI: AIAPI,
+  Battle: BattleAPI,
+  Friends: FriendsAPI,
   Token: TokenManager,
 };
 
-console.log("✅ CareerSage API Service loaded");
+console.log("CareerSage API Service loaded");

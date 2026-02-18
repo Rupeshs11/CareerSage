@@ -1,6 +1,6 @@
 # ============================================
-# CareerSage - Docker Compose (Production)
-# Flask Backend + MongoDB + Nginx Reverse Proxy
+# CareerSage - Docker Compose (App + DB Only)
+# Nginx & SSL will be handled NATIVELY on the host
 # ============================================
 
 services:
@@ -26,12 +26,12 @@ services:
 
   # ---------- Flask Backend + Frontend ----------
   app:
-    image: rupeshs11/careersage:v1
+    image: rupeshs11/careersage:v2
     container_name: careersage-app
     ports:
-      - "5000:5000"
+      - "5000:5000" # Expose 5000 so host Nginx can proxy to it
     env_file:
-      - backend/.env
+      - .env
     environment:
       - FLASK_ENV=production
       - MONGODB_URI=mongodb://mongodb:27017/careersage
@@ -39,20 +39,6 @@ services:
     depends_on:
       mongodb:
         condition: service_healthy
-    restart: unless-stopped
-    networks:
-      - careersage-net
-
-  # ---------- Nginx Reverse Proxy ----------
-  nginx:
-    image: nginx:alpine
-    container_name: careersage-nginx
-    ports:
-      - "80:80"
-    volumes:
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
-    depends_on:
-      - app
     restart: unless-stopped
     networks:
       - careersage-net

@@ -19,6 +19,9 @@ class User(db.Document):
     is_active = db.BooleanField(default=True)
     is_verified = db.BooleanField(default=False)
     
+    # Friends
+    friends = db.ListField(db.ObjectIdField(), default=[])
+    
     # Timestamps
     created_at = db.DateTimeField(default=datetime.utcnow)
     updated_at = db.DateTimeField(default=datetime.utcnow)

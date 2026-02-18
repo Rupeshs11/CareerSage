@@ -231,9 +231,17 @@ def update_node_progress(roadmap_id):
     roadmap.completed_nodes = completed_nodes
     
     progress = UserProgress.objects(user_id=safe_object_id(user_id)).first()
-    if progress and completed:
+    if not progress:
+        progress = UserProgress(user_id=safe_object_id(user_id))
+        progress.save()
+    
+    if completed:
         progress.total_nodes_completed += 1
+        progress.update_streak()
         progress.add_activity('node_completed', f'Completed: {node_id}', {'roadmap_id': roadmap_id})
+    elif not completed and progress.total_nodes_completed > 0:
+        progress.total_nodes_completed -= 1
+        progress.save()
     
     try:
         roadmap.save()

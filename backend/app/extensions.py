@@ -21,6 +21,7 @@ import flask_mongoengine.json
 flask_mongoengine.json.override_json_encoder = lambda app: None
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
+from flask_socketio import SocketIO
 
 # Database (MongoDB)
 db = MongoEngine()
@@ -30,3 +31,6 @@ jwt = JWTManager()
 
 # CORS
 cors = CORS()
+
+# Socket.IO for real-time battles
+socketio = SocketIO()

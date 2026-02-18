@@ -5,5 +5,7 @@ from .user import User
 from .roadmap import Roadmap, UserRoadmap
 from .quiz import QuizResult
 from .progress import UserProgress
+from .battle import BattleResult, BattleStats
+from .notification import Notification
 
-__all__ = ['User', 'Roadmap', 'UserRoadmap', 'QuizResult', 'UserProgress']
+__all__ = ['User', 'Roadmap', 'UserRoadmap', 'QuizResult', 'UserProgress', 'BattleResult', 'BattleStats', 'Notification']

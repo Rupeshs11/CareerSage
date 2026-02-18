@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - CareerSage</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <link rel="stylesheet" href="css/style.css">
 </head>
 
@@ -17,11 +18,11 @@
 
         <!-- Main Content -->
         <main class="flex-1 overflow-y-auto">
-            <div class="container mx-auto px-6 py-8">
+            <div class="container mx-auto px-4 md:px-6 py-6 md:py-8">
 
                 <!-- Welcome Section -->
-                <section class="mb-8">
-                    <h1 class="text-3xl font-bold text-white" id="welcome-message">Welcome back!</h1>
+                <section class="mb-6 md:mb-8">
+                    <h1 class="text-2xl md:text-3xl font-bold text-white" id="welcome-message">Welcome back!</h1>
                     <p class="text-gray-400 mt-1">Track your progress and continue your learning journey.</p>
                 </section>
 
@@ -77,7 +78,7 @@
                             </div>
                         </div>
                         <p class="text-3xl font-bold text-white" id="stat-skills">0</p>
-                        <p class="text-sm text-gray-500 mt-1">Skills completed</p>
+                        <p class="text-sm text-gray-500 mt-1" id="stat-skills-sub">Skills completed</p>
                     </div>
 
                     <!-- Quizzes Taken -->
@@ -111,7 +112,7 @@
                                 <a href="./aisensie.html"
                                     class="text-blue-500 hover:text-blue-400 text-sm font-medium">+ Create New</a>
                             </div>
-                            <div id="my-roadmaps-list" class="space-y-4">
+                            <div id="my-roadmaps-list" class="space-y-4 max-h-[400px] overflow-y-auto pr-1">
                                 <!-- Roadmaps will be dynamically inserted here -->
                                 <div class="text-center py-8 text-gray-500" id="no-roadmaps-message">
                                     <svg class="w-12 h-12 mx-auto mb-4 text-gray-600" fill="none" stroke="currentColor"
@@ -128,24 +129,36 @@
                             </div>
                         </div>
 
-                        <!-- Recent Activity -->
-                        <div class="bg-[#161b22] border border-gray-800 rounded-xl p-6">
-                            <h2 class="text-xl font-bold text-white mb-6">Recent Activity</h2>
-                            <div id="recent-activity" class="space-y-4">
-                                <div class="flex items-center gap-4 p-3 rounded-lg hover:bg-gray-800/50 transition">
-                                    <div class="w-10 h-10 bg-blue-500/20 rounded-full flex items-center justify-center">
-                                        <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor"
+                        <!-- Recent Activity (Collapsible) -->
+                        <div class="bg-[#161b22] border border-gray-800 rounded-xl overflow-hidden">
+                            <button
+                                onclick="document.getElementById('activity-body').classList.toggle('hidden'); this.querySelector('#activity-arrow').classList.toggle('rotate-180')"
+                                class="w-full flex items-center justify-between p-5 hover:bg-gray-800/30 transition cursor-pointer">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center">
+                                        <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                         </svg>
                                     </div>
-                                    <div class="flex-1">
-                                        <p class="text-white font-medium">Welcome to CareerSage!</p>
-                                        <p class="text-gray-500 text-sm">Start by creating your first AI-powered roadmap
-                                        </p>
+                                    <h2 class="text-lg font-bold text-white">Recent Activity</h2>
+                                    <span id="activity-count"
+                                        class="text-xs bg-gray-700 text-gray-400 px-2 py-0.5 rounded-full">0</span>
+                                </div>
+                                <svg id="activity-arrow" class="w-5 h-5 text-gray-500 transition-transform duration-200"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            <div id="activity-body" class="hidden border-t border-gray-800">
+                                <div id="recent-activity" class="max-h-80 overflow-y-auto p-4 space-y-2">
+                                    <div class="flex items-center gap-4 p-3 rounded-lg">
+                                        <div class="flex-1">
+                                            <p class="text-gray-500 text-sm">No activity yet — start learning!</p>
+                                        </div>
                                     </div>
-                                    <span class="text-gray-600 text-sm">Just now</span>
                                 </div>
                             </div>
                         </div>
@@ -166,15 +179,15 @@
                                     </svg>
                                     Generate AI Roadmap
                                 </a>
-                                <a href="./skill-quiz.html"
+                                <a href="./skill-battle.html"
                                     class="flex items-center gap-3 p-3 rounded-lg bg-[#0d1117] border border-gray-700 hover:border-purple-500 transition text-white font-medium">
                                     <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4">
+                                            d="M13 10V3L4 14h7v7l9-11h-7z">
                                         </path>
                                     </svg>
-                                    Take Skill Quiz
+                                    Battle
                                 </a>
                                 <a href="./roadmaps.html"
                                     class="flex items-center gap-3 p-3 rounded-lg bg-[#0d1117] border border-gray-700 hover:border-green-500 transition text-white font-medium">
@@ -189,13 +202,14 @@
                             </div>
                         </div>
 
-                        <!-- Skills Overview -->
+                        <!-- Weekly Activity Chart -->
                         <div class="bg-[#161b22] border border-gray-800 rounded-xl p-6">
-                            <h2 class="text-xl font-bold text-white mb-4">Skills Overview</h2>
-                            <div id="skills-overview" class="space-y-4">
-                                <div class="text-center py-6 text-gray-500" id="no-skills-message">
-                                    <p class="text-sm">Complete roadmap nodes to track skills here</p>
-                                </div>
+                            <div class="flex items-center justify-between mb-4">
+                                <h2 class="text-xl font-bold text-white">Weekly Activity</h2>
+                                <span class="text-xs text-gray-500" id="weekly-total">0 activities</span>
+                            </div>
+                            <div class="h-44">
+                                <canvas id="weekly-chart"></canvas>
                             </div>
                         </div>
 
@@ -211,8 +225,8 @@
                                     </svg>
                                 </div>
                                 <div>
-                                    <p class="text-white font-bold text-lg">Start your streak!</p>
-                                    <p class="text-gray-400 text-sm">Learn daily to build momentum</p>
+                                    <p class="text-white font-bold text-lg" id="streak-text">Start your streak!</p>
+                                    <p class="text-gray-400 text-sm" id="streak-sub">Learn daily to build momentum</p>
                                 </div>
                             </div>
                         </div>
@@ -225,103 +239,263 @@
         <div id="footer-placeholder"></div>
     </div>
 
+    <script src="js/load-header-footer.js"></script>
     <script src="js/api.js"></script>
-    <script src="js/main.js" type="module"></script>
+    <script src="js/main.js?v=2" type="module"></script>
     <script>
+        // Utility: relative timestamps
+        function timeAgo(isoDate) {
+            if (!isoDate) return '';
+            const now = new Date();
+            const date = new Date(isoDate);
+            const seconds = Math.floor((now - date) / 1000);
+            if (seconds < 60) return 'Just now';
+            const minutes = Math.floor(seconds / 60);
+            if (minutes < 60) return minutes + 'm ago';
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return hours + 'h ago';
+            const days = Math.floor(hours / 24);
+            if (days < 7) return days + 'd ago';
+            return date.toLocaleDateString('en-IN', { month: 'short', day: 'numeric' });
+        }
+
+        // Activity icons by type
+        function activityIcon(type) {
+            const icons = {
+                roadmap_saved: '<div class="w-10 h-10 bg-blue-500/20 rounded-full flex items-center justify-center"><svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg></div>',
+                node_completed: '<div class="w-10 h-10 bg-green-500/20 rounded-full flex items-center justify-center"><svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></div>',
+                quiz_completed: '<div class="w-10 h-10 bg-yellow-500/20 rounded-full flex items-center justify-center"><svg class="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg></div>',
+                skill_test: '<div class="w-10 h-10 bg-purple-500/20 rounded-full flex items-center justify-center"><svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg></div>'
+            };
+            return icons[type] || icons.node_completed;
+        }
+
+        // Score badge color
+        function scoreBadge(pct) {
+            if (pct >= 80) return 'bg-green-500/20 text-green-400 border border-green-500/30';
+            if (pct >= 50) return 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30';
+            return 'bg-red-500/20 text-red-400 border border-red-500/30';
+        }
+
         // Dashboard initialization
         document.addEventListener('DOMContentLoaded', async function () {
-            // Debug: Check token
             const token = localStorage.getItem('access_token');
-            console.log('🔐 Token present:', !!token);
-            console.log('🔐 Token value:', token ? token.substring(0, 20) + '...' : 'none');
 
-            // Check if user is authenticated via API
             if (!API.Auth.isAuthenticated()) {
-                console.log('❌ Not authenticated, redirecting to login');
                 window.location.href = './login.html';
                 return;
             }
 
             const user = API.Auth.getCurrentUser();
-            console.log('👤 User:', user);
-
-            // Update welcome message
             if (user && user.name) {
                 document.getElementById('welcome-message').textContent = `Welcome back, ${user.name.split(' ')[0]}!`;
             }
 
             try {
-                // Fetch dashboard stats from API
-                console.log('📊 Fetching dashboard stats...');
+                // 1. Fetch stats
                 const statsResponse = await API.Dashboard.getStats();
-                console.log('📊 Stats response:', statsResponse);
                 const stats = statsResponse.stats;
 
-                // Update stats
                 document.getElementById('stat-progress').textContent = (stats.total_progress || 0) + '%';
                 document.getElementById('stat-roadmaps').textContent = stats.active_roadmaps || 0;
                 document.getElementById('stat-skills').textContent = stats.skills_acquired || 0;
                 document.getElementById('stat-quizzes').textContent = stats.quizzes_taken || 0;
 
-                // Fetch user's roadmaps
+                // Update skills sub text with nodes completed
+                if (stats.nodes_completed > 0) {
+                    document.getElementById('stat-skills-sub').textContent = `${stats.nodes_completed} nodes completed`;
+                }
+
+                // Streak
+                const streak = stats.current_streak || 0;
+                const longest = stats.longest_streak || 0;
+                const streakText = document.getElementById('streak-text');
+                const streakSub = document.getElementById('streak-sub');
+                if (streak > 0) {
+                    streakText.textContent = streak + ' Day' + (streak > 1 ? 's' : '') + ' Streak!';
+                    streakSub.textContent = 'Longest: ' + longest + ' day' + (longest > 1 ? 's' : '') + ' — Keep it up!';
+                }
+
+                // 2. Fetch roadmaps
                 const roadmapsResponse = await API.Dashboard.getRoadmaps();
                 const savedRoadmaps = roadmapsResponse.roadmaps || [];
 
-                // Render roadmaps list
                 if (savedRoadmaps.length > 0) {
                     document.getElementById('no-roadmaps-message').style.display = 'none';
                     const roadmapsList = document.getElementById('my-roadmaps-list');
 
                     savedRoadmaps.forEach(roadmap => {
+                        const progress = roadmap.progress || 0;
                         const roadmapCard = document.createElement('div');
-                        roadmapCard.className = 'flex items-center gap-4 p-4 rounded-lg bg-[#0d1117] border border-gray-700 hover:border-blue-500 transition cursor-pointer';
+                        roadmapCard.className = 'p-4 rounded-lg bg-[#0d1117] border border-gray-700 hover:border-blue-500 transition cursor-pointer';
                         roadmapCard.innerHTML = `
-                            <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">
-                                ${roadmap.title ? roadmap.title.charAt(0).toUpperCase() : 'R'}
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
+                                    ${roadmap.title ? roadmap.title.charAt(0).toUpperCase() : 'R'}
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h3 class="text-white font-semibold truncate">${roadmap.title || 'Custom Roadmap'}</h3>
+                                    <p class="text-gray-500 text-sm">${roadmap.is_ai_generated ? 'AI Generated' : 'Saved roadmap'}</p>
+                                </div>
+                                <div class="text-right flex-shrink-0">
+                                    <p class="text-blue-500 font-semibold">${progress}%</p>
+                                    <p class="text-gray-500 text-sm">Complete</p>
+                                </div>
                             </div>
-                            <div class="flex-1">
-                                <h3 class="text-white font-semibold">${roadmap.title || 'Custom Roadmap'}</h3>
-                                <p class="text-gray-500 text-sm">${roadmap.is_ai_generated ? '🤖 AI Generated' : 'Saved roadmap'}</p>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-blue-500 font-semibold">${roadmap.progress || 0}%</p>
-                                <p class="text-gray-500 text-sm">Complete</p>
+                            <div class="mt-3 w-full bg-gray-800 rounded-full h-1.5">
+                                <div class="h-1.5 rounded-full transition-all duration-500 ${progress >= 80 ? 'bg-green-500' : progress >= 40 ? 'bg-blue-500' : 'bg-purple-500'}" style="width: ${progress}%"></div>
                             </div>
                         `;
                         roadmapCard.onclick = () => {
-                            // Pass saved=true to indicate this is a saved roadmap from dashboard
                             window.location.href = `./roadmap-visual.html?id=${roadmap.id}&saved=true`;
                         };
                         roadmapsList.appendChild(roadmapCard);
                     });
                 }
 
-                // Fetch user's skills
-                const skillsResponse = await API.Dashboard.getSkills();
-                const skills = skillsResponse.skills || [];
+                // 3. Fetch activity
+                const activityResponse = await API.Dashboard.getActivity();
+                const activities = activityResponse.activity || [];
 
-                if (skills.length > 0) {
-                    document.getElementById('no-skills-message').style.display = 'none';
-                    const skillsContainer = document.getElementById('skills-overview');
+                const activityContainer = document.getElementById('recent-activity');
+                const activityCount = document.getElementById('activity-count');
+                if (activities.length > 0) {
+                    activityCount.textContent = activities.length;
+                    activityContainer.innerHTML = activities.map(a => `
+                        <div class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-gray-800/50 transition">
+                            ${activityIcon(a.type)}
+                            <div class="flex-1 min-w-0">
+                                <p class="text-white font-medium text-sm truncate">${a.description}</p>
+                                <p class="text-gray-500 text-xs">${timeAgo(a.timestamp)}</p>
+                            </div>
+                        </div>
+                    `).join('');
+                }
 
-                    skills.slice(0, 5).forEach(skill => {
-                        const skillBadge = document.createElement('div');
-                        skillBadge.className = 'flex items-center gap-2 p-2 rounded-lg bg-green-900/30 border border-green-800';
-                        skillBadge.innerHTML = `
-                            <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                            </svg>
-                            <span class="text-green-400 text-sm font-medium">${skill}</span>
-                        `;
-                        skillsContainer.appendChild(skillBadge);
+                // 4. Fetch test history
+                const testHistoryResponse = await API.Dashboard.getTestHistory();
+                const history = testHistoryResponse.history || [];
+
+                if (history.length > 0) {
+                    // Find or create test history card
+                    let testHistoryCard = document.getElementById('test-history-card');
+                    if (!testHistoryCard) {
+                        testHistoryCard = document.createElement('div');
+                        testHistoryCard.id = 'test-history-card';
+                        testHistoryCard.className = 'bg-[#161b22] border border-gray-800 rounded-xl p-6';
+                        // Insert after recent activity
+                        const activityParent = document.getElementById('recent-activity').parentElement;
+                        activityParent.parentElement.appendChild(testHistoryCard);
+                    }
+
+                    testHistoryCard.innerHTML = `
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-xl font-bold text-white">Test History</h2>
+                            <a href="./skill-test.html" class="text-purple-500 hover:text-purple-400 text-sm font-medium">Take Test →</a>
+                        </div>
+                        <div class="space-y-3 max-h-[350px] overflow-y-auto pr-1">
+                            ${history.map(t => `
+                                <div class="flex items-center gap-3 p-3 rounded-lg bg-[#0d1117] border border-gray-700/50">
+                                    <div class="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-white font-medium text-sm truncate">${t.skill}</p>
+                                        <p class="text-gray-500 text-xs">${t.score}/${t.total} correct · ${timeAgo(t.date)}</p>
+                                    </div>
+                                    <span class="px-2.5 py-1 rounded-full text-xs font-bold ${scoreBadge(t.percentage)}">${t.percentage}%</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+
+                // 5. Fetch weekly activity chart
+                try {
+                    const weeklyResponse = await API.Dashboard.getWeeklyActivity();
+                    const labels = weeklyResponse.labels || [];
+                    const counts = weeklyResponse.counts || [];
+                    const total = counts.reduce((a, b) => a + b, 0);
+
+                    document.getElementById('weekly-total').textContent = `${total} activit${total === 1 ? 'y' : 'ies'} this week`;
+
+                    const ctx = document.getElementById('weekly-chart').getContext('2d');
+
+                    // Create gradient
+                    const gradient = ctx.createLinearGradient(0, 0, 0, 176);
+                    gradient.addColorStop(0, 'rgba(99, 102, 241, 0.9)');
+                    gradient.addColorStop(1, 'rgba(139, 92, 246, 0.3)');
+
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                data: counts,
+                                backgroundColor: gradient,
+                                borderColor: 'rgba(99, 102, 241, 0.6)',
+                                borderWidth: 1,
+                                borderRadius: 6,
+                                borderSkipped: false,
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: { display: false },
+                                tooltip: {
+                                    backgroundColor: '#1f2937',
+                                    titleColor: '#e5e7eb',
+                                    bodyColor: '#9ca3af',
+                                    borderColor: '#374151',
+                                    borderWidth: 1,
+                                    cornerRadius: 8,
+                                    padding: 10,
+                                    callbacks: {
+                                        label: (context) => `${context.parsed.y} activit${context.parsed.y === 1 ? 'y' : 'ies'}`
+                                    }
+                                }
+                            },
+                            scales: {
+                                x: {
+                                    grid: { display: false },
+                                    ticks: { color: '#6b7280', font: { size: 11 } },
+                                    border: { display: false }
+                                },
+                                y: {
+                                    beginAtZero: true,
+                                    grid: { color: 'rgba(55, 65, 81, 0.3)' },
+                                    ticks: {
+                                        color: '#6b7280',
+                                        font: { size: 11 },
+                                        stepSize: 1,
+                                        precision: 0
+                                    },
+                                    border: { display: false }
+                                }
+                            }
+                        }
                     });
+                } catch (e) {
+                    console.warn('Failed to load weekly activity:', e);
                 }
 
             } catch (error) {
                 console.error('Failed to load dashboard data:', error);
-                // Fallback to localStorage data if API fails
-                const savedRoadmaps = JSON.parse(localStorage.getItem('careersage_roadmaps') || '[]');
-                document.getElementById('stat-roadmaps').textContent = savedRoadmaps.length;
+                // Set defaults for all stats so the page isn't blank
+                document.getElementById('stat-progress').textContent = '0%';
+                document.getElementById('stat-roadmaps').textContent = '0';
+                document.getElementById('stat-skills').textContent = '0';
+                document.getElementById('stat-quizzes').textContent = '0';
+                // Show error notice
+                var errBanner = document.createElement('div');
+                errBanner.className = 'bg-red-500/10 border border-red-500/30 text-red-400 text-sm p-3 rounded-lg mb-4 text-center';
+                errBanner.textContent = 'Could not load dashboard data. Your session may have expired — please log in again.';
+                var main = document.querySelector('main') || document.body;
+                main.insertBefore(errBanner, main.firstChild);
             }
         });
     </script>

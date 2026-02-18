@@ -8,7 +8,7 @@ class AIService:
     """Service for AI-powered roadmap generation using NVIDIA API."""
     
     NVIDIA_BASE_URL = "https://integrate.api.nvidia.com/v1"
-    NVIDIA_API_KEY = "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"
+    # NVIDIA_API_KEY removed - loaded from config
     NVIDIA_MODEL = "nvidia/llama-3.3-nemotron-super-49b-v1.5"
     
     def __init__(self):
@@ -20,7 +20,7 @@ class AIService:
         if self._client is None:
             self._client = OpenAI(
                 base_url=self.NVIDIA_BASE_URL,
-                api_key=self.NVIDIA_API_KEY
+                api_key=current_app.config['NVIDIA_API_KEY']
             )
             current_app.logger.info("NVIDIA API client initialized")
         return self._client
@@ -79,22 +79,29 @@ class AIService:
 - Career Goal: {career_goal}
 
 **Requirements:**
-1. Create 10-15 learning nodes covering the complete journey
+1. Create 12-15 learning nodes covering the complete journey
 2. Each node must have:
    - Unique ID (lowercase-with-hyphens)
-   - Clear title
+   - Clear title (keep it short, max 4-5 words)
    - Description (2-3 sentences)
    - Topics list (3-5 key concepts)
    - Estimated time
-   - 3 FREE resources:
-     * 1 YouTube video tutorial
-     * 1 blog article/guide  
-     * 1 official documentation
-   - Position (x, y coordinates for visualization)
+   - 3 FREE resources with REAL, working URLs:
+     * 1 YouTube video tutorial (use real youtube.com URLs)
+     * 1 blog article/guide (use real URLs from popular tech blogs)
+     * 1 official documentation (use real documentation URLs)
    - Type: "required" or "recommended"
 
-3. Create logical connections showing the learning path
-4. Arrange nodes in a meaningful flow (not just linear)
+3. **CRITICAL - Create a proper DAG (Directed Acyclic Graph) flow:**
+   - Start with 1 foundation node at the top
+   - Branch into 2-3 parallel paths for related skills that can be learned simultaneously
+   - Merge branches back into a single node before branching again
+   - The flow pattern should look like: 
+     * 1 root → 2-3 branches → 1 merge → 2-3 branches → 1 merge → 1 final
+   - This creates a diamond/tree-like structure, NOT a simple linear chain
+   - Every node must have at least one incoming and one outgoing edge (except first/last)
+
+4. Edges define the learning dependency flow
 
 **Output ONLY valid JSON** in this exact format:
 {{
@@ -105,8 +112,6 @@ class AIService:
       "id": "node-id",
       "title": "Node Title",
       "description": "What you'll learn...",
-      "x": 500,
-      "y": 0,
       "type": "required",
       "estimatedTime": "2 weeks",
       "topics": ["Topic 1", "Topic 2", "Topic 3"],
@@ -121,28 +126,8 @@ class AIService:
     {{"source": "node1-id", "target": "node2-id"}}
   ]
 }}
-131: **Output ONLY valid JSON** in this exact format:
-132: {{
-133:   "title": "{topic} - Complete Learning Path",
-134:   "description": "Comprehensive roadmap for {topic}...",
-135:   "nodes": [
-136:     {{
-137:       "id": "node-id",
-138:       "title": "Node Title",
-139:       "description": "What you'll learn...",
-140:       "type": "required",
-141:       "estimatedTime": "2 weeks",
-142:       "topics": ["Topic 1", "Topic 2", "Topic 3"],
-143:       "resources": [
-144:         {{"title": "Video Title", "url": "https://youtube.com/...", "type": "video"}},
-145:         {{"title": "Article Title", "url": "https://...", "type": "article"}}
-146:       ]
-147:     }}
-148:   ],
-149:   "edges": [
-150:     {{"source": "node1-id", "target": "node2-id"}}
-151:   ]
-152: }}
+
+IMPORTANT: Use real, working URLs. Create branching and merging edges for a proper flowchart structure, NOT a purely linear chain.
 
 Generate the roadmap now."""
 
@@ -213,10 +198,10 @@ Generate the roadmap now."""
         if not nodes:
             return
 
-        NODE_WIDTH = 200
+        NODE_WIDTH = 220
         NODE_HEIGHT = 80
         RANK_SEP = 100
-        NODE_SEP = 100
+        NODE_SEP = 80
         DIRECTION = "TB"
 
         node_map = {n['id']: n for n in nodes}
@@ -367,6 +352,63 @@ Generate the roadmap now."""
         
         current_app.logger.info(f"Successfully generated roadmap with {len(roadmap['nodes'])} nodes")
         return roadmap
+
+
+    def generate_skill_test(self, skill, topics=None):
+        """Generate a skill test with 10 MCQ questions for a given skill."""
+        topics_text = ", ".join(topics) if topics else skill
+        
+        prompt = f"""Generate a skill assessment test for: **{skill}**
+
+Topics to cover: {topics_text}
+
+Create exactly 10 multiple-choice questions that test practical knowledge of {skill}.
+
+**Output ONLY valid JSON** in this exact format:
+{{
+  "skill": "{skill}",
+  "questions": [
+    {{
+      "id": 1,
+      "question": "What is the purpose of X in {skill}?",
+      "category": "Core Concepts",
+      "options": ["Option A", "Option B", "Option C", "Option D"],
+      "correct": 0,
+      "explanation": "Brief explanation of why the answer is correct."
+    }}
+  ]
+}}
+
+Rules:
+- Questions should range from beginner to intermediate difficulty
+- Each question must have exactly 4 options
+- "correct" is the 0-based index of the correct option
+- Include a brief explanation for each answer
+- Cover different aspects of {skill}
+- Make questions practical and applied, not just theoretical
+
+Generate the test now."""
+        
+        current_app.logger.info(f"Generating skill test for: {skill}")
+        
+        content = self.call_nvidia_api(prompt)
+        if not content:
+            return None
+        
+        data = self.parse_json_response(content)
+        if not data or 'questions' not in data:
+            return None
+        
+        for q in data['questions']:
+            if 'options' not in q or len(q['options']) != 4:
+                continue
+            if 'correct' not in q or not isinstance(q['correct'], int):
+                q['correct'] = 0
+            if 'explanation' not in q:
+                q['explanation'] = ''
+        
+        current_app.logger.info(f"Generated {len(data['questions'])} questions for {skill}")
+        return data
 
 
 ai_service = AIService()

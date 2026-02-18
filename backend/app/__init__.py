@@ -2,7 +2,7 @@
 import os
 from flask import Flask, jsonify, send_from_directory, request
 from .config import config
-from .extensions import db, jwt, cors
+from .extensions import db, jwt, cors, socketio
 
 
 def create_app(config_name='default'):
@@ -21,6 +21,7 @@ def create_app(config_name='default'):
     db.init_app(app)
     jwt.init_app(app)
     cors.init_app(app, origins=app.config['CORS_ORIGINS'], supports_credentials=True)
+    socketio.init_app(app, cors_allowed_origins="*", ping_timeout=60, ping_interval=25, async_mode='threading')
     
     # Register blueprints (routes)
     from .routes.auth import auth_bp
@@ -28,12 +29,16 @@ def create_app(config_name='default'):
     from .routes.quiz import quiz_bp
     from .routes.dashboard import dashboard_bp
     from .routes.ai import ai_bp
+    from .routes.battle import battle_bp
+    from .routes.friends import friends_bp
     
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(roadmaps_bp, url_prefix='/api/roadmaps')
     app.register_blueprint(quiz_bp, url_prefix='/api/quiz')
     app.register_blueprint(dashboard_bp, url_prefix='/api/dashboard')
     app.register_blueprint(ai_bp, url_prefix='/api/ai')
+    app.register_blueprint(battle_bp, url_prefix='/api/battle')
+    app.register_blueprint(friends_bp, url_prefix='/api/friends')
     
     # Add request logging
     @app.before_request

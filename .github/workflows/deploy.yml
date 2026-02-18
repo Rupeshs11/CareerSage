@@ -1,0 +1,48 @@
+# ============================================
+# CareerSage - Deploy to EC2
+# Triggers automatically after Docker Push succeeds
+# ============================================
+
+name: Deploy to EC2
+
+on:
+  workflow_run:
+    workflows: ["Build & Push to Docker Hub"]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Deploy to EC2 via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USERNAME }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            echo "=========================================="
+            echo "  Deploying CareerSage to Production"
+            echo "=========================================="
+
+            cd /home/${{ secrets.EC2_USERNAME }}/careersage
+
+            # Pull latest image
+            echo "[1/3] Pulling latest image..."
+            docker compose pull
+
+            # Restart containers with new image
+            echo "[2/3] Restarting containers..."
+            docker compose up -d
+
+            # Cleanup old images
+            echo "[3/3] Cleaning up old images..."
+            docker image prune -f
+
+            echo ""
+            echo "Deployment complete!"
+            docker ps

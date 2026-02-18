@@ -1,34 +1,70 @@
-# Ignore Python virtual environment
-venv/
-backend/venv/
-.env
+# Python
 __pycache__/
-*.pyc
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+*.egg
+dist/
+build/
+*.whl
 
-# Ignore IDE files
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Environment variables
+.env
+*.env
+
+# IDE
 .vscode/
 .idea/
+*.swp
+*.swo
 
-# Ignore system files
+# OS
 .DS_Store
 Thumbs.db
 
-# Ignore logs and temporary files
+# Logs
 *.log
-*.tmp
-*.bak
+logs.txt
 
-# Ignore build and dist folders
-build/
-dist/
-*.egg-info/
-
-# Ignore node_modules (if frontend uses React or similar)
-frontend/node_modules/
-frontend/.env
-frontend/build/
-
-# Ignore database files (if any local SQLite or temp DBs)
+# Database
 *.db
 *.sqlite3
- 
+instance/
+
+# Node
+node_modules/
+
+# Distribution
+.dist/
+
+# Test files
+test_*.py
+testAPI.py
+quick_api_test.py
+check_db.py
+
+# Data & cache
+backend/app/Dataset/
+backend/app/data/
+backend/app/__pycache__/
+backend/app/models/__pycache__/
+backend/app/routes/__pycache__/
+backend/app/services/__pycache__/
+backend/app/utils/__pycache__/
+
+# Migration & seed scripts
+migrate_data.py
+seed.py
+
+# SSL production env
+ssl/.env
+ssl/.env.production
+
+# Misc dev files
+VANILLA_GUIDE.md

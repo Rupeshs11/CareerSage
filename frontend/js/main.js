@@ -38,15 +38,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function initAuthUI() {
   const accountDropdown = document.getElementById("accountDropdown");
-  const accountBtnText = document.getElementById("account-btn-text");
+  const accountBtn = document.getElementById("account-btn");
 
   if (!accountDropdown) return;
 
   const user = JSON.parse(localStorage.getItem("careersage_user"));
 
   if (user) {
-    // User is logged in - show user info and logout
-    accountBtnText.textContent = user.name.split(" ")[0]; // First name only
+    // Show user initial in the icon
+    const iconDiv = accountBtn ? accountBtn.querySelector("div") : null;
+    if (iconDiv) {
+      const initial = user.name ? user.name.charAt(0).toUpperCase() : "U";
+      iconDiv.innerHTML = `<span class="text-white font-bold text-sm">${initial}</span>`;
+      iconDiv.classList.remove("text-purple-400");
+      iconDiv.classList.add(
+        "bg-gradient-to-br",
+        "from-purple-600",
+        "to-blue-600",
+        "border-transparent",
+      );
+    }
+
     accountDropdown.innerHTML = `
       <div class="p-3 border-b border-gray-700">
         <p class="text-white font-semibold">${user.name}</p>
@@ -66,8 +78,6 @@ function initAuthUI() {
       </a>
     `;
   } else {
-    // User is logged out - show login/register options
-    accountBtnText.textContent = "Account";
     accountDropdown.innerHTML = `
       <a href="./login.html">
         <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1876,6 +1886,7 @@ function initRoadmapVisualPage() {
             nodes: response.roadmap.nodes || [],
             connections: response.roadmap.connections || [],
             completed_nodes: response.roadmap.completed_nodes || [],
+            generation_params: response.roadmap.generation_params || null,
             faqs: [],
           };
           console.log("Loaded saved roadmap from API:", currentRoadmap);
@@ -1899,6 +1910,8 @@ function initRoadmapVisualPage() {
                 parsed.description || "Your personalized learning path",
               nodes: parsed.nodes || [],
               connections: parsed.connections || [],
+              completed_nodes: parsed.completed_nodes || [],
+              generation_params: parsed.generation_params || null,
               faqs: [],
             };
             console.log("Loaded AI-generated roadmap:", currentRoadmap);
@@ -1941,6 +1954,13 @@ function initRoadmapVisualPage() {
     }
 
     console.log("Calling renderRoadmapPage with:", currentRoadmap);
+
+    // Store roadmap nodes for skill-test page to access
+    try {
+      localStorage.setItem("generated_roadmap", JSON.stringify(currentRoadmap));
+    } catch (e) {
+      console.warn("Failed to store roadmap in localStorage:", e);
+    }
 
     // Now render the page
     renderRoadmapPage();
@@ -1989,79 +2009,150 @@ function initRoadmapVisualPage() {
     // Track completed nodes
     let completedNodes = new Set();
 
-    // Draw SVG connection lines
+    // Draw pipe connector lines between consecutive nodes (GitHub Actions style)
     function drawConnections() {
       const svg = document.getElementById("connections");
-      if (!svg || !currentRoadmap.connections) return;
+      if (svg) svg.innerHTML = "";
 
-      // Clear previous lines
-      svg.innerHTML = "";
+      // Remove old pipe lines
+      document.querySelectorAll(".pipe-line").forEach((el) => el.remove());
 
-      currentRoadmap.connections.forEach((conn) => {
-        const sourceId = conn.from || conn.source;
-        const targetId = conn.to || conn.target;
+      if (!currentRoadmap.nodes || currentRoadmap.nodes.length < 2) return;
 
-        const fromNode = currentRoadmap.nodes.find((n) => n.id === sourceId);
-        const toNode = currentRoadmap.nodes.find((n) => n.id === targetId);
+      const layer = document.getElementById("roadmap-layer");
+      if (!layer) return;
 
-        if (!fromNode || !toNode) return;
+      const NODE_W = 280;
+      const NODE_H = 140;
+      const COLS = 3;
 
-        // Calculate positions (Node Center points for cleaner lines)
-        // Adjusted for smaller node size 150x60
-        const NODE_W = 150;
-        const NODE_H = 60;
+      for (let i = 0; i < currentRoadmap.nodes.length - 1; i++) {
+        const from = currentRoadmap.nodes[i];
+        const to = currentRoadmap.nodes[i + 1];
+        const fromRow = Math.floor(i / COLS);
+        const toRow = Math.floor((i + 1) / COLS);
+        const isEvenRow = fromRow % 2 === 0;
 
-        // Dagre/Backend gives Top-Left. We want centers for lines?
-        // Actually, let's do Bottom-Center to Top-Center for Top-Down flow
-        const x1 = fromNode.x + NODE_W / 2;
-        const y1 = fromNode.y + NODE_H; // Bottom of source
-        const x2 = toNode.x + NODE_W / 2;
-        const y2 = toNode.y; // Top of target
+        // Determine pipe color class
+        const fromDone = completedNodes.has(from.id);
+        const toDone = completedNodes.has(to.id);
+        let pipeClass = "";
+        if (fromDone && toDone) pipeClass = "completed";
+        else if (fromDone && !toDone) pipeClass = "in-progress";
 
-        const path = document.createElementNS(
-          "http://www.w3.org/2000/svg",
-          "path",
-        );
+        if (fromRow === toRow) {
+          // Same row: horizontal pipe
+          const pipe = document.createElement("div");
+          pipe.className = `pipe-line ${pipeClass}`;
 
-        // Wavy/Flexible "Bezier" Connector (Modern & Cool)
-        // M x1 y1 -> C cp1x cp1y, cp2x cp2y, x2 y2
+          const x1 = isEvenRow ? from.x + NODE_W : to.x + NODE_W;
+          const x2 = isEvenRow ? to.x : from.x;
+          const minX = Math.min(x1, x2);
+          const pipeWidth = Math.abs(x2 - x1);
+          const y = from.y + NODE_H / 2;
 
-        // Control Points for smooth S-curve (Vertical orientation)
-        const cp1x = x1;
-        const cp1y = y1 + (y2 - y1) / 2;
-        const cp2x = x2;
-        const cp2y = y2 - (y2 - y1) / 2;
+          pipe.style.left = `${minX}px`;
+          pipe.style.top = `${y}px`;
+          pipe.style.width = `${pipeWidth}px`;
+          pipe.style.height = `3px`;
 
-        const d = `M ${x1} ${y1} C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${x2} ${y2}`;
+          layer.appendChild(pipe);
+        } else {
+          // Row transition: vertical pipe from bottom of source to top of target
+          // Part 1: short horizontal to center if needed, then vertical drop
+          const fromCenterX = from.x + NODE_W / 2;
+          const toCenterX = to.x + NODE_W / 2;
 
-        // Add proper styling
-        path.setAttribute("d", d);
-        path.setAttribute("stroke", "#94a3b8"); // Slightly softer color
-        path.setAttribute("stroke-width", "2");
-        path.setAttribute("fill", "none");
-        path.setAttribute("stroke-linecap", "round");
+          // Vertical pipe straight down from source center
+          const pipeV = document.createElement("div");
+          pipeV.className = `pipe-line ${pipeClass}`;
 
-        svg.appendChild(path);
+          const vX = fromCenterX;
+          const vY = from.y + NODE_H;
+          const vHeight = to.y - (from.y + NODE_H);
+
+          pipeV.style.left = `${vX - 1}px`;
+          pipeV.style.top = `${vY}px`;
+          pipeV.style.width = `3px`;
+          pipeV.style.height = `${Math.max(0, vHeight)}px`;
+
+          layer.appendChild(pipeV);
+
+          // If columns are different, add horizontal connector
+          if (Math.abs(fromCenterX - toCenterX) > 5) {
+            const pipeH = document.createElement("div");
+            pipeH.className = `pipe-line ${pipeClass}`;
+
+            const midY = from.y + NODE_H + vHeight / 2;
+            const minX = Math.min(fromCenterX, toCenterX);
+            const hWidth = Math.abs(toCenterX - fromCenterX);
+
+            pipeH.style.left = `${minX}px`;
+            pipeH.style.top = `${midY}px`;
+            pipeH.style.width = `${hWidth}px`;
+            pipeH.style.height = `3px`;
+
+            layer.appendChild(pipeH);
+
+            // Second vertical segment from horizontal to target
+            const pipeV2 = document.createElement("div");
+            pipeV2.className = `pipe-line ${pipeClass}`;
+
+            pipeV2.style.left = `${toCenterX - 1}px`;
+            pipeV2.style.top = `${midY}px`;
+            pipeV2.style.width = `3px`;
+            pipeV2.style.height = `${Math.max(0, vHeight / 2)}px`;
+
+            layer.appendChild(pipeV2);
+
+            // Adjust the first vertical to only go halfway
+            pipeV.style.height = `${Math.max(0, vHeight / 2)}px`;
+          }
+        }
+      }
+    }
+
+    // Zig-zag serpentine layout: 3 nodes per row, alternating direction
+    function applyZigZagLayout(nodes) {
+      const NODE_W = 280;
+      const NODE_H = 140;
+      const GAP_X = 40;
+      const GAP_Y = 60;
+      const COLS = 3;
+      const START_X = 40;
+
+      nodes.forEach((node, i) => {
+        const row = Math.floor(i / COLS);
+        const col = i % COLS;
+        const isEvenRow = row % 2 === 0;
+
+        const actualCol = isEvenRow ? col : COLS - 1 - col;
+
+        node.x = START_X + actualCol * (NODE_W + GAP_X);
+        node.y = 20 + row * (NODE_H + GAP_Y);
       });
     }
 
-    // Auto-layout function using Dagre
+    // Dagre layout kept as fallback
     function applyDagreLayout(nodes, connections, direction = "TB") {
       if (!window.dagre) {
-        console.warn("Dagre not found, using static coordinates");
+        console.warn("Dagre not found, using zig-zag layout");
+        applyZigZagLayout(nodes);
         return;
       }
 
       const dagreGraph = new dagre.graphlib.Graph();
       dagreGraph.setDefaultEdgeLabel(() => ({}));
 
-      const nodeWidth = 150;
-      const nodeHeight = 60;
+      const nodeWidth = 280;
+      const nodeHeight = 140;
 
       dagreGraph.setGraph({
         rankdir: direction,
-        nodesep: 140, // Much wider spacing for proper "Spread" Tree look
-        ranksep: 80, // Good vertical separation
+        nodesep: 80,
+        ranksep: 100,
+        marginx: 40,
+        marginy: 40,
       });
 
       nodes.forEach((node) => {
@@ -2080,7 +2171,6 @@ function initRoadmapVisualPage() {
 
       nodes.forEach((node) => {
         const nodeWithPosition = dagreGraph.node(node.id);
-        // Dagre gives center coordinates, we need top-left for absolute positioning
         node.x = nodeWithPosition.x - nodeWidth / 2;
         node.y = nodeWithPosition.y - nodeHeight / 2;
       });
@@ -2150,7 +2240,7 @@ function initRoadmapVisualPage() {
       );
     }
 
-    // Render Flowchart Nodes
+    // Render Flowchart Nodes (Widget Cards + Pipe Connections)
     function renderFlowchart() {
       const container = document.getElementById("roadmap-container");
       if (!container) return;
@@ -2161,71 +2251,115 @@ function initRoadmapVisualPage() {
         return;
       }
 
-      // === AUTO LAYOUT ===
-      // Apply Dagre layout to calculate X/Y coordinates dynamically
-      // This overrides any hardcoded X/Y in the JSON
-      // === AUTO LAYOUT ===
-      applyDagreLayout(currentRoadmap.nodes, currentRoadmap.connections || []);
+      // Apply zig-zag layout (sequential serpentine flow)
+      applyZigZagLayout(currentRoadmap.nodes);
 
-      // Create a Wrapper for Scaling
-      // We set transform-origin to 'top center' so it scales neatly from the top
       container.innerHTML =
-        '<div id="roadmap-layer" style="transform-origin: top center; width: 100%; height: 100%; position: absolute; left: 0; top: 0;"><svg id="connections" style="overflow: visible; width: 100%; height: 100%;"></svg></div>';
+        '<div id="roadmap-layer" style="transform-origin: top left; width: 100%; height: 100%; position: absolute; left: 0; top: 0;"><svg id="connections" style="overflow: visible; width: 100%; height: 100%;"></svg></div>';
       const layer = document.getElementById("roadmap-layer");
 
-      // Draw lines (they will go into #connections inside #roadmap-layer)
-      drawConnections();
+      // Determine in-progress index (first incomplete node after a completed one)
+      let inProgressIdx = -1;
+      for (let i = 0; i < currentRoadmap.nodes.length; i++) {
+        if (!completedNodes.has(currentRoadmap.nodes[i].id)) {
+          if (i === 0 || completedNodes.has(currentRoadmap.nodes[i - 1].id)) {
+            inProgressIdx = i;
+          }
+          break;
+        }
+      }
 
-      // Draw Nodes
-      currentRoadmap.nodes.forEach((node) => {
+      // Draw Nodes as widget cards
+      currentRoadmap.nodes.forEach((node, nodeIdx) => {
         const nodeEl = document.createElement("div");
-        nodeEl.className = `node ${node.type || "custom"}`;
+        nodeEl.className = `node-widget ${node.type || "required"}`;
         nodeEl.id = node.id;
         nodeEl.style.left = `${node.x}px`;
         nodeEl.style.top = `${node.y}px`;
-        nodeEl.textContent = node.title;
 
+        // Apply states
         if (completedNodes.has(node.id)) {
           nodeEl.classList.add("completed");
+        } else if (nodeIdx === inProgressIdx) {
+          nodeEl.classList.add("in-progress");
         }
+
+        // Step number badge
+        const stepBadge = document.createElement("div");
+        stepBadge.className = "node-step";
+        stepBadge.textContent = nodeIdx + 1;
+        nodeEl.appendChild(stepBadge);
+
+        // Header area
+        const header = document.createElement("div");
+        header.className = "node-header";
+
+        const titleSpan = document.createElement("span");
+        titleSpan.className = "node-title";
+        titleSpan.textContent = node.title;
+        header.appendChild(titleSpan);
+
+        // Time estimate
+        if (node.estimatedTime) {
+          const timeSpan = document.createElement("span");
+          timeSpan.className = "node-time";
+          timeSpan.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> ${node.estimatedTime}`;
+          header.appendChild(timeSpan);
+        }
+
+        nodeEl.appendChild(header);
+
+        // Topic tags
+        if (node.topics && node.topics.length > 0) {
+          const tagsDiv = document.createElement("div");
+          tagsDiv.className = "node-tags";
+          const displayTopics = node.topics.slice(0, 3);
+          displayTopics.forEach((t) => {
+            const tag = document.createElement("span");
+            tag.className = "node-tag";
+            tag.textContent = t;
+            tagsDiv.appendChild(tag);
+          });
+          if (node.topics.length > 3) {
+            const more = document.createElement("span");
+            more.className = "node-tag more";
+            more.textContent = `+${node.topics.length - 3}`;
+            tagsDiv.appendChild(more);
+          }
+          nodeEl.appendChild(tagsDiv);
+        }
+
+        // Type badge
+        const typeBadge = document.createElement("span");
+        typeBadge.className = `node-type-badge ${node.type || "required"}`;
+        typeBadge.textContent =
+          node.type === "recommended" ? "OPTIONAL" : "CORE";
+        nodeEl.appendChild(typeBadge);
 
         nodeEl.addEventListener("click", () => {
           openNodePanel(node);
         });
 
-        // Initialize dragging
         initNodeDragging(nodeEl, node);
 
-        // Tooltip logic
+        // Tooltip
         const tooltip = document.getElementById("flowchart-tooltip");
         if (tooltip) {
           nodeEl.addEventListener("mouseenter", () => {
-            if (node.topics && node.topics.length > 0) {
-              const listHtml = node.topics.map((t) => `<li>${t}</li>`).join("");
-              tooltip.innerHTML = `<h4>${node.title}</h4><ul>${listHtml}</ul>`;
+            if (node.description) {
+              tooltip.innerHTML = `<p style="margin:0;color:#e2e8f0;font-size:0.85rem">${node.description}</p>`;
               tooltip.classList.add("show");
-              // Tooltip positioning using Viewport Coordinates (Robust against scale/scroll)
               const rect = nodeEl.getBoundingClientRect();
               const containerRect = container.getBoundingClientRect();
-
-              // Calculate position relative to container (accounting for scroll)
-              // We want visual position relative to container top-left
               let left = rect.left - containerRect.left + container.scrollLeft;
               let top =
                 rect.top -
                 containerRect.top +
                 container.scrollTop +
                 rect.height +
-                4;
-
-              // Smart Boundary Check (Flip if too close to right/bottom)
-              // Tooltip width approx 250px
-              if (left + 250 > container.scrollWidth) {
-                left -= 250; // Flip to left
-              }
-              // If flipping puts it off-screen left, clamp it
+                6;
+              if (left + 280 > container.scrollWidth) left -= 280;
               left = Math.max(10, left);
-
               tooltip.style.left = `${left}px`;
               tooltip.style.top = `${top}px`;
             }
@@ -2238,21 +2372,26 @@ function initRoadmapVisualPage() {
         layer.appendChild(nodeEl);
       });
 
-      // === SMART FIT & ZOOM SETUP ===
-      const maxGraphY = Math.max(
-        ...currentRoadmap.nodes.map((n) => n.y + 60 + 50),
+      // Draw pipe connections after nodes
+      drawConnections();
+
+      // Smart fit
+      const maxGraphX = Math.max(
+        ...currentRoadmap.nodes.map((n) => n.x + 280 + 40),
       );
+      const maxGraphY = Math.max(
+        ...currentRoadmap.nodes.map((n) => n.y + 140 + 40),
+      );
+      const containerW = container.clientWidth;
       const containerH = container.clientHeight;
 
       let initialScale = 1;
-      if (maxGraphY > containerH) {
-        initialScale = Math.max(0.5, Math.min(1, containerH / maxGraphY));
-      }
+      const scaleX = containerW / maxGraphX;
+      const scaleY = containerH / maxGraphY;
+      initialScale = Math.max(0.4, Math.min(1, Math.min(scaleX, scaleY)));
 
-      // Set Global Zoom State
       window.currentZoom = initialScale;
 
-      // Define Zoom Functions Globally
       window.updateZoom = function () {
         const layer = document.getElementById("roadmap-layer");
         if (layer) {
@@ -2271,14 +2410,13 @@ function initRoadmapVisualPage() {
       };
 
       window.handleZoomReset = function () {
-        window.currentZoom = 1; // Or resize to fit? Let's use 1.0 standard.
+        window.currentZoom = 1;
         window.updateZoom();
       };
 
-      // Apply Initial Zoom
       window.updateZoom();
 
-      // Setup Wheel Listener (One-time check)
+      // Wheel zoom
       if (!container.dataset.hasZoomListener) {
         container.addEventListener("wheel", (e) => {
           if (e.ctrlKey) {
@@ -2293,9 +2431,6 @@ function initRoadmapVisualPage() {
         });
         container.dataset.hasZoomListener = "true";
       }
-
-      // Adjust SVG container size to fit contents if needed
-      // (Optional: loop through nodes to find max X/Y and set container width/height)
     }
 
     // Store current node for panel operations
@@ -2370,6 +2505,23 @@ function initRoadmapVisualPage() {
           '<p class="text-gray-500 text-center py-4">No resources available yet</p>';
       }
 
+      // Clear search results
+      const searchResultsContainer = document.getElementById(
+        "panel-search-results",
+      );
+      if (searchResultsContainer) searchResultsContainer.innerHTML = "";
+
+      // Set skill test link
+      const skillTestLink = document.getElementById("panel-skill-test-link");
+      if (skillTestLink) {
+        const params = new URLSearchParams();
+        params.set("node", node.title);
+        if (node.topics && node.topics.length > 0) {
+          params.set("topics", JSON.stringify(node.topics));
+        }
+        skillTestLink.href = `./skill-test.html?${params.toString()}`;
+      }
+
       // Update complete button state
       const completeBtn = document.getElementById("panel-complete-btn");
       if (completedNodes.has(node.id)) {
@@ -2397,6 +2549,65 @@ function initRoadmapVisualPage() {
       overlay.classList.remove("hidden");
     };
 
+    // Search more resources
+    window.searchMoreResources = async function () {
+      if (!currentPanelNode) return;
+      const btn = document.getElementById("panel-search-btn");
+      const resultsContainer = document.getElementById("panel-search-results");
+
+      btn.innerHTML = `
+        <svg class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+        </svg>
+        Searching...
+      `;
+      btn.disabled = true;
+
+      try {
+        const data = await API.AI.searchResources(currentPanelNode.title);
+        const resources = data.resources || [];
+
+        if (resources.length > 0) {
+          const resourceIcons = { video: "🎬", docs: "📄", article: "📰" };
+          resultsContainer.innerHTML = `
+            <h5 class="text-xs font-semibold text-gray-500 uppercase mt-2">Web Results</h5>
+            ${resources
+              .map(
+                (r) => `
+              <a href="${r.url}" target="_blank" rel="noopener"
+                 class="flex items-center gap-3 p-3 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 transition group">
+                <span class="text-2xl">${resourceIcons[r.type] || "🔗"}</span>
+                <div class="flex-1 min-w-0">
+                  <p class="text-white font-medium group-hover:text-blue-400 transition text-sm truncate">${r.title}</p>
+                  <p class="text-xs text-gray-500 truncate">${r.snippet || r.type}</p>
+                </div>
+                <svg class="w-4 h-4 text-gray-500 group-hover:text-blue-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
+                </svg>
+              </a>
+            `,
+              )
+              .join("")}
+          `;
+        } else {
+          resultsContainer.innerHTML =
+            '<p class="text-gray-500 text-sm text-center py-2">No results found</p>';
+        }
+      } catch (e) {
+        resultsContainer.innerHTML =
+          '<p class="text-red-400 text-sm text-center py-2">Search failed. Please try again.</p>';
+      }
+
+      btn.innerHTML = `
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+        Find More Resources
+      `;
+      btn.disabled = false;
+    };
+
     // Close side panel
     window.closeNodePanel = function () {
       const panel = document.getElementById("node-detail-panel");
@@ -2408,20 +2619,37 @@ function initRoadmapVisualPage() {
     };
 
     // Toggle node completion from panel
-    window.toggleNodeComplete = function () {
+    window.toggleNodeComplete = async function () {
       if (!currentPanelNode) return;
 
-      const nodeEl = document.getElementById(currentPanelNode.id);
-      if (completedNodes.has(currentPanelNode.id)) {
-        completedNodes.delete(currentPanelNode.id);
-        if (nodeEl) nodeEl.classList.remove("completed");
-      } else {
+      const isCompleting = !completedNodes.has(currentPanelNode.id);
+
+      if (isCompleting) {
         completedNodes.add(currentPanelNode.id);
-        if (nodeEl) nodeEl.classList.add("completed");
+      } else {
+        completedNodes.delete(currentPanelNode.id);
       }
+
+      // Re-render entire pipeline to update pipes and in-progress state
+      renderFlowchart();
 
       // Re-open panel to update button state
       openNodePanel(currentPanelNode);
+
+      // Persist to backend if this is a saved roadmap
+      const savedId = currentRoadmap.id || roadmapId;
+      if (savedId && isSavedRoadmap) {
+        try {
+          await API.Roadmaps.updateNodeProgress(
+            savedId,
+            currentPanelNode.id,
+            isCompleting,
+          );
+          console.log("Progress saved for node:", currentPanelNode.id);
+        } catch (e) {
+          console.warn("Could not save progress to backend:", e);
+        }
+      }
     };
 
     // Render FAQs
@@ -2461,128 +2689,59 @@ function initRoadmapVisualPage() {
     }
 
     // Initialize everything
-    // PDF Download - Screenshot Quality
-    window.downloadRoadmapPDF = async function () {
-      const roadmapContainer = document.getElementById("roadmap-container");
-      const layer = document.getElementById("roadmap-layer");
 
-      if (!roadmapContainer || !layer) {
-        alert("Could not find the roadmap to export.");
-        return;
-      }
-
-      // Find the button
-      const btn = document.querySelector(
-        'button[onclick="downloadRoadmapPDF()"]',
+    // Seed completedNodes from saved data before first render
+    if (
+      currentRoadmap.completed_nodes &&
+      currentRoadmap.completed_nodes.length > 0
+    ) {
+      currentRoadmap.completed_nodes.forEach((id) => completedNodes.add(id));
+      console.log(
+        "Loaded",
+        completedNodes.size,
+        "completed nodes from saved data:",
+        [...completedNodes],
       );
-      const originalBtnText = btn ? btn.innerHTML : "";
-      if (btn) {
-        btn.innerHTML = `<svg class="animate-spin w-5 h-5 inline mr-2" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Generating...`;
-        btn.disabled = true;
-      }
+    }
 
-      // Hide UI elements
-      const zoomControls = document.getElementById("zoom-controls");
-      const tooltip = document.getElementById("flowchart-tooltip");
-      if (zoomControls) zoomControls.style.visibility = "hidden";
-      if (tooltip) tooltip.style.visibility = "hidden";
+    // Frontend fallback: if generation_params has skills, match them against nodes
+    if (
+      completedNodes.size === 0 &&
+      currentRoadmap.generation_params &&
+      currentRoadmap.generation_params.skills
+    ) {
+      const userSkills = currentRoadmap.generation_params.skills.map((s) =>
+        s.toLowerCase().trim(),
+      );
+      if (userSkills.length > 0 && currentRoadmap.nodes) {
+        console.log("Frontend skill matching - skills:", userSkills);
+        currentRoadmap.nodes.forEach((node) => {
+          const searchText = [
+            node.id || "",
+            node.title || "",
+            node.description || "",
+            ...(node.topics || []),
+          ]
+            .join(" ")
+            .toLowerCase();
 
-      // Save original styles
-      const originalLayerTransform = layer.style.transform;
-      const originalContainerOverflow = roadmapContainer.style.overflow;
-      const originalContainerWidth = roadmapContainer.style.width;
-      const originalContainerHeight = roadmapContainer.style.height;
-
-      // Calculate the actual bounds of the roadmap content
-      const allNodes = layer.querySelectorAll(".node");
-      let minX = Infinity,
-        minY = Infinity,
-        maxX = 0,
-        maxY = 0;
-
-      allNodes.forEach((node) => {
-        const left = parseFloat(node.style.left) || 0;
-        const top = parseFloat(node.style.top) || 0;
-        const width = node.offsetWidth || 150;
-        const height = node.offsetHeight || 60;
-
-        minX = Math.min(minX, left);
-        minY = Math.min(minY, top);
-        maxX = Math.max(maxX, left + width);
-        maxY = Math.max(maxY, top + height);
-      });
-
-      // Add padding
-      const padding = 50;
-      const contentWidth = maxX - minX + padding * 2;
-      const contentHeight = maxY - minY + padding * 2;
-
-      // Reset the transform scale to 1 for accurate capture
-      layer.style.transform = "scale(1)";
-
-      // Expand container to fit all content
-      roadmapContainer.style.overflow = "visible";
-      roadmapContainer.style.width = contentWidth + "px";
-      roadmapContainer.style.height = contentHeight + "px";
-      layer.style.width = contentWidth + "px";
-      layer.style.height = contentHeight + "px";
-
-      // Wait a frame for the DOM to update
-      await new Promise((resolve) => setTimeout(resolve, 100));
-
-      try {
-        // Use html2canvas to capture
-        const canvas = await html2canvas(layer, {
-          scale: 2,
-          useCORS: true,
-          logging: false,
-          backgroundColor: "#f8fafc",
-          width: contentWidth,
-          height: contentHeight,
-          x: 0,
-          y: 0,
+          for (const skill of userSkills) {
+            if (searchText.includes(skill)) {
+              completedNodes.add(node.id);
+              console.log(
+                `  Frontend matched skill '${skill}' to node '${node.id}' (${node.title})`,
+              );
+              break;
+            }
+          }
         });
-
-        // Calculate PDF dimensions
-        const pdfWidthMM = ((canvas.width / 96) * 25.4) / 2; // Divide by scale
-        const pdfHeightMM = ((canvas.height / 96) * 25.4) / 2;
-
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF({
-          orientation: pdfWidthMM > pdfHeightMM ? "landscape" : "portrait",
-          unit: "mm",
-          format: [pdfWidthMM, pdfHeightMM],
-        });
-
-        const imgData = canvas.toDataURL("image/png", 1.0);
-        pdf.addImage(imgData, "PNG", 0, 0, pdfWidthMM, pdfHeightMM);
-
-        // Generate filename
-        const title =
-          document.getElementById("roadmap-title")?.innerText || "roadmap";
-        const safeTitle = title.replace(/[^a-z0-9]/gi, "_").toLowerCase();
-        pdf.save(`${safeTitle}.pdf`);
-      } catch (error) {
-        console.error("PDF generation failed:", error);
-        alert("Failed to generate PDF. Please try again.");
-      } finally {
-        // Restore everything
-        layer.style.transform = originalLayerTransform;
-        layer.style.width = "";
-        layer.style.height = "";
-        roadmapContainer.style.overflow = originalContainerOverflow;
-        roadmapContainer.style.width = originalContainerWidth;
-        roadmapContainer.style.height = originalContainerHeight;
-
-        if (zoomControls) zoomControls.style.visibility = "visible";
-        if (tooltip) tooltip.style.visibility = "visible";
-
-        if (btn) {
-          btn.innerHTML = originalBtnText;
-          btn.disabled = false;
-        }
+        console.log("Frontend matched", completedNodes.size, "nodes:", [
+          ...completedNodes,
+        ]);
       }
-    };
+    }
+
+    console.log("Final completedNodes count:", completedNodes.size);
 
     renderSidebar();
     renderFlowchart();

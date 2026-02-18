@@ -95,6 +95,7 @@ class UserRoadmap(db.Document):
             'completed_nodes': self.completed_nodes or [],
             'progress': self.get_progress_percentage(),
             'is_ai_generated': self.is_ai_generated,
+            'generation_params': self.generation_params or {},
             'roadmap_id': str(self.roadmap_id.id) if self.roadmap_id else None,
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None
