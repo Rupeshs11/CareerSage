@@ -1,0 +1,61 @@
+# ============================================
+# CareerSage - Build, Push & Deploy
+# Push to main → Build Image → Deploy to EC2
+# Shows as 2 connected jobs in GitHub Actions
+# ============================================
+
+name: "1. Build & Deploy"
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  # -------- Job 1: Build & Push to Docker Hub --------
+  build-and-push:
+    name: 🐳 Build & Push Image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build & Push Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/careersage:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/careersage:${{ github.sha }}
+
+  # -------- Job 2: Deploy to EC2 (runs after Job 1) --------
+  deploy:
+    name: 🚀 Deploy to EC2
+    runs-on: ubuntu-latest
+    needs: build-and-push
+
+    steps:
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy Latest Image
+        run: |
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+            cd ~/careersage
+            sg docker -c "docker-compose pull"
+            sg docker -c "docker-compose up -d"
+            sg docker -c "docker image prune -f"
+            echo "Deployment complete!"
+            sg docker -c "docker ps"
+          EOF
