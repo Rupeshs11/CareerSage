@@ -1,0 +1,114 @@
+name: "0. Initial EC2 Setup"
+
+on:
+  workflow_dispatch:
+
+jobs:
+  setup:
+    name: Setup EC2
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Install Docker and Nginx
+        run: |
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+            sudo yum update -y
+            sudo yum install docker nginx -y
+            sudo systemctl start docker nginx
+            sudo systemctl enable docker nginx
+            sudo usermod -aG docker $USER
+            sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+            sudo chmod +x /usr/local/bin/docker-compose
+            mkdir -p ~/ims
+          EOF
+
+      - name: Create docker-compose.yml
+        run: |
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+            cat > ~/ims/docker-compose.yml << 'COMPOSE'
+          version: "3.8"
+
+          services:
+            frontend:
+              image: vishwajit29/ims-3.9:frontend
+              ports:
+                - "3000:3000"
+              depends_on:
+                - backend
+              networks:
+                - ims-network
+
+            backend:
+              image: vishwajit29/ims-3.9:backend
+              ports:
+                - "8080:8080"
+              environment:
+                - SPRING_DATA_MONGODB_HOST=mongodb
+                - SPRING_DATA_MONGODB_PORT=27017
+                - SPRING_DATA_MONGODB_DATABASE=ims_db_1
+                - ALLOWED_ORIGINS=https://www.vishwajit.tech,http://www.vishwajit.tech,http://localhost:3000
+              depends_on:
+                - mongodb
+              networks:
+                - ims-network
+
+            mongodb:
+              image: mongo:5.0
+              ports:
+                - "27017:27017"
+              volumes:
+                - mongodb-data:/data/db
+              networks:
+                - ims-network
+
+          volumes:
+            mongodb-data:
+
+          networks:
+            ims-network:
+              driver: bridge
+          COMPOSE
+          EOF
+
+      - name: Create Nginx Config
+        run: |
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+            sudo tee /etc/nginx/conf.d/ims.conf << 'NGINX'
+          server {
+              listen 80;
+              server_name www.vishwajit.tech vishwajit.tech;
+
+              location / {
+                  proxy_pass http://localhost:3000;
+                  proxy_http_version 1.1;
+                  proxy_set_header Host $host;
+                  proxy_set_header X-Real-IP $remote_addr;
+              }
+
+              location /api/ {
+                  proxy_pass http://localhost:8080/api/api/;
+                  proxy_http_version 1.1;
+                  proxy_set_header Host $host;
+                  proxy_set_header X-Real-IP $remote_addr;
+              }
+          }
+          NGINX
+            sudo nginx -t && sudo systemctl reload nginx
+          EOF
+
+      - name: Start Containers
+        run: |
+          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
+            cd ~/ims
+            sg docker -c "docker-compose pull"
+            sg docker -c "docker-compose up -d"
+          EOF

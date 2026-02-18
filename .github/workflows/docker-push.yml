@@ -3,7 +3,7 @@
 # Triggers on push to main branch
 # ============================================
 
-name: Build & Push to Docker Hub
+name: "1. Build & Push to Docker Hub"
 
 on:
   push:
