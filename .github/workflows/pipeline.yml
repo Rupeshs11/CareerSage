@@ -75,6 +75,15 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ap-south-1
 
+      # Restore state from previous run (critical for knowing what already exists)
+      - name: Download Terraform State
+        uses: dawidd6/action-download-artifact@v6
+        with:
+          name: terraform-state
+          path: terraform/
+          search_artifacts: true
+          if_no_artifact_found: warn
+
       - name: Terraform Init
         run: terraform init
 
@@ -107,6 +116,18 @@ jobs:
       - name: Terraform Destroy
         if: github.event.inputs.action == 'terraform-destroy'
         run: terraform apply -destroy -auto-approve -var="key_name=${{ secrets.TF_VAR_KEY_NAME }}"
+
+      # Save state so next run knows what resources exist
+      - name: Upload Terraform State
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-state
+          path: |
+            terraform/terraform.tfstate
+            terraform/terraform.tfstate.backup
+          overwrite: true
+          retention-days: 90
 
   # ==========================================
   # Job 2: Build & Push Docker Image
