@@ -13,7 +13,7 @@
     // Logo
     '<div class="flex items-center gap-6">' +
     '<a href="./index.html" class="flex items-center gap-2 text-white font-bold text-xl">' +
-    '<span class="bg-gradient-to-br from-purple-500 to-blue-600 text-white w-8 h-8 rounded-lg flex items-center justify-center font-extrabold shadow-lg shadow-purple-500/20">C</span>' +
+    '<img src="./logo/cs_logo.png" alt="CareerSage" class="w-8 h-8 rounded-lg shadow-lg shadow-purple-500/20">' +
     "<span>CareerSage</span>" +
     "</a>" +
     "</div>" +

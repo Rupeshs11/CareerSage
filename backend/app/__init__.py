@@ -122,6 +122,61 @@ def create_app(config_name='default'):
             'message': 'Please provide a valid access token'
         }), 401
     
+    # Seed official roadmaps if collection is empty
+    with app.app_context():
+        seed_official_roadmaps(app)
     
     return app
+
+
+def seed_official_roadmaps(app):
+    """Auto-seed official roadmaps into DB if collection is empty."""
+    try:
+        from .models.roadmap import Roadmap
+        from .data.mock_roadmaps import MOCK_ROADMAPS
+
+        count = Roadmap.objects.count()
+        if count > 0:
+            app.logger.info(f"Official roadmaps already seeded ({count} found)")
+            return
+
+        app.logger.info("Seeding official roadmaps...")
+        for slug, data in MOCK_ROADMAPS.items():
+            roadmap = Roadmap(
+                slug=slug,
+                title=data['title'],
+                description=data.get('description', ''),
+                category=_get_category(slug),
+                nodes=data.get('nodes', []),
+                connections=data.get('connections', []),
+                is_official=True,
+                is_published=True,
+                view_count=0
+            )
+            roadmap.save()
+            app.logger.info(f"  ✅ Seeded: {data['title']}")
+
+        app.logger.info(f"Seeded {len(MOCK_ROADMAPS)} official roadmaps")
+    except Exception as e:
+        app.logger.error(f"Seeding failed: {e}")
+
+
+def _get_category(slug):
+    """Map slug to category."""
+    categories = {
+        'frontend-developer': 'Frontend',
+        'backend-developer': 'Backend',
+        'fullstack-developer': 'Fullstack',
+        'mobile-developer': 'Mobile',
+        'flutter-developer': 'Mobile',
+        'react-developer': 'Frontend',
+        'game-developer': 'Game Dev',
+        'cyber-security': 'Security',
+        'devops-engineer': 'DevOps',
+        'cloud-engineer': 'Cloud',
+        'linux-admin': 'Linux',
+        'data-scientist': 'Data Science',
+        'embedded-systems': 'Embedded',
+    }
+    return categories.get(slug, 'General')
 
