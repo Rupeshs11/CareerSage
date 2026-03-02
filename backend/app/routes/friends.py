@@ -155,9 +155,10 @@ def accept_friend_request():
         socketio.emit('notification', accept_notif.to_dict(), to=their_sid, namespace='/')
         socketio.emit('friend_list_updated', {}, to=their_sid, namespace='/')
 
-    # Also notify the accepting user to refresh their friends list
+    # Also notify the accepting user to refresh their friends list and notifications
     my_sid = user_sid_map.get(user_id)
     if my_sid:
+        socketio.emit('notification', {}, to=my_sid, namespace='/')
         socketio.emit('friend_list_updated', {}, to=my_sid, namespace='/')
 
     return jsonify({'message': 'Friend request accepted'})

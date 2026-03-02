@@ -7,6 +7,8 @@ from flask import Blueprint, request, jsonify, current_app
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_socketio import emit, join_room, leave_room
 from ..extensions import db, socketio
+from ..models.notification import Notification
+from mongoengine import Q as meQ
 from ..models.battle import BattleResult, BattleStats
 from ..models.user import User
 from ..models.progress import UserProgress
@@ -132,6 +134,16 @@ def finalize_battle(battle, challenger_score, opponent_score):
     battle.opponent_score = opponent_score
     battle.status = 'completed'
     battle.completed_at = datetime.utcnow()
+
+    # Mark all battle_invite notifications for this battle as read
+    try:
+        Notification.objects(
+            type='battle_invite',
+            read=False,
+            data__battle_id=str(battle.id)
+        ).update(set__read=True)
+    except Exception:
+        pass
 
     c_stats = get_or_create_stats(str(battle.challenger_id.id))
     c_stats.total_battles += 1
