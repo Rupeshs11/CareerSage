@@ -308,14 +308,67 @@
     }
   };
 
-  // Load notifications on page load and poll every 30s
+  // Load notifications on page load
   setTimeout(loadNotifications, 1000);
+
+  // ============ Real-time Notifications via SocketIO (all pages) ============
+  function initGlobalSocket() {
+    // Skip if on skill-battle.html (it has its own socket)
+    if (window.location.pathname.includes("skill-battle")) return;
+    // Skip if socket.io not loaded or user not logged in
+    if (typeof io === "undefined") return;
+    var user = null;
+    try {
+      var raw =
+        localStorage.getItem("user") || localStorage.getItem("careersage_user");
+      user = raw ? JSON.parse(raw) : null;
+    } catch (e) {}
+    if (!user || !user.id) return;
+
+    var globalSocket = io(window.location.origin, {
+      transports: ["websocket", "polling"],
+      reconnection: true,
+    });
+
+    globalSocket.on("connect", function () {
+      globalSocket.emit("register_user", { user_id: user.id });
+    });
+
+    // Instant notification refresh
+    globalSocket.on("notification", function () {
+      loadNotifications();
+    });
+
+    // Refresh notifications when friend list updates
+    globalSocket.on("friend_list_updated", function () {
+      loadNotifications();
+    });
+  }
+
+  // Fallback polling every 30s
   setInterval(loadNotifications, 30000);
 
   // ============ Run on DOM ready ============
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", inject);
+    document.addEventListener("DOMContentLoaded", function () {
+      inject();
+      loadSocketIOAndInit();
+    });
   } else {
     inject();
+    loadSocketIOAndInit();
+  }
+
+  function loadSocketIOAndInit() {
+    if (typeof io !== "undefined") {
+      initGlobalSocket();
+    } else {
+      var script = document.createElement("script");
+      script.src = "https://cdn.socket.io/4.7.4/socket.io.min.js";
+      script.onload = function () {
+        initGlobalSocket();
+      };
+      document.head.appendChild(script);
+    }
   }
 })();
