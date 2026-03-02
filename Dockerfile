@@ -55,8 +55,8 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
 # Production server with eventlet for SocketIO support
 CMD ["gunicorn", \
      "--bind", "0.0.0.0:5000", \
+     "--worker-class", "eventlet", \
      "--workers", "1", \
-     "--threads", "4", \
      "--timeout", "120", \
      "--keep-alive", "65", \
      "--access-logfile", "-", \
