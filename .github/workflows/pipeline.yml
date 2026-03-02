@@ -261,18 +261,21 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Copy project files to EC2
+      - name: Copy docker-compose.yml to EC2
         run: |
           HOST="${{ secrets.EC2_USER }}@${{ steps.host.outputs.ec2_host }}"
-          ssh $HOST "sudo rm -rf ~/careersage/nginx && mkdir -p ~/careersage/nginx"
+          ssh $HOST "mkdir -p ~/careersage"
           scp docker-compose.yml $HOST:~/careersage/docker-compose.yml
-          scp nginx/default.conf $HOST:~/careersage/nginx/default.conf
 
       - name: Deploy Latest Image
         run: |
           ssh ${{ secrets.EC2_USER }}@${{ steps.host.outputs.ec2_host }} << 'EOF'
           set -e
           cd ~/careersage
+
+          # Remove old nginx container if exists
+          sudo docker rm -f careersage-nginx 2>/dev/null || true
+
           sudo docker compose pull
           sudo docker compose up -d
           sudo docker image prune -f
