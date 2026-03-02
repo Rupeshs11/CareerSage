@@ -460,16 +460,6 @@
             // Listen for real-time notifications (e.g., battle invites)
             socket.on('notification', (n) => {
                 if (typeof loadNotifications === 'function') loadNotifications();
-                // Show a visual toast for battle invites
-                if (n.type === 'battle_invite' && n.data?.battle_id) {
-                    const msg = n.data?.message || 'You received a battle invite!';
-                    if (confirm(msg + '\nJoin now?')) {
-                        joinBattle(n.data.battle_id);
-                    }
-                } else if (n.type === 'friend_request') {
-                    const msg = n.data?.message || 'You received a friend request!';
-                    alert(msg);
-                }
             });
 
             // Handle ?join=BATTLE_ID from notification links
