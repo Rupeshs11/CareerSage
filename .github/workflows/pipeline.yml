@@ -258,69 +258,23 @@ jobs:
             mkdir -p ~/careersage
           EOF
 
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Copy docker-compose.yml to EC2
+        run: |
+          scp docker-compose.yml ${{ secrets.EC2_USER }}@${{ steps.host.outputs.ec2_host }}:~/careersage/docker-compose.yml
+
       - name: Deploy Latest Image
         run: |
-          ssh ${{ secrets.EC2_USER }}@${{ steps.host.outputs.ec2_host }} << 'DEPLOY'
-            set -e
-            cd ~/careersage
-
-            # Create docker-compose.yml if not present
-            if [ ! -f docker-compose.yml ]; then
-              cat > docker-compose.yml << 'COMPOSE'
-            services:
-              mongodb:
-                image: mongo:latest
-                container_name: careersage-db
-                ports:
-                  - "27017:27017"
-                volumes:
-                  - mongo_data:/data/db
-                environment:
-                  - MONGO_INITDB_DATABASE=careersage
-                healthcheck:
-                  test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
-                  interval: 10s
-                  timeout: 5s
-                  retries: 5
-                  start_period: 10s
-                restart: unless-stopped
-                networks:
-                  - careersage-net
-
-              app:
-                image: ${{ secrets.DOCKERHUB_USERNAME }}/careersage:latest
-                container_name: careersage-app
-                ports:
-                  - "5000:5000"
-                environment:
-                  - FLASK_ENV=production
-                  - MONGODB_URI=mongodb://mongodb:27017/careersage
-                  - TZ=Asia/Kolkata
-                depends_on:
-                  mongodb:
-                    condition: service_healthy
-                restart: unless-stopped
-                networks:
-                  - careersage-net
-
-            volumes:
-              mongo_data:
-                driver: local
-
-            networks:
-              careersage-net:
-                driver: bridge
-            COMPOSE
-              echo "✅ docker-compose.yml created"
-            fi
-
-            # Pull and deploy
-            sudo docker compose pull
-            sudo docker compose up -d
-            sudo docker image prune -f
-
-            echo "========================================="
-            echo " ✅ Deployment complete!"
-            echo "========================================="
-            sudo docker ps
-          DEPLOY
+          ssh ${{ secrets.EC2_USER }}@${{ steps.host.outputs.ec2_host }} << 'EOF'
+          set -e
+          cd ~/careersage
+          sudo docker compose pull
+          sudo docker compose up -d
+          sudo docker image prune -f
+          echo "========================================="
+          echo " ✅ Deployment complete!"
+          echo "========================================="
+          sudo docker ps
+          EOF
