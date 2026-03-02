@@ -2,7 +2,7 @@
 import random
 import json
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask import Blueprint, request, jsonify, current_app
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from flask_socketio import emit, join_room, leave_room
@@ -317,6 +317,10 @@ def handle_disconnect():
             del user_sid_map[uid]
             break
 
+    # Broadcast offline status to all connected clients
+    if disc_user:
+        socketio.emit('user_offline', {'user_id': disc_user}, namespace='/')
+
     # Notify opponent if mid-battle
     if disc_user:
         for battle_id, room in list(active_rooms.items()):
@@ -343,6 +347,12 @@ def handle_register(data):
     if user_id:
         user_sid_map[user_id] = request.sid
         current_app.logger.info(f'User {user_id} registered with sid {request.sid}')
+        # Broadcast online status to all connected clients
+        user = User.objects(id=safe_object_id(user_id)).first()
+        socketio.emit('user_online', {
+            'user_id': user_id,
+            'name': user.name if user else 'Unknown'
+        }, namespace='/')
 
 
 @socketio.on('create_battle')
@@ -353,6 +363,19 @@ def handle_create_battle(data):
 
     if not user_id:
         emit('error', {'message': 'User ID required'})
+        return
+
+    # --- Duplicate battle prevention ---
+    # Check if this user already has a waiting/in_progress battle created recently (last 30s)
+    recent_cutoff = datetime.utcnow() - timedelta(seconds=30)
+    existing = BattleResult.objects(
+        challenger_id=safe_object_id(user_id),
+        status__in=['waiting', 'in_progress'],
+        created_at__gte=recent_cutoff
+    ).first()
+    if existing:
+        current_app.logger.warning(f'Duplicate battle blocked for user {user_id}')
+        emit('error', {'message': 'You already have an active battle. Please wait or cancel it first.'})
         return
 
     sid = request.sid

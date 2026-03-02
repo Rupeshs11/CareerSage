@@ -1,0 +1,192 @@
+# ============================================
+# CareerSage - Unified CI/CD Pipeline
+# Single workflow for Infrastructure + Build + Deploy
+# ============================================
+#
+# Actions (via workflow_dispatch dropdown):
+#   terraform-plan    → Preview infrastructure changes
+#   terraform-apply   → Create/update EC2 instance
+#   terraform-destroy → Destroy EC2 instance
+#   build-deploy      → Build Docker image + deploy to EC2
+#   full              → Apply infra + build + deploy (complete pipeline)
+#
+# Auto-trigger: push to main → build-deploy
+#
+# Required Secrets:
+#   AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY  (Terraform)
+#   TF_VAR_KEY_NAME                           (AWS key pair name)
+#   EC2_SSH_KEY, EC2_HOST, EC2_USER           (SSH deploy)
+#   DOCKERHUB_USERNAME, DOCKERHUB_TOKEN       (Docker Hub)
+# ============================================
+
+name: "CareerSage Pipeline"
+
+on:
+  push:
+    branches: [main]
+
+  workflow_dispatch:
+    inputs:
+      action:
+        description: "Select action to run"
+        required: true
+        type: choice
+        options:
+          - terraform-plan
+          - terraform-apply
+          - terraform-destroy
+          - build-deploy
+          - full
+
+jobs:
+  # ==========================================
+  # Job 1: Terraform (Infrastructure)
+  # Runs on: terraform-plan, terraform-apply,
+  #          terraform-destroy, full
+  # ==========================================
+  terraform:
+    name: "🏗️ Terraform"
+    runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'workflow_dispatch' &&
+      contains(fromJSON('["terraform-plan","terraform-apply","terraform-destroy","full"]'), github.event.inputs.action)
+
+    outputs:
+      ec2_public_ip: ${{ steps.apply.outputs.ec2_ip }}
+
+    defaults:
+      run:
+        working-directory: terraform
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.7.0"
+          terraform_wrapper: false
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-1
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Format Check
+        run: terraform fmt -check
+        continue-on-error: true
+
+      - name: Terraform Validate
+        run: terraform validate
+
+      # ---------- Plan ----------
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan -var="key_name=${{ secrets.TF_VAR_KEY_NAME }}" -out=tfplan -no-color
+        if: github.event.inputs.action != 'terraform-destroy'
+
+      - name: Terraform Plan (Destroy)
+        run: terraform plan -destroy -var="key_name=${{ secrets.TF_VAR_KEY_NAME }}" -no-color
+        if: github.event.inputs.action == 'terraform-destroy'
+
+      # ---------- Apply ----------
+      - name: Terraform Apply
+        id: apply
+        if: github.event.inputs.action == 'terraform-apply' || github.event.inputs.action == 'full'
+        run: |
+          terraform apply -auto-approve -var="key_name=${{ secrets.TF_VAR_KEY_NAME }}"
+          echo "ec2_ip=$(terraform output -raw public_ip)" >> $GITHUB_OUTPUT
+
+      # ---------- Destroy ----------
+      - name: Terraform Destroy
+        if: github.event.inputs.action == 'terraform-destroy'
+        run: terraform apply -destroy -auto-approve -var="key_name=${{ secrets.TF_VAR_KEY_NAME }}"
+
+  # ==========================================
+  # Job 2: Build & Push Docker Image
+  # Runs on: build-deploy, full, push to main
+  # ==========================================
+  build:
+    name: "🐳 Build & Push Image"
+    runs-on: ubuntu-latest
+    needs: [terraform]
+    if: >-
+      always() &&
+      (needs.terraform.result == 'success' || needs.terraform.result == 'skipped') &&
+      (
+        github.event_name == 'push' ||
+        (github.event_name == 'workflow_dispatch' &&
+         contains(fromJSON('["build-deploy","full"]'), github.event.inputs.action))
+      )
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build & Push Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/careersage:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/careersage:${{ github.sha }}
+
+  # ==========================================
+  # Job 3: Deploy to EC2
+  # Runs on: build-deploy, full, push to main
+  # ==========================================
+  deploy:
+    name: "🚀 Deploy to EC2"
+    runs-on: ubuntu-latest
+    needs: [terraform, build]
+    if: >-
+      always() &&
+      (needs.build.result == 'success') &&
+      (
+        github.event_name == 'push' ||
+        (github.event_name == 'workflow_dispatch' &&
+         contains(fromJSON('["build-deploy","full"]'), github.event.inputs.action))
+      )
+
+    steps:
+      - name: Determine EC2 Host
+        id: host
+        run: |
+          if [ -n "${{ needs.terraform.outputs.ec2_public_ip }}" ]; then
+            echo "ec2_host=${{ needs.terraform.outputs.ec2_public_ip }}" >> $GITHUB_OUTPUT
+          else
+            echo "ec2_host=${{ secrets.EC2_HOST }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ steps.host.outputs.ec2_host }} >> ~/.ssh/known_hosts
+
+      - name: Deploy Latest Image
+        run: |
+          ssh ${{ secrets.EC2_USER }}@${{ steps.host.outputs.ec2_host }} << 'EOF'
+            cd ~/careersage
+            sg docker -c "docker compose pull"
+            sg docker -c "docker compose up -d"
+            sg docker -c "docker image prune -f"
+            echo "========================================="
+            echo " Deployment complete!"
+            echo "========================================="
+            sg docker -c "docker ps"
+          EOF

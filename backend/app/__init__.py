@@ -21,7 +21,7 @@ def create_app(config_name='default'):
     db.init_app(app)
     jwt.init_app(app)
     cors.init_app(app, origins=app.config['CORS_ORIGINS'], supports_credentials=True)
-    socketio.init_app(app, cors_allowed_origins="*", ping_timeout=60, ping_interval=25, async_mode='threading')
+    socketio.init_app(app, cors_allowed_origins="*", ping_timeout=60, ping_interval=25, async_mode='eventlet')
     
     # Register blueprints (routes)
     from .routes.auth import auth_bp

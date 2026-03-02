@@ -68,3 +68,11 @@ ssl/.env.production
 
 # Misc dev files
 VANILLA_GUIDE.md
+
+# Terraform
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.backup
+terraform/*.tfplan
+terraform/tfplan
+terraform/.terraform.lock.hcl

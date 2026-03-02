@@ -155,6 +155,11 @@ def accept_friend_request():
         socketio.emit('notification', accept_notif.to_dict(), to=their_sid, namespace='/')
         socketio.emit('friend_list_updated', {}, to=their_sid, namespace='/')
 
+    # Also notify the accepting user to refresh their friends list
+    my_sid = user_sid_map.get(user_id)
+    if my_sid:
+        socketio.emit('friend_list_updated', {}, to=my_sid, namespace='/')
+
     return jsonify({'message': 'Friend request accepted'})
 
 
@@ -231,6 +236,18 @@ def handle_battle_invite(data):
 
     if not from_user_id or not to_user_id:
         return
+
+    # --- Duplicate invite prevention ---
+    # Check if an unread battle_invite for this battle already exists
+    existing_invite = Notification.objects(
+        user_id=safe_oid(to_user_id),
+        from_user_id=safe_oid(from_user_id),
+        type='battle_invite',
+        read=False,
+        data__battle_id=battle_id
+    ).first()
+    if existing_invite:
+        return  # Already sent, skip duplicate
 
     sender = User.objects(id=safe_oid(from_user_id)).first()
     if not sender:

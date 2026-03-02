@@ -379,6 +379,8 @@
         let myRole = 'challenger';
         let answeredCurrentQ = false;
         let lastOpponentId = null;
+        let _battleCreating = false;   // Debounce flag for createBattle
+        let _inviteSent = new Set();   // Track sent invites per friend to prevent duplicates
 
 
 
@@ -417,7 +419,16 @@
             socket.on('opponent_progress', onOpponentProgress);
             socket.on('battle_result', onBattleResult);
             socket.on('opponent_disconnected', onOpponentDisconnected);
-            socket.on('error', (d) => { console.error('Socket error:', d); alert(d.message || 'Error'); });
+            socket.on('error', (d) => {
+                console.error('Socket error:', d);
+                // Reset battle creation state on error
+                _battleCreating = false;
+                const btn = document.getElementById('btn-create-battle');
+                const soloBtn = document.getElementById('btn-solo-quick');
+                if (btn) { btn.disabled = false; btn.textContent = 'Create Battle (Multiplayer)'; }
+                if (soloBtn) { soloBtn.disabled = false; }
+                alert(d.message || 'Error');
+            });
 
             // Real-time: new battle appears for all users without refresh
             socket.on('new_battle_available', (b) => {
@@ -436,11 +447,29 @@
                 listEl.insertBefore(card, listEl.firstChild);
             });
 
+            // Listen for instant online/offline status changes
+            socket.on('user_online', (data) => {
+                updateFriendOnlineStatus(data.user_id, true);
+            });
+            socket.on('user_offline', (data) => {
+                updateFriendOnlineStatus(data.user_id, false);
+            });
+
             loadLobbyData();
 
             // Listen for real-time notifications (e.g., battle invites)
             socket.on('notification', (n) => {
                 if (typeof loadNotifications === 'function') loadNotifications();
+                // Show a visual toast for battle invites
+                if (n.type === 'battle_invite' && n.data?.battle_id) {
+                    const msg = n.data?.message || 'You received a battle invite!';
+                    if (confirm(msg + '\nJoin now?')) {
+                        joinBattle(n.data.battle_id);
+                    }
+                } else if (n.type === 'friend_request') {
+                    const msg = n.data?.message || 'You received a friend request!';
+                    alert(msg);
+                }
             });
 
             // Handle ?join=BATTLE_ID from notification links
@@ -453,14 +482,14 @@
                 setTimeout(() => joinBattle(joinId), 1500);
             }
 
-            // Auto-refresh: friends + lobby every 15s when on lobby view
+            // Fallback auto-refresh: friends + lobby every 60s when on lobby view
             setInterval(() => {
                 const lobbyVisible = !document.getElementById('lobby-view').classList.contains('hidden');
                 if (lobbyVisible) {
                     loadFriendsList();
                     loadLobbyData();
                 }
-            }, 15000);
+            }, 60000);
 
             // Refresh on reconnect
             socket.on('reconnect', () => {
@@ -591,15 +620,15 @@
 
                 listEl.innerHTML = friends.map(f => {
                     const dot = f.online
-                        ? '<span class="w-2 h-2 bg-green-400 rounded-full flex-shrink-0" title="Online"></span>'
-                        : '<span class="w-2 h-2 bg-gray-600 rounded-full flex-shrink-0" title="Offline"></span>';
+                        ? '<span class="status-dot w-2 h-2 bg-green-400 rounded-full flex-shrink-0" title="Online"></span>'
+                        : '<span class="status-dot w-2 h-2 bg-gray-600 rounded-full flex-shrink-0" title="Offline"></span>';
                     const status = f.online ? 'text-green-400' : 'text-gray-500';
                     return `
-                        <div class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-gray-800/30 transition">
+                        <div class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-gray-800/30 transition" data-friend-id="${f.id}">
                             ${dot}
                             <div class="flex-1 min-w-0">
                                 <p class="text-white text-sm font-medium truncate">${f.name}</p>
-                                <p class="${status} text-[10px]">${f.online ? 'Online' : 'Offline'}</p>
+                                <p class="status-text ${status} text-[10px]">${f.online ? 'Online' : 'Offline'}</p>
                             </div>
                             <div class="flex gap-1.5">
                                 <button onclick="challengeFriend('${f.id}', '${f.name}')" class="px-2 py-1 bg-indigo-600/80 hover:bg-indigo-500 text-white rounded text-[10px] font-semibold transition" title="Challenge">Challenge</button>
@@ -608,6 +637,29 @@
                         </div>`;
                 }).join('');
             } catch (e) { console.warn('Friends load failed:', e); }
+        }
+
+        // Instant in-place online/offline status update (no REST call needed)
+        function updateFriendOnlineStatus(userId, isOnline) {
+            const listEl = document.getElementById('friends-list');
+            if (!listEl) return;
+            const friendCards = listEl.querySelectorAll('[data-friend-id]');
+            friendCards.forEach(card => {
+                if (card.getAttribute('data-friend-id') === userId) {
+                    const dot = card.querySelector('.status-dot');
+                    const statusText = card.querySelector('.status-text');
+                    if (dot) {
+                        dot.className = 'status-dot w-2 h-2 rounded-full flex-shrink-0 ' +
+                            (isOnline ? 'bg-green-400' : 'bg-gray-600');
+                        dot.title = isOnline ? 'Online' : 'Offline';
+                    }
+                    if (statusText) {
+                        statusText.textContent = isOnline ? 'Online' : 'Offline';
+                        statusText.className = 'status-text text-[10px] ' +
+                            (isOnline ? 'text-green-400' : 'text-gray-500');
+                    }
+                }
+            });
         }
 
         async function addFriendFromInput() {
@@ -622,6 +674,7 @@
         }
 
         function challengeFriend(friendId, friendName) {
+            if (_battleCreating) return; // Prevent duplicate challenge
             const topic = document.getElementById('battle-topic').value.trim();
             if (!topic) { alert('Enter a topic first, then challenge your friend!'); return; }
             // Create battle then invite
@@ -640,6 +693,9 @@
 
         function inviteFriend(friendId, friendName) {
             if (!currentBattleId) { alert('Create or join a battle first!'); return; }
+            const inviteKey = currentBattleId + ':' + friendId;
+            if (_inviteSent.has(inviteKey)) { alert('Invite already sent to ' + friendName); return; }
+            _inviteSent.add(inviteKey);
             socket.emit('battle_invite', {
                 from_user_id: currentUserId,
                 to_user_id: friendId,
@@ -660,11 +716,16 @@
 
         // ============ Battle Actions ============
         function createBattle(solo = false) {
+            if (_battleCreating) return; // Prevent duplicate creation
             const topic = document.getElementById('battle-topic').value.trim();
             if (!topic) { alert('Please enter a topic!'); return; }
 
-            document.getElementById('btn-create-battle').disabled = true;
-            document.getElementById('btn-create-battle').textContent = 'Generating questions...';
+            _battleCreating = true;
+            const btn = document.getElementById('btn-create-battle');
+            const soloBtn = document.getElementById('btn-solo-quick');
+            btn.disabled = true;
+            btn.textContent = 'Generating questions...';
+            soloBtn.disabled = true;
 
             socket.emit('create_battle', { user_id: currentUserId, topic: topic });
 
@@ -692,9 +753,12 @@
 
         function cancelBattle() {
             currentBattleId = null;
+            _battleCreating = false;
+            _inviteSent.clear();
             showView('lobby-view');
             document.getElementById('btn-create-battle').disabled = false;
             document.getElementById('btn-create-battle').textContent = 'Create Battle (Multiplayer)';
+            document.getElementById('btn-solo-quick').disabled = false;
         }
 
         function copyBattleId() {
@@ -708,6 +772,8 @@
             opponentScore = 0;
             currentQuestionIdx = 0;
             currentQuestions = [];
+            _battleCreating = false;
+            _inviteSent.clear();
             showView('lobby-view');
             loadLobbyData();
         }
@@ -717,8 +783,13 @@
             currentBattleId = data.battle_id;
             currentQuestions = data.questions;
 
-            document.getElementById('btn-create-battle').disabled = false;
-            document.getElementById('btn-create-battle').textContent = 'Create Battle (Multiplayer)';
+            // Reset debounce flag and buttons
+            _battleCreating = false;
+            const btn = document.getElementById('btn-create-battle');
+            const soloBtn = document.getElementById('btn-solo-quick');
+            btn.disabled = false;
+            btn.textContent = 'Create Battle (Multiplayer)';
+            soloBtn.disabled = false;
 
             if (window._startSoloAfterCreate) {
                 window._startSoloAfterCreate = false;
