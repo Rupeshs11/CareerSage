@@ -264,7 +264,7 @@ jobs:
       - name: Copy project files to EC2
         run: |
           HOST="${{ secrets.EC2_USER }}@${{ steps.host.outputs.ec2_host }}"
-          ssh $HOST "mkdir -p ~/careersage/nginx"
+          ssh $HOST "rm -rf ~/careersage/nginx && mkdir -p ~/careersage/nginx"
           scp docker-compose.yml $HOST:~/careersage/docker-compose.yml
           scp nginx/default.conf $HOST:~/careersage/nginx/default.conf
 
