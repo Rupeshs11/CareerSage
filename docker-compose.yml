@@ -26,16 +26,17 @@ services:
 
   # ---------- Flask Backend + Frontend ----------
   app:
-    image: rupeshs11/careersage:v1
+    image: rupeshs11/careersage:latest
     container_name: careersage-app
     ports:
       - "5000:5000"
-    env_file:
-      - backend/.env
     environment:
       - FLASK_ENV=production
       - MONGODB_URI=mongodb://mongodb:27017/careersage
       - TZ=Asia/Kolkata
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-super-secret-jwt-key-change-me}
+      - SECRET_KEY=${SECRET_KEY:-super-secret-key-change-me}
+      - NVIDIA_API_KEY=${NVIDIA_API_KEY:-}
     depends_on:
       mongodb:
         condition: service_healthy
