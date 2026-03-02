@@ -30,6 +30,8 @@ services:
     container_name: careersage-app
     ports:
       - "5000:5000"
+    env_file:
+      - .env
     environment:
       - FLASK_ENV=production
       - MONGODB_URI=mongodb://mongodb:27017/careersage

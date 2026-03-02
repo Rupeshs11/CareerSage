@@ -302,6 +302,16 @@ jobs:
           ssh $HOST "mkdir -p ~/careersage"
           scp docker-compose.yml $HOST:~/careersage/docker-compose.yml
 
+      - name: Create .env on EC2
+        run: |
+          ssh ${{ secrets.EC2_USER }}@${{ steps.host.outputs.ec2_host }} << EOF
+          cat > ~/careersage/.env << 'ENVFILE'
+          NVIDIA_API_KEY=${{ secrets.NVIDIA_API_KEY }}
+          JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}
+          SECRET_KEY=${{ secrets.SECRET_KEY }}
+          ENVFILE
+          EOF
+
       - name: Deploy Latest Image
         run: |
           ssh ${{ secrets.EC2_USER }}@${{ steps.host.outputs.ec2_host }} << 'EOF'
