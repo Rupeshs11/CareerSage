@@ -67,10 +67,66 @@ class AIService:
         
         return is_tech
     
-    def build_roadmap_prompt(self, topic, skills, experience_level, career_goal):
+    def build_roadmap_prompt(self, topic, skills, experience_level, career_goal, mode='beginner'):
         """Build the AI prompt for roadmap generation."""
         skills_text = ", ".join(skills) if skills else "None specified"
         
+        if mode == 'beginner':
+            return self._build_beginner_prompt(topic, skills_text, experience_level, career_goal)
+        return self._build_advanced_prompt(topic, skills_text, experience_level, career_goal)
+    
+    def _build_beginner_prompt(self, topic, skills_text, experience_level, career_goal):
+        """Build a simpler prompt for beginner mode (7-8 nodes, no resources)."""
+        return f"""Generate a simple learning roadmap for: **{topic}**
+
+**User Profile:**
+- Current Skills: {skills_text}
+- Experience Level: {experience_level}
+- Career Goal: {career_goal}
+
+**Requirements:**
+1. Create exactly 7-8 learning nodes covering the key milestones
+2. Each node must have:
+   - Unique ID (lowercase-with-hyphens)
+   - Clear title (max 4-5 words)
+   - Description (1-2 sentences)
+   - Topics list (3-4 key concepts)
+   - Estimated time
+   - Type: "required" or "recommended"
+   - NO resources needed
+
+3. **Create a simple DAG flow:**
+   - 1 root → 2 branches → 1 merge → 2 branches → 1 final
+   - Every node must connect properly
+
+4. Edges define the learning dependency flow
+
+**Output ONLY valid JSON** in this exact format:
+{{
+  "title": "{topic} - Quick Path",
+  "description": "Quick learning path for {topic}...",
+  "nodes": [
+    {{
+      "id": "node-id",
+      "title": "Node Title",
+      "description": "What you'll learn...",
+      "type": "required",
+      "estimatedTime": "2 weeks",
+      "topics": ["Topic 1", "Topic 2", "Topic 3"],
+      "resources": []
+    }}
+  ],
+  "edges": [
+    {{"source": "node1-id", "target": "node2-id"}}
+  ]
+}}
+
+IMPORTANT: Keep it simple with 7-8 nodes only. NO resources. Create branching edges for a proper flowchart.
+
+Generate the roadmap now."""
+
+    def _build_advanced_prompt(self, topic, skills_text, experience_level, career_goal):
+        """Build the full prompt for advanced mode (12-15 nodes with resources)."""
         return f"""Generate a personalized learning roadmap for: **{topic}**
 
 **User Profile:**
@@ -324,7 +380,7 @@ Generate the roadmap now."""
         current_app.logger.info(f"Validated roadmap with {len(data['nodes'])} nodes")
         return data
     
-    def generate_roadmap(self, topic, skills=None, experience_level="beginner", career_goal="learn"):
+    def generate_roadmap(self, topic, skills=None, experience_level="beginner", career_goal="learn", mode="beginner"):
         """Generate a personalized learning roadmap."""
         skills = skills or []
         
@@ -334,9 +390,9 @@ Generate the roadmap now."""
                 "message": f"'{topic}' is not a valid technology career topic. Please enter a tech-related career like 'Web Developer', 'Data Scientist', 'Cloud Engineer', etc."
             }
         
-        current_app.logger.info(f"Generating AI roadmap for: {topic}")
+        current_app.logger.info(f"Generating AI roadmap for: {topic} (mode: {mode})")
         
-        prompt = self.build_roadmap_prompt(topic, skills, experience_level, career_goal)
+        prompt = self.build_roadmap_prompt(topic, skills, experience_level, career_goal, mode)
         
         content = self.call_nvidia_api(prompt)
         if not content:

@@ -270,6 +270,7 @@ const AIAPI = {
     skills = [],
     experienceLevel = "beginner",
     careerGoal = "frontend-developer",
+    mode = "beginner",
   ) {
     return await apiRequest("/ai/generate-roadmap", {
       method: "POST",
@@ -278,6 +279,7 @@ const AIAPI = {
         skills,
         experience_level: experienceLevel,
         career_goal: careerGoal,
+        mode,
       }),
     });
   },

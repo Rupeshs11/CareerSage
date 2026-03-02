@@ -66,9 +66,16 @@
 
 
 
-
-
-
+                <!-- Roadmap Mode -->
+                <div class="mb-6">
+                    <label for="roadmap-mode" class="block mb-2 font-semibold text-gray-300">Roadmap Detail
+                        Level</label>
+                    <select id="roadmap-mode"
+                        class="w-full bg-[#0d1117] border border-gray-700 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none text-white appearance-none cursor-pointer">
+                        <option value="beginner">🟢 Beginner — Quick overview (7-8 nodes, no resources)</option>
+                        <option value="advanced">🔵 Advanced — Full roadmap (12-15 nodes with resources)</option>
+                    </select>
+                </div>
 
                 <!-- Generate Button -->
                 <button id="generate-btn"
@@ -287,11 +294,13 @@
             localStorage.removeItem('generated_roadmap');
 
             try {
+                const mode = document.getElementById('roadmap-mode').value;
                 const response = await API.AI.generateRoadmap(
                     topic,
                     currentSkills,
-                    'all', // Default to all levels
-                    'learn' // Default career goal
+                    'all',
+                    'learn',
+                    mode
                 );
 
                 console.log('Roadmap generated:', response);

@@ -92,6 +92,7 @@ def generate_roadmap():
         skills = data.get('skills', [])
         experience_level = data.get('experienceLevel', 'beginner')
         career_goal = data.get('careerGoal', 'frontend-developer')
+        mode = data.get('mode', 'beginner')
         
         current_app.logger.info(f"Topic: {topic}, Skills: {skills}, Level: {experience_level}")
     except Exception as e:
@@ -120,7 +121,8 @@ def generate_roadmap():
             topic=topic,
             skills=skills,
             experience_level=experience_level,
-            career_goal=career_goal
+            career_goal=career_goal,
+            mode=mode
         )
         
         if isinstance(roadmap_data, dict) and roadmap_data.get('error') == 'non_tech_topic':
