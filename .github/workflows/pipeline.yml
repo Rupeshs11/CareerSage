@@ -263,8 +263,10 @@ jobs:
 
       - name: Copy project files to EC2
         run: |
-          scp docker-compose.yml ${{ secrets.EC2_USER }}@${{ steps.host.outputs.ec2_host }}:~/careersage/docker-compose.yml
-          scp -r nginx ${{ secrets.EC2_USER }}@${{ steps.host.outputs.ec2_host }}:~/careersage/nginx
+          HOST="${{ secrets.EC2_USER }}@${{ steps.host.outputs.ec2_host }}"
+          ssh $HOST "mkdir -p ~/careersage/nginx"
+          scp docker-compose.yml $HOST:~/careersage/docker-compose.yml
+          scp nginx/default.conf $HOST:~/careersage/nginx/default.conf
 
       - name: Deploy Latest Image
         run: |
