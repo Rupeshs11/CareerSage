@@ -261,9 +261,10 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Copy docker-compose.yml to EC2
+      - name: Copy project files to EC2
         run: |
           scp docker-compose.yml ${{ secrets.EC2_USER }}@${{ steps.host.outputs.ec2_host }}:~/careersage/docker-compose.yml
+          scp -r nginx ${{ secrets.EC2_USER }}@${{ steps.host.outputs.ec2_host }}:~/careersage/nginx
 
       - name: Deploy Latest Image
         run: |
