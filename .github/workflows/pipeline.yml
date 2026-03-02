@@ -192,6 +192,30 @@ jobs:
             echo "ec2_host=${{ secrets.EC2_HOST }}" >> $GITHUB_OUTPUT
           fi
 
+      - name: Validate EC2 Host
+        run: |
+          HOST="${{ steps.host.outputs.ec2_host }}"
+          if [ -z "$HOST" ]; then
+            echo "❌ EC2_HOST is empty. Set the EC2_HOST secret or run terraform-apply first."
+            exit 1
+          fi
+          echo "✅ Target host: $HOST"
+
+      - name: Wait for EC2 to be reachable
+        run: |
+          HOST="${{ steps.host.outputs.ec2_host }}"
+          echo "Waiting for $HOST to accept SSH connections..."
+          for i in $(seq 1 12); do
+            if ssh-keyscan -H "$HOST" 2>/dev/null | grep -q .; then
+              echo "✅ Host is reachable!"
+              exit 0
+            fi
+            echo "Attempt $i/12 - not ready, waiting 10s..."
+            sleep 10
+          done
+          echo "❌ Host not reachable after 2 minutes"
+          exit 1
+
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
