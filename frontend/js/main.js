@@ -153,10 +153,10 @@ function initLandingPage() {
         "Tell us your career goal, and our AI will generate a personalized, step-by-step learning path for you.",
     },
     {
-      icon: "chart",
-      title: "Skill Gap Analysis",
+      icon: "quiz",
+      title: "AI Skill Test",
       description:
-        "Identify the exact skills you need to bridge the gap between where you are and where you want to be.",
+        "Test your knowledge with AI-generated quizzes on any tech topic and get instant results with detailed explanations.",
     },
     {
       icon: "book",
@@ -165,17 +165,17 @@ function initLandingPage() {
         "Get curated links to the best articles, tutorials, and courses for every step of your roadmap.",
     },
     {
-      icon: "document",
-      title: "Resume Builder",
+      icon: "battle",
+      title: "1v1 Rapid Fire Battle",
       description:
-        "Create a professional, tech-focused resume that highlights your new skills and gets you noticed.",
+        "Challenge your friends to real-time quiz battles, climb the leaderboard, and prove your skills under pressure.",
     },
   ];
   const icons = {
     compass: `<div class="relative w-12 h-12 flex items-center justify-center bg-blue-500/10 rounded-full"><div class="absolute w-1 h-8 bg-blue-500 rounded-full transform rotate-45"></div><div class="absolute w-1 h-8 bg-blue-500 rounded-full transform -rotate-45"></div><div class="absolute w-4 h-4 bg-gray-800 border-2 border-blue-500 rounded-full"></div></div>`,
-    chart: `<div class="w-12 h-12 flex items-end justify-between bg-green-500/10 rounded-full p-2"><div class="w-2 h-4 bg-green-500 rounded-t-sm"></div><div class="w-2 h-8 bg-green-500 rounded-t-sm"></div><div class="w-2 h-6 bg-green-500 rounded-t-sm"></div></div>`,
+    quiz: `<div class="w-12 h-12 flex items-center justify-center bg-green-500/10 rounded-full"><svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>`,
     book: `<div class="w-12 h-12 flex items-center justify-center bg-purple-500/10 rounded-full p-2"><div class="w-8 h-8 border-2 border-purple-500 rounded-md"></div><div class="absolute w-1 h-8 bg-purple-500"></div></div>`,
-    document: `<div class="w-12 h-12 flex flex-col items-center justify-center bg-yellow-500/10 rounded-full p-2"><div class="w-8 h-2 bg-yellow-500 rounded-sm mb-1"></div><div class="w-8 h-2 bg-yellow-500 rounded-sm mb-1"></div><div class="w-6 h-2 bg-yellow-500 rounded-sm"></div></div>`,
+    battle: `<div class="w-12 h-12 flex items-center justify-center bg-yellow-500/10 rounded-full"><svg class="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg></div>`,
   };
   const featuresGrid = document.getElementById("features-grid");
   if (featuresGrid) {
