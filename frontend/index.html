@@ -4,120 +4,627 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CareerSage - Your AI Career Planner</title>
+    <title>CareerSage - AI-Powered Competitive Learning Platform</title>
+    <meta name="description"
+        content="Master your career with AI-powered roadmaps, adaptive testing, and real-time competitive battles.">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* =======================================
+           CAREERSAGE — PREMIUM VISUAL SYSTEM
+           Depth, lighting, hierarchy, motion
+        ======================================= */
+
+        :root {
+            --accent: linear-gradient(135deg, #6366f1, #a855f7);
+            --accent-vivid: linear-gradient(135deg, #818cf8, #c084fc);
+            --glow-indigo: rgba(99, 102, 241, 0.08);
+            --glow-purple: rgba(168, 85, 247, 0.06);
+            --glass-bg: rgba(255, 255, 255, 0.04);
+            --glass-border: rgba(255, 255, 255, 0.06);
+            --glass-hover-border: rgba(255, 255, 255, 0.14);
+        }
+
+        /* --- Hero Section --- */
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            background: #0f172a;
+        }
+
+        /* Ambient orb — top-left (blue) */
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -18%;
+            left: -8%;
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.13) 0%, transparent 60%);
+            border-radius: 50%;
+            animation: driftOrb 14s ease-in-out infinite;
+            filter: blur(80px);
+        }
+
+        /* Ambient orb — bottom-right (purple) */
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            bottom: -12%;
+            right: -8%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.1) 0%, transparent 60%);
+            border-radius: 50%;
+            animation: driftOrb 18s ease-in-out infinite reverse;
+            filter: blur(80px);
+        }
+
+        /* Glow behind hero text (blue) */
+        .hero-glow {
+            position: absolute;
+            top: 42%;
+            left: 20%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            height: 400px;
+            background: radial-gradient(ellipse, rgba(99, 102, 241, 0.09) 0%, transparent 65%);
+            pointer-events: none;
+            z-index: 0;
+            animation: breathe 6s ease-in-out infinite;
+        }
+
+        /* Glow behind dashboard card (purple) */
+        .dashboard-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 130%;
+            height: 130%;
+            background: radial-gradient(ellipse, rgba(168, 85, 247, 0.08) 0%, rgba(99, 102, 241, 0.04) 40%, transparent 65%);
+            pointer-events: none;
+            animation: breathe 8s ease-in-out infinite 2s;
+        }
+
+        @keyframes driftOrb {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            50% {
+                transform: translate(20px, -15px) scale(1.03);
+            }
+        }
+
+        @keyframes breathe {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+
+            50% {
+                opacity: 0.7;
+                transform: translate(-50%, -50%) scale(1.05);
+            }
+        }
+
+        /* --- Typography --- */
+        .hero-title {
+            font-weight: 900;
+            letter-spacing: -0.045em;
+            line-height: 0.98;
+            text-shadow:
+                0 2px 40px rgba(99, 102, 241, 0.08),
+                0 0 80px rgba(99, 102, 241, 0.03);
+        }
+
+        .gradient-text {
+            background: var(--accent-vivid);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 24px rgba(99, 102, 241, 0.18));
+        }
+
+        .hero-subtitle {
+            color: #94a3b8;
+            font-weight: 400;
+            line-height: 1.7;
+            letter-spacing: 0.005em;
+        }
+
+        /* --- Buttons --- */
+        .btn-primary {
+            background: var(--accent);
+            box-shadow:
+                0 0 20px rgba(99, 102, 241, 0.35),
+                0 0 50px rgba(168, 85, 247, 0.1),
+                0 4px 20px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.08), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-primary:hover {
+            box-shadow:
+                0 0 40px rgba(99, 102, 241, 0.5),
+                0 0 90px rgba(168, 85, 247, 0.15),
+                0 8px 30px rgba(0, 0, 0, 0.4);
+            transform: translateY(-2px) scale(1.03);
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:active {
+            transform: translateY(0) scale(0.99);
+        }
+
+        .btn-secondary {
+            border: 1.5px solid rgba(148, 163, 184, 0.15);
+            background: rgba(15, 23, 42, 0.3);
+            backdrop-filter: blur(8px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-secondary:hover {
+            border-color: rgba(99, 102, 241, 0.35);
+            background: rgba(99, 102, 241, 0.06);
+            box-shadow:
+                0 0 25px rgba(99, 102, 241, 0.08),
+                0 4px 16px rgba(0, 0, 0, 0.2);
+            transform: translateY(-2px) scale(1.03);
+        }
+
+        .btn-secondary:active {
+            transform: translateY(0) scale(0.99);
+        }
+
+        /* --- Dashboard Card --- */
+        .dashboard-preview {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow:
+                0 40px 80px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.03),
+                0 0 100px rgba(168, 85, 247, 0.06),
+                0 0 40px rgba(99, 102, 241, 0.04);
+            overflow: hidden;
+            position: relative;
+            transform: perspective(1200px) rotateY(-2deg);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.4s ease;
+        }
+
+        .dashboard-preview:hover {
+            transform: perspective(1200px) rotateY(0deg) translateY(-4px);
+            box-shadow:
+                0 50px 100px rgba(0, 0, 0, 0.55),
+                0 0 0 1px rgba(255, 255, 255, 0.04),
+                0 0 120px rgba(168, 85, 247, 0.08),
+                0 0 50px rgba(99, 102, 241, 0.06);
+        }
+
+        .dashboard-preview::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.2), transparent);
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #6366f1, #a855f7, #c084fc);
+            box-shadow: 0 0 14px rgba(99, 102, 241, 0.4);
+            position: relative;
+            animation: shimmer 2.5s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+
+            0%,
+            100% {
+                box-shadow: 0 0 14px rgba(99, 102, 241, 0.4);
+            }
+
+            50% {
+                box-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+            }
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            right: -2px;
+            top: -1px;
+            width: 7px;
+            height: 7px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 8px rgba(168, 85, 247, 0.8), 0 0 16px rgba(99, 102, 241, 0.3);
+        }
+
+        .inner-card {
+            background: rgba(15, 23, 42, 0.45);
+            border: 1px solid var(--glass-border);
+            transition: all 0.25s ease;
+        }
+
+        .inner-card:hover {
+            border-color: var(--glass-hover-border);
+            transform: translateY(-1px);
+        }
+
+        /* --- Feature Cards --- */
+        .feature-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: 2rem;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.3), transparent);
+            opacity: 0;
+            transition: opacity 0.35s ease;
+        }
+
+        .feature-card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.04) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.35s ease;
+            pointer-events: none;
+        }
+
+        .feature-card:hover {
+            border-color: var(--glass-hover-border);
+            transform: translateY(-8px);
+            box-shadow:
+                0 30px 60px rgba(0, 0, 0, 0.3),
+                0 0 50px rgba(99, 102, 241, 0.05);
+        }
+
+        .feature-card:hover::before,
+        .feature-card:hover::after {
+            opacity: 1;
+        }
+
+        .feature-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.08);
+        }
+
+        /* --- Animations --- */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .fade-up-delay-1 {
+            animation-delay: 0.1s;
+        }
+
+        .fade-up-delay-2 {
+            animation-delay: 0.2s;
+        }
+
+        .fade-up-delay-3 {
+            animation-delay: 0.3s;
+        }
+
+        .fade-up-delay-4 {
+            animation-delay: 0.4s;
+        }
+
+        .fade-up-delay-5 {
+            animation-delay: 0.5s;
+        }
+
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-accent {
+            width: 48px;
+            height: 3px;
+            background: var(--accent);
+            border-radius: 2px;
+            box-shadow: 0 0 16px rgba(99, 102, 241, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                letter-spacing: -0.025em;
+                line-height: 1.05;
+            }
+
+            .hero-glow {
+                display: none;
+            }
+
+            .dashboard-preview {
+                transform: none !important;
+            }
+
+            .hero-subtitle {
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 2rem !important;
+                line-height: 1.08;
+            }
+
+            .hero-subtitle {
+                font-size: 14px;
+            }
+
+            .btn-primary,
+            .btn-secondary {
+                width: 100%;
+                padding: 14px 20px;
+                font-size: 14px;
+            }
+
+            .feature-card {
+                padding: 1.5rem;
+            }
+
+            .feature-icon {
+                width: 44px;
+                height: 44px;
+                border-radius: 12px;
+            }
+        }
+    </style>
 </head>
 
-<body class="bg-[#0d1117] text-gray-300">
+<body class="bg-[#0f172a] text-gray-300" style="font-family: 'Inter', sans-serif;">
 
     <!-- Header -->
     <div id="header-placeholder"></div>
 
     <!-- Main Content -->
-    <main class="animated-gradient">
-        <div class="container mx-auto px-4 md:px-6 py-12 md:py-24">
-            <!-- Hero Section -->
-            <section class="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
-                <!-- Left Side: Text Content -->
-                <div class="text-center md:text-left">
-                    <h1 class="text-3xl sm:text-5xl md:text-6xl font-extrabold leading-tight tracking-tight text-white">
-                        Chart Your Path to Success
-                    </h1>
-                    <p class="mt-4 md:mt-6 text-base md:text-lg text-gray-400 max-w-lg mx-auto md:mx-0">
-                        Stop guessing, start growing. AI-powered roadmaps for your dream tech career.
+    <main style="padding-top: 0;">
+
+        <!-- ===== HERO ===== -->
+        <section class="hero-section px-4 md:px-8">
+            <div class="hero-glow"></div>
+
+            <div class="container mx-auto max-w-7xl relative z-10">
+                <div class="grid md:grid-cols-2 gap-12 lg:gap-20 items-center">
+
+                    <!-- Left: Text -->
+                    <div class="text-center md:text-left fade-up">
+
+                        <h1 class="hero-title text-[2.5rem] sm:text-[3rem] lg:text-[3.5rem] xl:text-[4rem]">
+                            <span class="text-white">Master Your Career</span><br>
+                            <span class="text-white">With </span><span class="gradient-text">AI-Driven</span><br>
+                            <span class="text-white">Roadmaps and</span><br>
+                            <span class="text-white">Competitive Growth</span>
+                        </h1>
+
+                        <p class="hero-subtitle mt-5 text-[15px] max-w-[22rem] mx-auto md:mx-0">
+                            CareerSage combines intelligent roadmaps, adaptive AI testing, and real-time
+                            competitive battles to transform how you learn, compete, and grow.
+                        </p>
+
+                        <div class="mt-9 flex flex-col sm:flex-row justify-center md:justify-start gap-4">
+                            <a href="./aisensie.html"
+                                class="btn-primary text-white font-bold py-3.5 px-8 rounded-xl text-[15px] inline-flex items-center justify-center gap-2.5">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09z" />
+                                </svg>
+                                Generate My Roadmap
+                            </a>
+                            <a href="./roadmaps.html"
+                                class="btn-secondary text-slate-300 font-semibold py-3.5 px-8 rounded-xl text-[15px] inline-flex items-center justify-center gap-2.5">
+                                Explore Roadmaps
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Right: Dashboard Preview -->
+                    <div class="hidden md:block fade-up fade-up-delay-3">
+                        <div class="relative">
+                            <div class="dashboard-glow" style="position:absolute;width:100%;height:100%"></div>
+                            <div class="dashboard-preview p-7 max-w-md ml-auto relative z-10">
+                                <!-- Title bar -->
+                                <div class="flex items-center gap-2 mb-6">
+                                    <div class="w-3 h-3 rounded-full bg-[#ff5f57]"></div>
+                                    <div class="w-3 h-3 rounded-full bg-[#febc2e]"></div>
+                                    <div class="w-3 h-3 rounded-full bg-[#28c840]"></div>
+                                    <span
+                                        class="ml-3 text-[10px] text-slate-500 font-semibold uppercase tracking-[0.15em]">CareerSage</span>
+                                </div>
+
+                                <!-- Progress -->
+                                <div class="inner-card rounded-xl p-5 mb-4">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <span class="text-[13px] font-bold text-white">Your Progress</span>
+                                        <span
+                                            class="text-[11px] text-emerald-400 font-extrabold bg-emerald-400/10 px-2.5 py-0.5 rounded-md">72%</span>
+                                    </div>
+                                    <div class="w-full bg-slate-800/60 rounded-full h-2.5 overflow-hidden">
+                                        <div class="h-2.5 rounded-full progress-fill" style="width:72%"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Roadmap nodes -->
+                                <div class="grid grid-cols-3 gap-3 mb-4">
+                                    <div class="inner-card rounded-xl p-3 text-center">
+                                        <div class="text-[11px] font-bold text-indigo-300 mb-1">HTML/CSS</div>
+                                        <div class="text-[9px] text-emerald-400 font-bold uppercase tracking-wider">✓
+                                            Complete</div>
+                                    </div>
+                                    <div class="inner-card rounded-xl p-3 text-center"
+                                        style="border-color:rgba(168,85,247,0.12)">
+                                        <div class="text-[11px] font-bold text-purple-300 mb-1">JavaScript</div>
+                                        <div class="text-[9px] text-amber-400 font-bold uppercase tracking-wider">●
+                                            Active</div>
+                                    </div>
+                                    <div class="inner-card rounded-xl p-3 text-center">
+                                        <div class="text-[11px] font-bold text-slate-500 mb-1">React</div>
+                                        <div class="text-[9px] text-slate-600 font-bold uppercase tracking-wider">Locked
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Stats -->
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div class="inner-card rounded-xl p-4">
+                                        <div class="text-xl font-black text-white tracking-tight">1,247</div>
+                                        <div
+                                            class="text-[9px] text-slate-500 uppercase tracking-[0.1em] font-semibold mt-1">
+                                            Battle Rating</div>
+                                    </div>
+                                    <div class="inner-card rounded-xl p-4">
+                                        <div class="text-xl font-black text-white tracking-tight">89<span
+                                                class="text-indigo-400">%</span></div>
+                                        <div
+                                            class="text-[9px] text-slate-500 uppercase tracking-[0.1em] font-semibold mt-1">
+                                            Quiz Accuracy</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== FEATURES ===== -->
+        <section id="features" class="py-28 md:py-36 pb-36 px-4 md:px-8 bg-[#0f172a] relative">
+            <div
+                class="absolute top-0 left-1/2 -translate-x-1/2 w-2/3 h-px bg-gradient-to-r from-transparent via-indigo-500/10 to-transparent">
+            </div>
+
+            <div class="container mx-auto max-w-7xl">
+                <div class="text-center mb-20 fade-up">
+                    <div class="section-accent mx-auto mb-5"></div>
+                    <h2 class="text-3xl md:text-[2.5rem] font-extrabold text-white tracking-tight">Everything You Need
+                        to Succeed</h2>
+                    <p class="mt-5 text-slate-400 max-w-lg mx-auto text-[15px] leading-relaxed">
+                        From personalized plans to skill tracking, our platform is designed to guide you at every step.
                     </p>
-                    <div class="mt-8 md:mt-10 flex flex-col sm:flex-row justify-center md:justify-start gap-4">
-                        <a href="./aisensie.html"
-                            class="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 font-bold py-3 px-8 rounded-lg text-lg transition-all transform hover:scale-105 shadow-lg shadow-purple-500/20 text-white">
-                            Generate My Roadmap
-                        </a>
-                        <a href="./roadmaps.html"
-                            class="bg-gray-800/60 border border-gray-700 hover:border-purple-500/50 hover:bg-gray-800 font-bold py-3 px-8 rounded-lg text-lg transition-all text-gray-300">
-                            Explore Roadmaps
-                        </a>
-                    </div>
                 </div>
 
-                <!-- Right Side: Image Placeholder -->
-                <div class="hidden md:flex justify-center items-center h-96">
-                    <!--landing page image-->
-                    <img src="components/element.png" alt="Illustration showing career confusion"
-                        class="rounded-2xl shadow-2xl shadow-blue-500/10 max-h-full w-auto">
-                </div>
-            </section>
-
-            <!-- Feature Cards Section -->
-            <section id="features" class="py-24 md:py-32">
-                <div class="text-center mb-16">
-                    <h2 class="text-4xl font-bold text-white">Everything You Need to Succeed</h2>
-                    <p class="mt-4 text-gray-400 max-w-2xl mx-auto">From personalized plans to skill tracking, our
-                        platform is designed to guide you at every step.</p>
-                </div>
-                <div id="features-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div id="features-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7">
                     <!-- AI Roadmap Generation -->
-                    <div
-                        class="bg-[#161b22] p-8 rounded-xl border border-gray-800 transition-all duration-300 hover:border-blue-500 hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-2">
-                        <div class="mb-6">
-                            <div
-                                class="relative w-12 h-12 flex items-center justify-center bg-blue-500/10 rounded-full">
-                                <div class="absolute w-1 h-8 bg-blue-500 rounded-full transform rotate-45"></div>
-                                <div class="absolute w-1 h-8 bg-blue-500 rounded-full transform -rotate-45"></div>
-                                <div class="absolute w-4 h-4 bg-gray-800 border-2 border-blue-500 rounded-full"></div>
-                            </div>
+                    <div class="feature-card fade-up fade-up-delay-1">
+                        <div class="feature-icon bg-indigo-500/10">
+                            <svg class="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                            </svg>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-3">AI Roadmap Generation</h3>
-                        <p class="text-gray-400">Tell us your career goal, and our AI will generate a personalized,
-                            step-by-step learning path for you.</p>
+                        <h3 class="text-[15px] font-bold text-white mb-2 tracking-tight">AI Roadmap Generation</h3>
+                        <p class="text-[13px] text-slate-400 leading-relaxed">Tell us your career goal, and our AI will
+                            generate a personalized, step-by-step learning path.</p>
                     </div>
+
                     <!-- AI Skill Test -->
-                    <div
-                        class="bg-[#161b22] p-8 rounded-xl border border-gray-800 transition-all duration-300 hover:border-green-500 hover:shadow-2xl hover:shadow-green-500/10 hover:-translate-y-2">
-                        <div class="mb-6">
-                            <div class="w-12 h-12 flex items-center justify-center bg-green-500/10 rounded-full">
-                                <svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                            </div>
+                    <div class="feature-card fade-up fade-up-delay-2">
+                        <div class="feature-icon bg-emerald-500/10">
+                            <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-3">AI Skill Test</h3>
-                        <p class="text-gray-400">Test your knowledge with AI-generated quizzes on any tech topic and get
-                            instant results with detailed explanations.</p>
+                        <h3 class="text-[15px] font-bold text-white mb-2 tracking-tight">AI Skill Test</h3>
+                        <p class="text-[13px] text-slate-400 leading-relaxed">Test your knowledge with AI-generated
+                            quizzes and get instant results with detailed explanations.</p>
                     </div>
+
                     <!-- Resource Recommendation -->
-                    <div
-                        class="bg-[#161b22] p-8 rounded-xl border border-gray-800 transition-all duration-300 hover:border-purple-500 hover:shadow-2xl hover:shadow-purple-500/10 hover:-translate-y-2">
-                        <div class="mb-6">
-                            <div class="w-12 h-12 flex items-center justify-center bg-purple-500/10 rounded-full p-2">
-                                <div class="w-8 h-8 border-2 border-purple-500 rounded-md"></div>
-                                <div class="absolute w-1 h-8 bg-purple-500"></div>
-                            </div>
+                    <div class="feature-card fade-up fade-up-delay-3">
+                        <div class="feature-icon bg-purple-500/10">
+                            <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                            </svg>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-3">Resource Recommendation</h3>
-                        <p class="text-gray-400">Get curated links to the best articles, tutorials, and courses for
-                            every step of your roadmap.</p>
+                        <h3 class="text-[15px] font-bold text-white mb-2 tracking-tight">Resource Recommendation</h3>
+                        <p class="text-[13px] text-slate-400 leading-relaxed">Get curated links to the best articles,
+                            tutorials, and courses for every step of your roadmap.</p>
                     </div>
+
                     <!-- 1v1 Rapid Fire Battle -->
-                    <div
-                        class="bg-[#161b22] p-8 rounded-xl border border-gray-800 transition-all duration-300 hover:border-yellow-500 hover:shadow-2xl hover:shadow-yellow-500/10 hover:-translate-y-2">
-                        <div class="mb-6">
-                            <div class="w-12 h-12 flex items-center justify-center bg-yellow-500/10 rounded-full">
-                                <svg class="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor"
-                                    viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                                </svg>
-                            </div>
+                    <div class="feature-card fade-up fade-up-delay-4">
+                        <div class="feature-icon bg-amber-500/10">
+                            <svg class="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
                         </div>
-                        <h3 class="text-xl font-bold text-white mb-3">1v1 Rapid Fire Battle</h3>
-                        <p class="text-gray-400">Challenge your friends to real-time quiz battles, climb the
-                            leaderboard, and prove your skills under pressure.</p>
+                        <h3 class="text-[15px] font-bold text-white mb-2 tracking-tight">1v1 Rapid Fire Battle</h3>
+                        <p class="text-[13px] text-slate-400 leading-relaxed">Challenge friends to real-time quiz
+                            battles, climb the leaderboard, and prove your skills.</p>
                     </div>
                 </div>
-            </section>
-        </div>
+            </div>
+        </section>
     </main>
 
     <!-- Footer -->
@@ -126,7 +633,7 @@
     <!-- Scripts -->
     <script src="js/load-header-footer.js"></script>
     <script src="js/api.js"></script>
-    <script src="js/main.js?v=2" type="module"></script>
+    <script src="js/main.js?v=5" type="module"></script>
 </body>
 
 </html>

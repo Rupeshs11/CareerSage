@@ -6,7 +6,7 @@ html, body {
     font-family: 'Inter', sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #0d1117;
+    background-color: #0f172a;
     color: #c9d1d9;
     min-height: 100vh;
 }
@@ -16,7 +16,7 @@ main {
     padding-top: 64px;   /* sits right under the fixed header */
     padding-bottom: 60px; /* sits right above the fixed footer */
     min-height: 100vh;
-    background-color: #0d1117;
+    background-color: #0f172a;
 }
 
 /* When main is fixed-positioned (e.g. roadmap-visual), remove the duplicate padding */
@@ -33,39 +33,73 @@ main[style*="top:"], main[style*="top: "] {
 .dropdown-content {
     display: none;
     position: absolute;
-    background-color: #161b22;
-    min-width: 240px;
-    box-shadow: 0px 8px 24px rgba(0,0,0,0.6);
+    background: rgba(15, 20, 40, 0.9);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    min-width: 220px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(99, 102, 241, 0.05);
     z-index: 50;
-    border: 1px solid #30363d;
-    border-radius: 10px;
-    padding: 8px;
-    margin-top: 8px;
-    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    padding: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    margin-top: 12px;
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
 }
 .dropdown-content a {
-    color: #c9d1d9;
-    padding: 10px 12px;
+    color: #94a3b8;
+    padding: 10px 14px;
     text-decoration: none;
     display: flex;
     align-items: center;
-    gap: 12px;
-    border-radius: 6px;
-    font-size: 14px;
+    gap: 10px;
+    border-radius: 10px;
+    font-size: 13px;
+    transition: all 0.2s ease;
 }
 .dropdown-content a:hover {
-    background-color: rgba(139, 92, 246, 0.1);
+    background: rgba(99, 102, 241, 0.1);
     color: #e2e8f0;
 }
 .show {
     display: block;
+    opacity: 1;
+    transform: translateY(0);
 }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: #161b22; }
-::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: #555; }
+::-webkit-scrollbar-track { background: #0f172a; }
+::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.08); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.14); }
+
+/* --- Reusable Glassmorphism Card --- */
+.cs-card {
+    background: rgba(255, 255, 255, 0.04);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    transition: border-color 0.25s ease;
+}
+.cs-card:hover {
+    border-color: rgba(255, 255, 255, 0.12);
+}
+/* Input fields matching the theme */
+.cs-input {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    color: #e2e8f0;
+    transition: border-color 0.2s ease;
+}
+.cs-input:focus {
+    border-color: rgba(99, 102, 241, 0.4);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
 
 
 /* --- LANDING PAGE (index.html) SPECIFIC STYLES --- */
@@ -149,7 +183,7 @@ main[style*="top:"], main[style*="top: "] {
     padding: 14px 20px;
     border-radius: 10px;
     border: 2px solid;
-    background: #161b22;
+    background: #0f172a;
     color: #e2e8f0;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -279,7 +313,7 @@ main[style*="top:"], main[style*="top: "] {
     margin-bottom: 30px;
     flex-wrap: wrap;
     padding: 16px;
-    background: #161b22;
+    background: #0f172a;
     border-radius: 10px;
     border: 1px solid #30363d;
 }

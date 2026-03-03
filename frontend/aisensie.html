@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 
-<body class="bg-[#0d1117] text-gray-300">
+<body class="bg-[#0f172a] text-gray-300">
 
     <!-- Header -->
     <div id="header-placeholder"></div>
@@ -23,14 +23,14 @@
             <p class="mt-3 md:mt-4 text-base md:text-lg text-gray-400">Enter a topic below to generate a personalized
                 roadmap for it</p>
 
-            <div class="mt-6 md:mt-10 bg-[#161b22] p-4 md:p-8 rounded-xl border border-gray-800 text-left">
+            <div class="mt-6 md:mt-10 bg-white/[0.04] p-4 md:p-8 rounded-xl border border-white/[0.06] text-left">
                 <!-- Topic Input with Trending Dropdown -->
                 <div class="mb-6">
                     <label for="ai-topic" class="block mb-2 font-semibold text-gray-300">What do you want to
                         learn?</label>
                     <div class="relative">
                         <input type="text" id="ai-topic" autocomplete="off"
-                            class="w-full bg-[#0d1117] border border-gray-700 rounded-lg p-3 pr-10 focus:ring-2 focus:ring-blue-500 focus:outline-none text-white"
+                            class="w-full bg-[#0f172a] border border-white/[0.08] rounded-lg p-3 pr-10 focus:ring-2 focus:ring-blue-500 focus:outline-none text-white"
                             placeholder="Type or select a topic...">
                         <button type="button"
                             onclick="document.getElementById('topic-dropdown').classList.toggle('hidden')"
@@ -41,7 +41,7 @@
                             </svg>
                         </button>
                         <div id="topic-dropdown"
-                            class="hidden absolute z-50 w-full mt-1 bg-[#161b22] border border-gray-700 rounded-lg max-h-60 overflow-y-auto shadow-xl">
+                            class="hidden absolute z-50 w-full mt-1 bg-white/[0.04] border border-white/[0.08] rounded-lg max-h-60 overflow-y-auto shadow-xl">
                             <!-- Populated by JS -->
                         </div>
                     </div>
@@ -71,7 +71,7 @@
                     <label for="roadmap-mode" class="block mb-2 font-semibold text-gray-300">Roadmap Detail
                         Level</label>
                     <select id="roadmap-mode"
-                        class="w-full bg-[#0d1117] border border-gray-700 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none text-white appearance-none cursor-pointer">
+                        class="w-full bg-[#0f172a] border border-white/[0.08] rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none text-white appearance-none cursor-pointer">
                         <option value="beginner">🟢 Beginner — Quick overview (7-8 nodes, no resources)</option>
                         <option value="advanced">🔵 Advanced — Full roadmap (12-15 nodes with resources)</option>
                     </select>

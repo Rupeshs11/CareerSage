@@ -6,7 +6,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const footerPlaceholder = document.getElementById("footer-placeholder");
   const sidebarPlaceholder = document.getElementById("sidebar-placeholder");
 
-  if (headerPlaceholder) headerPlaceholder.innerHTML = headerHTML;
+  if (headerPlaceholder && !headerPlaceholder.innerHTML.trim())
+    headerPlaceholder.innerHTML = headerHTML;
   if (footerPlaceholder) footerPlaceholder.innerHTML = footerHTML;
   if (sidebarPlaceholder) {
     const sidebarTemplate = `
@@ -60,7 +61,7 @@ function initAuthUI() {
     }
 
     accountDropdown.innerHTML = `
-      <div class="p-3 border-b border-gray-700">
+      <div class="p-3 border-b border-white/[0.08]">
         <p class="text-white font-semibold">${user.name}</p>
         <p class="text-gray-400 text-sm">${user.email}</p>
       </div>
@@ -145,51 +146,8 @@ function runPageSpecificLogic() {
 }
 
 function initLandingPage() {
-  const features = [
-    {
-      icon: "compass",
-      title: "AI Roadmap Generation",
-      description:
-        "Tell us your career goal, and our AI will generate a personalized, step-by-step learning path for you.",
-    },
-    {
-      icon: "quiz",
-      title: "AI Skill Test",
-      description:
-        "Test your knowledge with AI-generated quizzes on any tech topic and get instant results with detailed explanations.",
-    },
-    {
-      icon: "book",
-      title: "Resource Recommendation",
-      description:
-        "Get curated links to the best articles, tutorials, and courses for every step of your roadmap.",
-    },
-    {
-      icon: "battle",
-      title: "1v1 Rapid Fire Battle",
-      description:
-        "Challenge your friends to real-time quiz battles, climb the leaderboard, and prove your skills under pressure.",
-    },
-  ];
-  const icons = {
-    compass: `<div class="relative w-12 h-12 flex items-center justify-center bg-blue-500/10 rounded-full"><div class="absolute w-1 h-8 bg-blue-500 rounded-full transform rotate-45"></div><div class="absolute w-1 h-8 bg-blue-500 rounded-full transform -rotate-45"></div><div class="absolute w-4 h-4 bg-gray-800 border-2 border-blue-500 rounded-full"></div></div>`,
-    quiz: `<div class="w-12 h-12 flex items-center justify-center bg-green-500/10 rounded-full"><svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg></div>`,
-    book: `<div class="w-12 h-12 flex items-center justify-center bg-purple-500/10 rounded-full p-2"><div class="w-8 h-8 border-2 border-purple-500 rounded-md"></div><div class="absolute w-1 h-8 bg-purple-500"></div></div>`,
-    battle: `<div class="w-12 h-12 flex items-center justify-center bg-yellow-500/10 rounded-full"><svg class="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg></div>`,
-  };
-  const featuresGrid = document.getElementById("features-grid");
-  if (featuresGrid) {
-    featuresGrid.innerHTML = features
-      .map(
-        (feature) =>
-          ` <div class="bg-[#161b22] p-8 rounded-xl border border-gray-800 transition-all duration-300 hover:border-blue-500 hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-2"> <div class="mb-6">${
-            icons[feature.icon]
-          }</div> <h3 class="text-xl font-bold text-white mb-3">${
-            feature.title
-          }</h3> <p class="text-gray-400">${feature.description}</p> </div> `,
-      )
-      .join("");
-  }
+  // Feature cards are now rendered directly in index.html with CSS classes
+  // No dynamic overwrite needed
 }
 
 function initRoadmapsPage() {
@@ -319,13 +277,13 @@ function initRoadmapsPage() {
               .map(
                 (roadmap) => `
               <a href="./roadmap-visual.html?topic=${roadmap.slug}" 
-                 class="bg-[#161b22] border border-gray-800 p-4 rounded-lg flex flex-col hover:border-blue-500 transition-colors">
+                 class="bg-white/[0.04] border border-white/[0.06] p-4 rounded-lg flex flex-col hover:border-blue-500 transition-colors">
                 <div class="flex justify-between items-start mb-2">
                   <span class="font-semibold text-white">${roadmap.title}</span>
                   ${roadmap.is_official ? '<span class="text-xs bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded">Official</span>' : ""}
                 </div>
                 <p class="text-gray-500 text-sm flex-1">${roadmap.description || ""}</p>
-                <div class="flex items-center justify-between mt-3 pt-3 border-t border-gray-700">
+                <div class="flex items-center justify-between mt-3 pt-3 border-t border-white/[0.06]">
                   <span class="text-gray-600 text-xs">${roadmap.view_count || 0} views</span>
                   <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>

@@ -94,7 +94,7 @@
     </style>
 </head>
 
-<body class="bg-[#0d1117] text-gray-300">
+<body class="bg-[#0f172a] text-gray-300">
     <div class="flex flex-col min-h-screen pt-16 pb-16">
         <div id="header-placeholder"></div>
 
@@ -114,12 +114,12 @@
                         <!-- Left: Start Battle -->
                         <div class="lg:col-span-2 space-y-6">
                             <!-- Topic Picker -->
-                            <div class="bg-[#161b22] border border-gray-800 rounded-xl p-6">
+                            <div class="bg-white/[0.04] border border-white/[0.06] rounded-xl p-6">
                                 <h2 class="text-xl font-bold text-white mb-4">Start a Battle</h2>
                                 <div class="mb-4">
                                     <label class="text-sm text-gray-400 mb-2 block">Choose Topic</label>
                                     <input id="battle-topic" type="text" placeholder="e.g. JavaScript, Docker, React..."
-                                        class="w-full bg-[#0d1117] border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-indigo-500 focus:outline-none transition">
+                                        class="w-full bg-[#0f172a] border border-white/[0.08] rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:border-indigo-500 focus:outline-none transition">
                                 </div>
                                 <div class="flex flex-wrap gap-2 mb-5">
                                     <button onclick="document.getElementById('battle-topic').value=this.textContent"
@@ -141,25 +141,25 @@
                                         Create Battle (Multiplayer)
                                     </button>
                                     <button id="btn-solo-quick" onclick="createBattle(true)"
-                                        class="px-6 bg-[#0d1117] border border-gray-700 hover:border-indigo-500 text-white font-semibold py-3 rounded-lg transition">
+                                        class="px-6 bg-[#0f172a] border border-white/[0.08] hover:border-indigo-500 text-white font-semibold py-3 rounded-lg transition">
                                         Solo
                                     </button>
                                 </div>
                             </div>
 
                             <!-- Join by Battle ID -->
-                            <div class="bg-[#161b22] border border-gray-800 rounded-xl p-6">
+                            <div class="bg-white/[0.04] border border-white/[0.06] rounded-xl p-6">
                                 <h2 class="text-lg font-bold text-white mb-3">Join by Battle ID</h2>
                                 <div class="flex gap-3">
                                     <input type="text" id="join-battle-id" placeholder="Paste battle ID here..."
-                                        class="flex-1 bg-[#0d1117] border border-gray-700 rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition text-sm">
+                                        class="flex-1 bg-[#0f172a] border border-white/[0.08] rounded-lg px-4 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition text-sm">
                                     <button onclick="joinById()"
                                         class="px-5 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-lg transition text-sm">
                                         Join
                                     </button>
                                 </div>
                             </div>
-                            <div class="bg-[#161b22] border border-gray-800 rounded-xl p-6">
+                            <div class="bg-white/[0.04] border border-white/[0.06] rounded-xl p-6">
                                 <h2 class="text-lg font-bold text-white mb-4">Open Battles</h2>
                                 <div id="active-battles-list" class="space-y-3 max-h-[250px] overflow-y-auto">
                                     <p class="text-gray-500 text-sm text-center py-4" id="no-battles-msg">No open
@@ -168,7 +168,7 @@
                             </div>
 
                             <!-- Battle History -->
-                            <div class="bg-[#161b22] border border-gray-800 rounded-xl p-6">
+                            <div class="bg-white/[0.04] border border-white/[0.06] rounded-xl p-6">
                                 <h2 class="text-lg font-bold text-white mb-4">Recent Battles</h2>
                                 <div id="battle-history" class="space-y-2 max-h-[300px] overflow-y-auto">
                                     <p class="text-gray-500 text-sm text-center py-4">No battles yet</p>
@@ -206,7 +206,7 @@
                             </div>
 
                             <!-- Leaderboard -->
-                            <div class="bg-[#161b22] border border-gray-800 rounded-xl p-6">
+                            <div class="bg-white/[0.04] border border-white/[0.06] rounded-xl p-6">
                                 <h2 class="text-lg font-bold text-white mb-4">Leaderboard</h2>
                                 <div id="leaderboard" class="space-y-2 max-h-[350px] overflow-y-auto">
                                     <p class="text-gray-500 text-sm text-center">Loading...</p>
@@ -214,14 +214,14 @@
                             </div>
 
                             <!-- Friends -->
-                            <div class="bg-[#161b22] border border-gray-800 rounded-xl p-6">
+                            <div class="bg-white/[0.04] border border-white/[0.06] rounded-xl p-6">
                                 <div class="flex items-center justify-between mb-4">
                                     <h2 class="text-lg font-bold text-white">Friends</h2>
                                 </div>
                                 <div class="mb-4">
                                     <div class="flex gap-2">
                                         <input type="text" id="add-friend-email" placeholder="Enter email to add..."
-                                            class="flex-1 bg-[#0d1117] border border-gray-700 rounded-lg px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition text-xs">
+                                            class="flex-1 bg-[#0f172a] border border-white/[0.08] rounded-lg px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition text-xs">
                                         <button onclick="addFriendFromInput()"
                                             class="px-3 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-semibold transition">Add</button>
                                     </div>
@@ -252,7 +252,7 @@
                             join.</p>
                         <div class="flex items-center justify-center gap-3 mb-6">
                             <code id="waiting-battle-id"
-                                class="bg-[#161b22] border border-gray-700 rounded-lg px-4 py-2 text-indigo-400 text-sm"></code>
+                                class="bg-white/[0.04] border border-white/[0.08] rounded-lg px-4 py-2 text-indigo-400 text-sm"></code>
                             <button onclick="copyBattleId()"
                                 class="px-3 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm transition">Copy</button>
                         </div>
@@ -296,7 +296,7 @@
                     </div>
 
                     <!-- Question Card -->
-                    <div class="bg-[#161b22] border border-gray-800 rounded-xl p-8 mb-4 pop-in" id="question-card">
+                    <div class="bg-white/[0.04] border border-white/[0.06] rounded-xl p-8 mb-4 pop-in" id="question-card">
                         <h3 class="text-xl font-bold text-white mb-6" id="question-text">Loading question...</h3>
                         <div id="options-container" class="grid grid-cols-1 md:grid-cols-2 gap-3">
                             <!-- Options rendered by JS -->
@@ -313,13 +313,13 @@
 
                         <!-- Score Comparison -->
                         <div class="flex justify-center items-center gap-8 mb-8">
-                            <div class="bg-[#161b22] border border-indigo-700 rounded-xl p-6 w-48 text-center">
+                            <div class="bg-white/[0.04] border border-indigo-700 rounded-xl p-6 w-48 text-center">
                                 <p class="text-sm text-gray-400 mb-1" id="result-player-name">You</p>
                                 <p class="text-4xl font-extrabold text-indigo-400" id="result-player-score">0</p>
                                 <p class="text-gray-500 text-sm">/10</p>
                             </div>
                             <span class="text-3xl text-gray-600 font-bold">VS</span>
-                            <div class="bg-[#161b22] border border-red-700/50 rounded-xl p-6 w-48 text-center">
+                            <div class="bg-white/[0.04] border border-red-700/50 rounded-xl p-6 w-48 text-center">
                                 <p class="text-sm text-gray-400 mb-1" id="result-opponent-name">Opponent</p>
                                 <p class="text-4xl font-extrabold text-red-400" id="result-opponent-score">0</p>
                                 <p class="text-gray-500 text-sm">/10</p>
@@ -327,7 +327,7 @@
                         </div>
 
                         <!-- Rating Change -->
-                        <div class="bg-[#161b22] border border-gray-800 rounded-xl p-4 inline-block mb-6">
+                        <div class="bg-white/[0.04] border border-white/[0.06] rounded-xl p-4 inline-block mb-6">
                             <p class="text-gray-400 text-sm">Rating</p>
                             <p class="text-2xl font-bold" id="rating-change">+0</p>
                         </div>
@@ -438,7 +438,7 @@
                 const noMsg = document.getElementById('no-battles-msg');
                 if (noMsg) noMsg.style.display = 'none';
                 const card = document.createElement('div');
-                card.className = 'flex items-center gap-3 p-3 rounded-lg bg-[#0d1117] border border-gray-700 hover:border-indigo-500 transition cursor-pointer';
+                card.className = 'flex items-center gap-3 p-3 rounded-lg bg-[#0f172a] border border-white/[0.08] hover:border-indigo-500 transition cursor-pointer';
                 card.setAttribute('onclick', "joinBattle('" + b.id + "')");
                 card.innerHTML = '<div class="w-10 h-10 bg-indigo-600/20 rounded-lg flex items-center justify-center"><svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg></div>' +
                     '<div class="flex-1"><p class="text-white font-semibold text-sm">' + b.topic + '</p>' +
@@ -548,7 +548,7 @@
                 if (battles.length > 0) {
                     noMsg.style.display = 'none';
                     listEl.innerHTML = battles.map(b => `
-                        <div class="flex items-center gap-3 p-3 rounded-lg bg-[#0d1117] border border-gray-700 hover:border-indigo-500 transition cursor-pointer" onclick="joinBattle('${b.id}')">
+                        <div class="flex items-center gap-3 p-3 rounded-lg bg-[#0f172a] border border-white/[0.08] hover:border-indigo-500 transition cursor-pointer" onclick="joinBattle('${b.id}')">
                             <div class="w-10 h-10 bg-indigo-600/20 rounded-lg flex items-center justify-center"><svg class="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg></div>
                             <div class="flex-1">
                                 <p class="text-white font-semibold text-sm">${b.topic}</p>
@@ -917,7 +917,7 @@
 
             const optContainer = document.getElementById('options-container');
             optContainer.innerHTML = q.options.map((opt, i) => `
-                <button class="battle-option p-4 rounded-lg bg-[#0d1117] border border-gray-700 text-left text-white font-medium hover:border-indigo-500 hover:bg-indigo-900/20 transition transform hover:scale-[1.01]"
+                <button class="battle-option p-4 rounded-lg bg-[#0f172a] border border-white/[0.08] text-left text-white font-medium hover:border-indigo-500 hover:bg-indigo-900/20 transition transform hover:scale-[1.01]"
                     onclick="submitAnswer(${q.id}, ${i})">
                     <span class="text-indigo-400 font-bold mr-2">${['A', 'B', 'C', 'D'][i]}.</span> ${opt}
                 </button>

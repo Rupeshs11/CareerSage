@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 
-<body class="bg-[#0d1117] text-gray-300">
+<body class="bg-[#0f172a] text-gray-300">
 
     <div class="flex flex-col min-h-screen">
         <!-- Header -->
@@ -30,7 +30,7 @@
                 <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
                     <!-- Total Progress -->
                     <div
-                        class="bg-[#161b22] border border-gray-800 rounded-xl p-6 hover:border-blue-500 transition-colors">
+                        class="bg-white/[0.04] border border-white/[0.06] rounded-xl p-6 hover:border-blue-500 transition-colors">
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="text-gray-400 font-medium">Total Progress</h3>
                             <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
@@ -47,7 +47,7 @@
 
                     <!-- Active Roadmaps -->
                     <div
-                        class="bg-[#161b22] border border-gray-800 rounded-xl p-6 hover:border-purple-500 transition-colors">
+                        class="bg-white/[0.04] border border-white/[0.06] rounded-xl p-6 hover:border-purple-500 transition-colors">
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="text-gray-400 font-medium">Active Roadmaps</h3>
                             <div class="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center">
@@ -65,7 +65,7 @@
 
                     <!-- Skills Acquired -->
                     <div
-                        class="bg-[#161b22] border border-gray-800 rounded-xl p-6 hover:border-green-500 transition-colors">
+                        class="bg-white/[0.04] border border-white/[0.06] rounded-xl p-6 hover:border-green-500 transition-colors">
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="text-gray-400 font-medium">Skills Acquired</h3>
                             <div class="w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center">
@@ -83,7 +83,7 @@
 
                     <!-- Quizzes Taken -->
                     <div
-                        class="bg-[#161b22] border border-gray-800 rounded-xl p-6 hover:border-yellow-500 transition-colors">
+                        class="bg-white/[0.04] border border-white/[0.06] rounded-xl p-6 hover:border-yellow-500 transition-colors">
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="text-gray-400 font-medium">Quizzes Taken</h3>
                             <div class="w-10 h-10 bg-yellow-500/20 rounded-lg flex items-center justify-center">
@@ -106,7 +106,7 @@
                     <!-- Left Column: Current Roadmaps -->
                     <div class="lg:col-span-2 space-y-6">
                         <!-- Current Roadmaps -->
-                        <div class="bg-[#161b22] border border-gray-800 rounded-xl p-6">
+                        <div class="bg-white/[0.04] border border-white/[0.06] rounded-xl p-6">
                             <div class="flex items-center justify-between mb-6">
                                 <h2 class="text-xl font-bold text-white">My Roadmaps</h2>
                                 <a href="./aisensie.html"
@@ -130,7 +130,7 @@
                         </div>
 
                         <!-- Recent Activity (Collapsible) -->
-                        <div class="bg-[#161b22] border border-gray-800 rounded-xl overflow-hidden">
+                        <div class="bg-white/[0.04] border border-white/[0.06] rounded-xl overflow-hidden">
                             <button
                                 onclick="document.getElementById('activity-body').classList.toggle('hidden'); this.querySelector('#activity-arrow').classList.toggle('rotate-180')"
                                 class="w-full flex items-center justify-between p-5 hover:bg-gray-800/30 transition cursor-pointer">
@@ -152,7 +152,7 @@
                                         d="M19 9l-7 7-7-7"></path>
                                 </svg>
                             </button>
-                            <div id="activity-body" class="hidden border-t border-gray-800">
+                            <div id="activity-body" class="hidden border-t border-white/[0.06]">
                                 <div id="recent-activity" class="max-h-80 overflow-y-auto p-4 space-y-2">
                                     <div class="flex items-center gap-4 p-3 rounded-lg">
                                         <div class="flex-1">
@@ -167,7 +167,7 @@
                     <!-- Right Column: Quick Actions & Skills -->
                     <div class="space-y-6">
                         <!-- Quick Actions -->
-                        <div class="bg-[#161b22] border border-gray-800 rounded-xl p-6">
+                        <div class="bg-white/[0.04] border border-white/[0.06] rounded-xl p-6">
                             <h2 class="text-xl font-bold text-white mb-4">Quick Actions</h2>
                             <div class="space-y-3">
                                 <a href="./aisensie.html"
@@ -180,7 +180,7 @@
                                     Generate AI Roadmap
                                 </a>
                                 <a href="./skill-battle.html"
-                                    class="flex items-center gap-3 p-3 rounded-lg bg-[#0d1117] border border-gray-700 hover:border-purple-500 transition text-white font-medium">
+                                    class="flex items-center gap-3 p-3 rounded-lg bg-[#0f172a] border border-white/[0.08] hover:border-purple-500 transition text-white font-medium">
                                     <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -190,7 +190,7 @@
                                     Battle
                                 </a>
                                 <a href="./roadmaps.html"
-                                    class="flex items-center gap-3 p-3 rounded-lg bg-[#0d1117] border border-gray-700 hover:border-green-500 transition text-white font-medium">
+                                    class="flex items-center gap-3 p-3 rounded-lg bg-[#0f172a] border border-white/[0.08] hover:border-green-500 transition text-white font-medium">
                                     <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -203,7 +203,7 @@
                         </div>
 
                         <!-- Weekly Activity Chart -->
-                        <div class="bg-[#161b22] border border-gray-800 rounded-xl p-6">
+                        <div class="bg-white/[0.04] border border-white/[0.06] rounded-xl p-6">
                             <div class="flex items-center justify-between mb-4">
                                 <h2 class="text-xl font-bold text-white">Weekly Activity</h2>
                                 <span class="text-xs text-gray-500" id="weekly-total">0 activities</span>
@@ -327,7 +327,7 @@
                     savedRoadmaps.forEach(roadmap => {
                         const progress = roadmap.progress || 0;
                         const roadmapCard = document.createElement('div');
-                        roadmapCard.className = 'p-4 rounded-lg bg-[#0d1117] border border-gray-700 hover:border-blue-500 transition cursor-pointer';
+                        roadmapCard.className = 'p-4 rounded-lg bg-[#0f172a] border border-white/[0.08] hover:border-blue-500 transition cursor-pointer';
                         roadmapCard.innerHTML = `
                             <div class="flex items-center gap-4">
                                 <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
@@ -382,7 +382,7 @@
                     if (!testHistoryCard) {
                         testHistoryCard = document.createElement('div');
                         testHistoryCard.id = 'test-history-card';
-                        testHistoryCard.className = 'bg-[#161b22] border border-gray-800 rounded-xl p-6';
+                        testHistoryCard.className = 'bg-white/[0.04] border border-white/[0.06] rounded-xl p-6';
                         // Insert after recent activity
                         const activityParent = document.getElementById('recent-activity').parentElement;
                         activityParent.parentElement.appendChild(testHistoryCard);
@@ -395,7 +395,7 @@
                         </div>
                         <div class="space-y-3 max-h-[350px] overflow-y-auto pr-1">
                             ${history.map(t => `
-                                <div class="flex items-center gap-3 p-3 rounded-lg bg-[#0d1117] border border-gray-700/50">
+                                <div class="flex items-center gap-3 p-3 rounded-lg bg-[#0f172a] border border-white/[0.08]/50">
                                     <div class="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
                                         <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
