@@ -90,6 +90,12 @@ function initAuthUI() {
           </div>
           <span class="text-sm text-gray-300 group-hover:text-white font-medium">Change Password</span>
         </a>
+        <a href="#" onclick="openHelpModal()" class="flex items-center gap-3 mx-2 px-3 py-2.5 rounded-lg hover:bg-white/[0.06] transition-all group">
+          <div class="w-8 h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center group-hover:bg-cyan-500/20 transition-colors">
+            <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          </div>
+          <span class="text-sm text-gray-300 group-hover:text-white font-medium">Help & Support</span>
+        </a>
       </div>
       <div class="border-t border-white/[0.08] py-1.5">
         <a href="#" onclick="logoutUser()" class="flex items-center gap-3 mx-2 px-3 py-2.5 rounded-lg hover:bg-red-500/10 transition-all group">
@@ -2862,3 +2868,78 @@ function closeChangePasswordModal() {
   var modal = document.getElementById("change-password-modal");
   if (modal) modal.remove();
 }
+
+// ============ Help & Support Modal ============
+function openHelpModal() {
+  var existing = document.getElementById("help-modal");
+  if (existing) existing.remove();
+
+  var modal = document.createElement("div");
+  modal.id = "help-modal";
+  modal.className =
+    "fixed inset-0 z-[9999] flex items-center justify-center p-4";
+  modal.innerHTML = `
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeHelpModal()"></div>
+    <div class="relative bg-[#0f172a] border border-white/[0.08] rounded-2xl p-6 w-full max-w-md shadow-2xl shadow-black/40 max-h-[85vh] overflow-y-auto" style="animation: modalIn 0.2s ease-out">
+      <div class="flex items-center justify-between mb-5">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-lg bg-cyan-500/15 flex items-center justify-center">
+            <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+          </div>
+          <h3 class="text-white font-semibold text-lg">Help & Support</h3>
+        </div>
+        <button onclick="closeHelpModal()" class="text-gray-500 hover:text-white transition p-1 rounded-lg hover:bg-white/5">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+
+      <div class="space-y-3 mb-6">
+        <div class="p-4 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:border-cyan-500/20 transition">
+          <h4 class="text-white text-sm font-semibold mb-1.5 flex items-center gap-2">
+            <span class="text-cyan-400">●</span> How do I generate a roadmap?
+          </h4>
+          <p class="text-gray-400 text-xs leading-relaxed">Go to the Roadmaps page, enter your career goal or technology, and click Generate. Our AI will create a personalized learning path for you.</p>
+        </div>
+        <div class="p-4 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:border-cyan-500/20 transition">
+          <h4 class="text-white text-sm font-semibold mb-1.5 flex items-center gap-2">
+            <span class="text-emerald-400">●</span> How do skill tests work?
+          </h4>
+          <p class="text-gray-400 text-xs leading-relaxed">Select a topic, and our AI generates adaptive questions based on your skill level. You get instant results with detailed explanations.</p>
+        </div>
+        <div class="p-4 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:border-cyan-500/20 transition">
+          <h4 class="text-white text-sm font-semibold mb-1.5 flex items-center gap-2">
+            <span class="text-amber-400">●</span> How do 1v1 battles work?
+          </h4>
+          <p class="text-gray-400 text-xs leading-relaxed">Create or join a battle room, select a topic, and compete against another player in a timed quiz. The player with the highest score wins!</p>
+        </div>
+        <div class="p-4 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:border-cyan-500/20 transition">
+          <h4 class="text-white text-sm font-semibold mb-1.5 flex items-center gap-2">
+            <span class="text-purple-400">●</span> Is CareerSage free to use?
+          </h4>
+          <p class="text-gray-400 text-xs leading-relaxed">Yes! CareerSage is completely free. Create an account and start your learning journey today.</p>
+        </div>
+      </div>
+
+      <div class="p-4 rounded-xl bg-indigo-500/5 border border-indigo-500/15">
+        <h4 class="text-white text-sm font-semibold mb-2">Still need help?</h4>
+        <p class="text-gray-400 text-xs mb-3">Reach out to us and we'll get back to you as soon as possible.</p>
+        <a href="mailto:support@knoxcloud.tech" class="inline-flex items-center gap-2 text-xs font-medium text-indigo-400 hover:text-indigo-300 transition">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+          support@knoxcloud.tech
+        </a>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+}
+
+function closeHelpModal() {
+  var modal = document.getElementById("help-modal");
+  if (modal) modal.remove();
+}
+
+// ============ Make modal functions globally accessible (module scope fix) ============
+window.openChangePasswordModal = openChangePasswordModal;
+window.closeChangePasswordModal = closeChangePasswordModal;
+window.openHelpModal = openHelpModal;
+window.closeHelpModal = closeHelpModal;
