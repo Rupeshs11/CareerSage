@@ -45,7 +45,7 @@ def generate_battle_questions(topic):
     from ..services.ai_service import AIService
     ai = AIService()
 
-    prompt = f"""Generate exactly 10 multiple-choice quiz questions about "{topic}" for a rapid-fire skill battle.
+    prompt = f"""Generate exactly 10 multiple-choice quiz questions SPECIFICALLY about "{topic}" for a rapid-fire skill battle.
 
 Return ONLY valid JSON in this exact format:
 {{
@@ -63,7 +63,10 @@ Rules:
 - "correct" is the 0-based index of the right answer
 - Questions should range from easy to hard
 - Keep questions concise (rapid-fire style)
-- Cover different aspects of {topic}
+- CRITICAL: ALL questions MUST be specifically about {topic}. Do NOT generate generic programming or computer science questions unless the topic IS programming/computer science.
+- For example, if the topic is "AutoCAD", ask about AutoCAD commands, tools, workflows, file formats, etc.
+- If the topic is "SolidWorks", ask about sketching, assemblies, simulations, etc.
+- Cover different aspects and features of {topic}
 - Exactly 4 options per question
 - Exactly 10 questions
 - IMPORTANT: Randomize the position of the correct answer across questions. Do NOT always put the correct answer at the same index."""
@@ -90,33 +93,33 @@ Rules:
                     q['correct'] = shuffled.index(correct_answer)
             return questions
 
-    # Fallback: generate generic questions
+    # Fallback: generate topic-aware questions
     return generate_fallback_questions(topic)
 
 
 def generate_fallback_questions(topic):
-    """Fallback questions if AI fails"""
+    """Fallback questions - dynamically generated to be relevant to the topic"""
     templates = [
-        {"question": f"Which of the following is a core concept in {topic}?",
-         "options": ["Abstraction", "Recursion", "Polymorphism", "All of the above"], "correct": 3},
-        {"question": f"What is the primary purpose of {topic}?",
-         "options": ["Data storage", "Problem solving", "User interface", "Networking"], "correct": 1},
-        {"question": f"Which tool is commonly used in {topic}?",
-         "options": ["VS Code", "Photoshop", "Excel", "PowerPoint"], "correct": 0},
-        {"question": f"What skill is most important for {topic}?",
-         "options": ["Communication", "Logical thinking", "Drawing", "Singing"], "correct": 1},
-        {"question": f"Which language is often associated with {topic}?",
-         "options": ["Python", "Latin", "French", "Mandarin"], "correct": 0},
-        {"question": f"What does debugging mean in {topic}?",
-         "options": ["Adding features", "Finding and fixing errors", "Deleting code", "Writing docs"], "correct": 1},
-        {"question": f"Which is a best practice in {topic}?",
-         "options": ["Skip testing", "Write clean code", "Avoid comments", "Use one variable"], "correct": 1},
-        {"question": f"What is version control used for in {topic}?",
-         "options": ["Tracking changes", "Sending emails", "Designing UI", "Database queries"], "correct": 0},
-        {"question": f"Which of these helps learn {topic} faster?",
-         "options": ["Practice projects", "Memorizing syntax", "Watching only", "Copying code"], "correct": 0},
-        {"question": f"What is an API in the context of {topic}?",
-         "options": ["A programming interface", "A database", "A frontend", "A design tool"], "correct": 0},
+        {"question": f"Which of the following is a key feature of {topic}?",
+         "options": [f"Core functionality of {topic}", "Unrelated feature", "Not applicable", "None of these"], "correct": 0},
+        {"question": f"What is {topic} primarily used for?",
+         "options": ["Entertainment only", f"Professional work in its domain", "Social media", "Gaming"], "correct": 1},
+        {"question": f"Who would typically use {topic} in their work?",
+         "options": ["Chefs", f"Professionals in the {topic} field", "Athletes", "Musicians"], "correct": 1},
+        {"question": f"What is the first step to learning {topic}?",
+         "options": ["Skip basics", "Memorize everything", f"Understand {topic} fundamentals", "Ignore documentation"], "correct": 2},
+        {"question": f"Which skill is most helpful when working with {topic}?",
+         "options": ["Cooking", f"Understanding {topic} concepts", "Singing", "Dancing"], "correct": 1},
+        {"question": f"What makes {topic} valuable in industry?",
+         "options": ["It's free", "It's old", f"It solves real-world problems", "It's simple"], "correct": 2},
+        {"question": f"How can you improve your {topic} skills?",
+         "options": [f"Practice with {topic} projects", "Only watch videos", "Avoid practicing", "Read unrelated books"], "correct": 0},
+        {"question": f"What type of professional certification exists for {topic}?",
+         "options": ["Cooking certificate", f"{topic} professional certification", "Driving license", "Sports medal"], "correct": 1},
+        {"question": f"Which is a reliable place to learn {topic}?",
+         "options": [f"Official {topic} documentation/courses", "Random social media", "Unverified blogs only", "None of these"], "correct": 0},
+        {"question": f"What is a common beginner mistake when learning {topic}?",
+         "options": ["Practicing too much", f"Skipping {topic} fundamentals", "Reading documentation", "Asking questions"], "correct": 1},
     ]
     for i, q in enumerate(templates):
         q['id'] = i + 1
