@@ -13,7 +13,7 @@
 
   // ============ Header HTML ============
   var headerHTML =
-    '<header id="site-header" class="fixed top-0 left-0 w-full z-40" style="background:transparent">' +
+    '<header id="site-header" class="fixed top-0 left-0 w-full z-40" style="background:transparent;transition:background 0.3s ease,backdrop-filter 0.3s ease,border-bottom 0.3s ease">' +
     '<div class="container mx-auto px-4 md:px-6 py-3 flex justify-between items-center">' +
     // Left group: Hamburger + Logo
     '<div class="flex items-center gap-1">' +
@@ -100,18 +100,33 @@
   // ============ Navbar Scroll ============
   function initNavbarScroll() {
     var pill = document.getElementById("navbar-pill");
-    if (!pill) return;
+    var header = document.getElementById("site-header");
+    if (!pill || !header) return;
     var isHome =
       window.location.pathname === "/" ||
       window.location.pathname.endsWith("/index.html") ||
       window.location.pathname.endsWith("/index");
     if (!isHome) {
       pill.classList.add("solid");
+      header.style.background = "rgba(15, 23, 42, 0.95)";
+      header.style.backdropFilter = "blur(12px)";
+      header.style.webkitBackdropFilter = "blur(12px)";
       return;
     }
     window.addEventListener("scroll", function () {
-      if (window.scrollY > 60) pill.classList.add("scrolled");
-      else pill.classList.remove("scrolled");
+      if (window.scrollY > 60) {
+        pill.classList.add("scrolled");
+        header.style.background = "rgba(15, 23, 42, 0.95)";
+        header.style.backdropFilter = "blur(12px)";
+        header.style.webkitBackdropFilter = "blur(12px)";
+        header.style.borderBottom = "1px solid rgba(255,255,255,0.06)";
+      } else {
+        pill.classList.remove("scrolled");
+        header.style.background = "transparent";
+        header.style.backdropFilter = "none";
+        header.style.webkitBackdropFilter = "none";
+        header.style.borderBottom = "none";
+      }
     });
   }
 

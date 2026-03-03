@@ -1,5 +1,5 @@
 export const headerHTML = `
-<header id="site-header" class="fixed top-0 left-0 w-full z-40" style="background:transparent">
+<header id="site-header" class="fixed top-0 left-0 w-full z-40" style="background:transparent;transition:background 0.3s ease,backdrop-filter 0.3s ease,border-bottom 0.3s ease">
     <div class="container mx-auto px-4 md:px-6 py-3 flex justify-between items-center">
         <!-- Left group: Hamburger + Logo -->
         <div class="flex items-center gap-1">
