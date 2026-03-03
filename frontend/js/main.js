@@ -84,11 +84,11 @@ function initAuthUI() {
           </div>
           <span class="text-sm text-gray-300 group-hover:text-white font-medium">Dashboard</span>
         </a>
-        <a href="./roadmaps.html" class="flex items-center gap-3 mx-2 px-3 py-2.5 rounded-lg hover:bg-white/[0.06] transition-all group">
-          <div class="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center group-hover:bg-purple-500/20 transition-colors">
-            <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
+        <a href="#" onclick="openChangePasswordModal()" class="flex items-center gap-3 mx-2 px-3 py-2.5 rounded-lg hover:bg-white/[0.06] transition-all group">
+          <div class="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center group-hover:bg-amber-500/20 transition-colors">
+            <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path></svg>
           </div>
-          <span class="text-sm text-gray-300 group-hover:text-white font-medium">My Roadmaps</span>
+          <span class="text-sm text-gray-300 group-hover:text-white font-medium">Change Password</span>
         </a>
       </div>
       <div class="border-t border-white/[0.08] py-1.5">
@@ -2749,4 +2749,116 @@ function initRoadmapVisualPage() {
 
   // Initialize the page by loading data and rendering
   initializePage();
+}
+
+// ============ Change Password Modal ============
+function openChangePasswordModal() {
+  // Remove existing modal if any
+  var existing = document.getElementById("change-password-modal");
+  if (existing) existing.remove();
+
+  var modal = document.createElement("div");
+  modal.id = "change-password-modal";
+  modal.className =
+    "fixed inset-0 z-[9999] flex items-center justify-center p-4";
+  modal.innerHTML = `
+    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeChangePasswordModal()"></div>
+    <div class="relative bg-[#0f172a] border border-white/[0.08] rounded-2xl p-6 w-full max-w-sm shadow-2xl shadow-black/40" style="animation: modalIn 0.2s ease-out">
+      <style>@keyframes modalIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}</style>
+      <div class="flex items-center justify-between mb-5">
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-lg bg-amber-500/15 flex items-center justify-center">
+            <svg class="w-4.5 h-4.5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path></svg>
+          </div>
+          <h3 class="text-white font-semibold text-lg">Change Password</h3>
+        </div>
+        <button onclick="closeChangePasswordModal()" class="text-gray-500 hover:text-white transition p-1 rounded-lg hover:bg-white/5">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+      </div>
+      <form id="change-password-form" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-gray-400 mb-1.5 uppercase tracking-wider">Current Password</label>
+          <input type="password" id="cp-current" required class="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-2.5 text-white text-sm placeholder-gray-600 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/20 transition" placeholder="••••••••">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-400 mb-1.5 uppercase tracking-wider">New Password</label>
+          <input type="password" id="cp-new" required minlength="8" class="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-2.5 text-white text-sm placeholder-gray-600 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/20 transition" placeholder="Min 8 characters">
+        </div>
+        <div id="cp-message" class="hidden text-xs p-2.5 rounded-lg text-center"></div>
+        <button type="submit" id="cp-submit" class="w-full py-2.5 rounded-xl text-white font-semibold text-sm transition" style="background:linear-gradient(135deg,#f59e0b,#d97706)">
+          Update Password
+        </button>
+      </form>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  document
+    .getElementById("change-password-form")
+    .addEventListener("submit", async function (e) {
+      e.preventDefault();
+      var current = document.getElementById("cp-current").value;
+      var newPw = document.getElementById("cp-new").value;
+      var btn = document.getElementById("cp-submit");
+      var msg = document.getElementById("cp-message");
+
+      if (newPw.length < 8) {
+        msg.className =
+          "text-xs p-2.5 rounded-lg text-center bg-red-500/10 border border-red-500/20 text-red-400";
+        msg.textContent = "New password must be at least 8 characters";
+        msg.classList.remove("hidden");
+        return;
+      }
+
+      btn.disabled = true;
+      btn.innerHTML =
+        '<svg class="animate-spin w-5 h-5 mx-auto" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>';
+
+      try {
+        var token = localStorage.getItem("careersage_token");
+        var resp = await fetch("/api/auth/me", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + token,
+          },
+          body: JSON.stringify({
+            current_password: current,
+            new_password: newPw,
+          }),
+        });
+        var data = await resp.json();
+
+        if (resp.ok) {
+          msg.className =
+            "text-xs p-2.5 rounded-lg text-center bg-green-500/10 border border-green-500/20 text-green-400";
+          msg.textContent = "Password updated successfully!";
+          msg.classList.remove("hidden");
+          btn.textContent = "✓ Done";
+          setTimeout(function () {
+            closeChangePasswordModal();
+          }, 1500);
+        } else {
+          msg.className =
+            "text-xs p-2.5 rounded-lg text-center bg-red-500/10 border border-red-500/20 text-red-400";
+          msg.textContent = data.error || "Failed to update password";
+          msg.classList.remove("hidden");
+          btn.disabled = false;
+          btn.textContent = "Update Password";
+        }
+      } catch (err) {
+        msg.className =
+          "text-xs p-2.5 rounded-lg text-center bg-red-500/10 border border-red-500/20 text-red-400";
+        msg.textContent = "Network error. Please try again.";
+        msg.classList.remove("hidden");
+        btn.disabled = false;
+        btn.textContent = "Update Password";
+      }
+    });
+}
+
+function closeChangePasswordModal() {
+  var modal = document.getElementById("change-password-modal");
+  if (modal) modal.remove();
 }
