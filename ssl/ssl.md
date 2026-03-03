@@ -1,50 +1,61 @@
 # 🔒 SSL Setup Guide — CareerSage
 
-> Enable HTTPS with a free Let's Encrypt SSL certificate using Certbot + Nginx on Ubuntu EC2.
+> After running both **Terraform** and **Build & Deploy** pipelines, follow these steps to enable HTTPS.
 
 ## Prerequisites
 
-- App already running on EC2 (Docker containers up on port `5000`)
-- Domain DNS (A record) pointing to your EC2 public IP
-- Ports **80** and **443** open in AWS Security Group
+- ✅ Terraform pipeline ran (EC2 provisioned, app running on port 5000)
+- ✅ Build & Deploy pipeline ran (Docker image deployed)
+- ✅ Domain purchased (e.g., from Hostinger, Namecheap, GoDaddy)
+- ✅ AWS Security Group has ports **80** and **443** open (0.0.0.0/0)
 
 ---
 
-## Step 1 — Install Certbot
+## Step 1 — Get EC2 Public IP
+
+```bash
+ssh -i your-key.pem ubuntu@YOUR_EC2_IP
+curl -s ifconfig.me
+```
+
+## Step 2 — Point Domain to EC2
+
+Go to your domain provider → DNS settings → Add/Update A records:
+
+| Type | Name | Value       |
+| ---- | ---- | ----------- |
+| A    | @    | YOUR_EC2_IP |
+| A    | www  | YOUR_EC2_IP |
+
+**⚠️ Wait until DNS propagates** — verify before proceeding:
+
+```bash
+nslookup knoxcloud.tech 8.8.8.8
+```
+
+Must show your EC2 IP. Check globally at [dnschecker.org](https://dnschecker.org/#A/knoxcloud.tech).
+
+> DNS can take 2-15 minutes. Do NOT proceed until it resolves correctly.
+
+## Step 3 — Install Certbot
 
 ```bash
 sudo apt install certbot python3-certbot-nginx -y
 ```
 
-## Step 2 — Configure Nginx for SSL
+## Step 4 — Configure HTTP-Only Nginx (No SSL Yet)
+
+> ⚠️ Do NOT add SSL config before getting the certificate — nginx will fail because cert files don't exist yet.
 
 ```bash
-sudo vim /etc/nginx/sites-enabled/careersage
-```
-
-Paste the following config:
-
-```nginx
+sudo tee /etc/nginx/sites-enabled/careersage > /dev/null << 'EOF'
 upstream flask_app {
     server 127.0.0.1:5000;
 }
 
-# Redirect HTTP → HTTPS
 server {
     listen 80;
     server_name knoxcloud.tech www.knoxcloud.tech;
-    return 301 https://$host$request_uri;
-}
-
-# HTTPS Server
-server {
-    listen 443 ssl;
-    server_name knoxcloud.tech www.knoxcloud.tech;
-
-    ssl_certificate /etc/letsencrypt/live/knoxcloud.tech/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/knoxcloud.tech/privkey.pem;
-    include /etc/letsencrypt/options-ssl-nginx.conf;
-    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
 
     location / {
         proxy_pass http://flask_app;
@@ -69,30 +80,33 @@ server {
         proxy_send_timeout 86400s;
     }
 }
-```
+EOF
 
-## Step 3 — Test & Restart Nginx
-
-```bash
+sudo rm -f /etc/nginx/sites-enabled/default
 sudo nginx -t && sudo systemctl restart nginx
 ```
 
-## Step 4 — Get SSL Certificate
+✅ Verify `http://knoxcloud.tech` loads in browser before proceeding.
+
+## Step 5 — Get SSL Certificate (Free via Let's Encrypt)
 
 ```bash
-sudo certbot --nginx -d knoxcloud.tech -d www.knoxcloud.tech
+sudo certbot --nginx -d knoxcloud.tech
 ```
 
-If the `--nginx` plugin fails, use **standalone mode** instead:
+- Enter email → **Y** (agree) → **N** (no share)
 
-```bash
-# Stop Nginx temporarily, get cert, restart
-sudo systemctl stop nginx
-sudo certbot certonly --standalone -d knoxcloud.tech -d www.knoxcloud.tech
-sudo systemctl start nginx
-```
+Certbot will **automatically** add SSL to your nginx config and restart nginx.
 
-## Step 5 — Auto-Renew (Optional)
+> If `www` DNS has propagated too, expand the cert:
+>
+> ```bash
+> sudo certbot --expand -d knoxcloud.tech -d www.knoxcloud.tech
+> ```
+
+> If `www` fails due to DNS propagation, skip it for now and add it later.
+
+## Step 6 — Auto-Renew SSL
 
 Certificates expire every 90 days. Set up auto-renewal:
 
@@ -100,11 +114,24 @@ Certificates expire every 90 days. Set up auto-renewal:
 echo "0 0,12 * * * root certbot renew --quiet --deploy-hook 'systemctl reload nginx'" | sudo tee /etc/cron.d/certbot-renew
 ```
 
----
-
-## ✅ Verify
+## Step 7 — Verify
 
 Visit `https://knoxcloud.tech` — you should see the green padlock 🔒
+
+---
+
+## ⚠️ Troubleshooting
+
+| Problem                                | Cause                                                 | Fix                                                              |
+| -------------------------------------- | ----------------------------------------------------- | ---------------------------------------------------------------- |
+| Certbot: "no valid A records"          | DNS not updated or not propagated                     | Update A records, wait, verify with `nslookup domain 8.8.8.8`    |
+| Certbot: "Timeout / firewall"          | Port 80 or 443 blocked                                | Open ports 80 & 443 in AWS Security Group                        |
+| Certbot: "Could not bind port 80"      | Nginx using port 80                                   | Stop nginx first: `sudo systemctl stop nginx`, get cert, restart |
+| Certbot: "Could not find server block" | Used `--nginx` but nginx config missing `server_name` | Ensure Step 4 is done first                                      |
+| nginx: "ssl_certificate not found"     | Added SSL config before getting cert                  | Follow Step 4 (HTTP only) → Step 5 (certbot adds SSL)            |
+| HTTPS not loading in browser           | Port 443 not open                                     | Add HTTPS (443) inbound rule in AWS Security Group               |
+| `www` not working                      | Missing www A record or DNS not propagated            | Add `www` A record, wait, then `certbot --expand`                |
+| "duplicate upstream" nginx error       | Config exists in both `conf.d/` and `sites-enabled/`  | Remove one: `sudo rm /etc/nginx/conf.d/careersage.conf`          |
 
 ---
 

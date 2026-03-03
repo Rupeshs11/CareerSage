@@ -63,7 +63,7 @@
     '<div class="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-indigo-400">' +
     '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>' +
     "</div></button>" +
-    '<div id="accountDropdown" class="dropdown-content right-0 min-w-[200px]"></div>' +
+    '<div id="accountDropdown" class="dropdown-content right-0 min-w-[260px]"></div>' +
     "</div></div>" +
     "</div>" + // end container
     '<div id="mobile-menu" class="hidden md:hidden mt-2 navbar-glass mx-4 px-4 py-3 space-y-1">' +
@@ -197,27 +197,69 @@
         );
       }
       accountDropdown.innerHTML =
-        '<div class="p-3 border-b border-white/[0.08]">' +
-        '<p class="text-white font-semibold">' +
+        // Profile header with gradient avatar
+        '<div class="p-4 border-b border-white/[0.08]">' +
+        '<div class="flex items-center gap-3">' +
+        '<div class="w-11 h-11 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 ring-2 ring-white/10">' +
+        '<span class="text-white font-bold text-lg">' +
+        (user.name ? user.name.charAt(0).toUpperCase() : "U") +
+        "</span>" +
+        "</div>" +
+        '<div class="flex-1 min-w-0">' +
+        '<p class="text-white font-semibold text-sm truncate">' +
         user.name +
         "</p>" +
-        '<p class="text-gray-400 text-sm">' +
+        '<p class="text-gray-400 text-xs truncate">' +
         user.email +
-        "</p></div>" +
-        '<a href="./dashboard.html" class="block">' +
-        '<svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>' +
-        '<span class="font-semibold">Dashboard</span></a>' +
-        '<a href="#" onclick="logoutUser()">' +
-        '<svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>' +
-        '<span class="font-semibold text-red-400">Logout</span></a>';
+        "</p>" +
+        "</div>" +
+        "</div>" +
+        '<div class="mt-3 flex items-center gap-1.5">' +
+        '<span class="inline-flex items-center gap-1 text-[10px] font-medium bg-indigo-500/15 text-indigo-400 px-2 py-0.5 rounded-full border border-indigo-500/20">' +
+        '<svg class="w-2.5 h-2.5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd"/></svg>' +
+        "Member</span>" +
+        "</div>" +
+        "</div>" +
+        // Menu items
+        '<div class="py-1.5">' +
+        '<a href="./dashboard.html" class="flex items-center gap-3 mx-2 px-3 py-2.5 rounded-lg hover:bg-white/[0.06] transition-all group">' +
+        '<div class="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500/20 transition-colors">' +
+        '<svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>' +
+        "</div>" +
+        '<span class="text-sm text-gray-300 group-hover:text-white font-medium">Dashboard</span>' +
+        "</a>" +
+        '<a href="./roadmaps.html" class="flex items-center gap-3 mx-2 px-3 py-2.5 rounded-lg hover:bg-white/[0.06] transition-all group">' +
+        '<div class="w-8 h-8 rounded-lg bg-purple-500/10 flex items-center justify-center group-hover:bg-purple-500/20 transition-colors">' +
+        '<svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>' +
+        "</div>" +
+        '<span class="text-sm text-gray-300 group-hover:text-white font-medium">My Roadmaps</span>' +
+        "</a>" +
+        "</div>" +
+        // Logout
+        '<div class="border-t border-white/[0.08] py-1.5">' +
+        '<a href="#" onclick="logoutUser()" class="flex items-center gap-3 mx-2 px-3 py-2.5 rounded-lg hover:bg-red-500/10 transition-all group">' +
+        '<div class="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center group-hover:bg-red-500/20 transition-colors">' +
+        '<svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>' +
+        "</div>" +
+        '<span class="text-sm text-red-400 group-hover:text-red-300 font-medium">Sign Out</span>' +
+        "</a>" +
+        "</div>";
     } else {
       accountDropdown.innerHTML =
-        '<a href="./login.html">' +
-        '<svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>' +
-        '<span class="font-semibold">Login</span></a>' +
-        '<a href="./register.html">' +
-        '<svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>' +
-        '<span class="font-semibold">Register</span></a>';
+        '<div class="py-2">' +
+        '<a href="./login.html" class="flex items-center gap-3 mx-2 px-3 py-2.5 rounded-lg hover:bg-white/[0.06] transition-all group">' +
+        '<div class="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center group-hover:bg-indigo-500/20 transition-colors">' +
+        '<svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>' +
+        "</div>" +
+        '<span class="text-sm text-gray-300 group-hover:text-white font-medium">Login</span>' +
+        "</a>" +
+        '<a href="./register.html" class="flex items-center gap-3 mx-2 px-3 py-2.5 rounded-lg hover:bg-white/[0.06] transition-all group">' +
+        '<div class="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center group-hover:bg-green-500/20 transition-colors">' +
+        '<svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>' +
+        "</div>" +
+        '<span class="text-sm text-gray-300 group-hover:text-white font-medium">Register</span>' +
+        "</a>" +
+        "</div>";
     }
   }
 
