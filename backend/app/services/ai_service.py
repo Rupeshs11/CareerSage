@@ -43,21 +43,60 @@ class AIService:
                 return False
         
         tech_keywords = [
+            # Roles & General
             'developer', 'engineer', 'programmer', 'software', 'web', 'mobile',
+            'architect', 'administrator', 'analyst', 'consultant', 'devrel',
+            # AI / ML / Data
             'data', 'ai', 'machine learning', 'ml', 'deep learning',
-            'devops', 'cloud', 'aws', 'azure', 'gcp',
-            'frontend', 'backend', 'fullstack', 'full stack',
-            'python', 'java', 'javascript', 'react', 'angular', 'vue',
-            'node', 'django', 'flask', 'spring',
-            'database', 'sql', 'nosql', 'mongodb', 'postgresql',
-            'embedded', 'iot', 'robotics', 'firmware',
-            'cyber', 'security', 'hacking', 'penetration',
-            'blockchain', 'crypto', 'smart contract',
-            'game', 'unity', 'unreal',
-            'android', 'ios', 'flutter', 'react native',
-            'ui', 'ux', 'design', 'product',
-            'qa', 'testing', 'automation',
-            'tech', 'it', 'computer', 'coding', 'programming'
+            'nlp', 'neural', 'generative', 'llm', 'chatbot',
+            # DevOps & Cloud
+            'devops', 'cloud', 'aws', 'azure', 'gcp', 'docker', 'kubernetes',
+            'terraform', 'ansible', 'jenkins', 'ci/cd', 'linux', 'sre',
+            # Development areas
+            'frontend', 'backend', 'fullstack', 'full stack', 'api',
+            # Languages & Frameworks
+            'python', 'java', 'javascript', 'typescript', 'react', 'angular', 'vue',
+            'node', 'django', 'flask', 'spring', 'express', 'fastapi',
+            'c#', 'csharp', 'c sharp', '.net', 'dotnet', 'asp.net',
+            'c++', 'cpp', 'rust', 'golang', 'go lang', 'swift', 'kotlin',
+            'ruby', 'rails', 'php', 'laravel', 'perl', 'scala', 'elixir',
+            'r ', 'rust', 'dart', 'lua', 'haskell', 'clojure',
+            # Databases
+            'database', 'sql', 'nosql', 'mongodb', 'postgresql', 'mysql',
+            'redis', 'cassandra', 'dynamodb', 'firebase', 'supabase',
+            # Embedded & IoT
+            'embedded', 'iot', 'robotics', 'firmware', 'arduino', 'raspberry',
+            'plc', 'scada', 'microcontroller',
+            # Security
+            'cyber', 'security', 'hacking', 'penetration', 'ethical hack',
+            'soc', 'siem', 'forensic',
+            # Blockchain
+            'blockchain', 'crypto', 'smart contract', 'solidity', 'web3',
+            # Game Dev
+            'game', 'unity', 'unreal', 'godot',
+            # Mobile
+            'android', 'ios', 'flutter', 'react native', 'swiftui',
+            # Design & UX
+            'ui', 'ux', 'design', 'product', 'figma', 'wireframe',
+            # QA & Testing
+            'qa', 'testing', 'automation', 'selenium', 'playwright', 'cypress',
+            # CAD, 3D & Engineering Software
+            'autocad', 'solidworks', 'catia', 'creo', 'revit', 'fusion 360',
+            'inventor', 'freecad', 'openscad', 'sketchup',
+            '3d', 'cad', 'cam', 'cae', 'modeling', 'simulation',
+            'blender', 'maya', '3ds max', 'zbrush', 'houdini',
+            'ansys', 'abaqus', 'comsol', 'fea', 'cfd',
+            # Scientific / Math Software
+            'matlab', 'mathematica', 'labview', 'simulink', 'octave',
+            'spss', 'stata', 'tableau', 'power bi', 'sas',
+            # ERP & Business Software
+            'sap', 'erp', 'crm', 'salesforce', 'servicenow', 'oracle',
+            # Misc tech
+            'tech', 'it', 'computer', 'coding', 'programming',
+            'networking', 'cisco', 'ccna', 'comptia', 'vmware',
+            'photoshop', 'illustrator', 'premiere', 'after effects',
+            'excel', 'vba', 'macro', 'sharepoint', 'office 365',
+            'git', 'github', 'gitlab', 'version control',
         ]
         
         is_tech = any(keyword in topic_lower for keyword in tech_keywords)

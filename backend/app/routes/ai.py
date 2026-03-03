@@ -102,16 +102,18 @@ def generate_roadmap():
     if not topic:
         return jsonify({'error': 'Topic is required'}), 400
     
-    # Validate topic - reject gibberish
+    # Validate topic - reject gibberish but allow valid symbols (#, ., +)
     import re
     topic_clean = topic.strip()
-    letters_only = re.sub(r'\s', '', topic_clean)
-    if len(letters_only) < 2:
+    # Strip non-alphabetical chars for gibberish detection only
+    alpha_only = re.sub(r'[^a-zA-Z]', '', topic_clean)
+    if len(alpha_only) < 1:
         return jsonify({'error': 'Please enter a valid learning topic'}), 400
-    vowels = len(re.findall(r'[aeiouAEIOU]', letters_only))
-    if len(letters_only) > 0 and (vowels / len(letters_only)) < 0.1:
+    vowels = len(re.findall(r'[aeiouAEIOU]', alpha_only))
+    # Only check vowel ratio for longer inputs (short ones like "C#" or "R" are valid)
+    if len(alpha_only) > 3 and (vowels / len(alpha_only)) < 0.1:
         return jsonify({'error': 'That doesn\'t look like a valid topic. Try something like "Frontend Development" or "Machine Learning".'}), 400
-    if re.search(r'[^aeiou\s]{6,}', topic_clean, re.IGNORECASE):
+    if len(alpha_only) > 6 and re.search(r'[^aeiou]{7,}', alpha_only, re.IGNORECASE):
         return jsonify({'error': 'That doesn\'t look like a valid topic. Try something like "Frontend Development" or "Machine Learning".'}), 400
     
     try:
@@ -242,28 +244,200 @@ def suggest_resources():
     
     resources = {
         'html': [
+            {'title': 'HTML Full Course - freeCodeCamp', 'url': 'https://www.youtube.com/watch?v=kUMe1FH4CHE', 'type': 'video'},
             {'title': 'MDN HTML Guide', 'url': 'https://developer.mozilla.org/en-US/docs/Learn/HTML', 'type': 'documentation'},
             {'title': 'freeCodeCamp HTML', 'url': 'https://www.freecodecamp.org/learn/responsive-web-design/', 'type': 'course'},
         ],
         'css': [
+            {'title': 'CSS Tutorial - freeCodeCamp', 'url': 'https://www.youtube.com/watch?v=1Rs2ND1ryYc', 'type': 'video'},
             {'title': 'CSS-Tricks', 'url': 'https://css-tricks.com/', 'type': 'blog'},
             {'title': 'Flexbox Froggy', 'url': 'https://flexboxfroggy.com/', 'type': 'interactive'},
         ],
         'javascript': [
+            {'title': 'JavaScript Full Course - freeCodeCamp', 'url': 'https://www.youtube.com/watch?v=PkZNo7MFNFg', 'type': 'video'},
+            {'title': 'Namaste JavaScript - Akshay Saini', 'url': 'https://www.youtube.com/watch?v=pN6jk0uUrfo', 'type': 'video'},
             {'title': 'JavaScript.info', 'url': 'https://javascript.info/', 'type': 'tutorial'},
             {'title': 'Eloquent JavaScript', 'url': 'https://eloquentjavascript.net/', 'type': 'book'},
         ],
-        'react': [
-            {'title': 'React Official Docs', 'url': 'https://react.dev/', 'type': 'documentation'},
-            {'title': 'React Tutorial', 'url': 'https://react.dev/learn', 'type': 'tutorial'},
+        'typescript': [
+            {'title': 'TypeScript for Beginners - Traversy Media', 'url': 'https://www.youtube.com/watch?v=BCg4U1FzODs', 'type': 'video'},
+            {'title': 'TypeScript Handbook', 'url': 'https://www.typescriptlang.org/docs/handbook/', 'type': 'documentation'},
         ],
-        'default': [
-            {'title': 'freeCodeCamp', 'url': 'https://www.freecodecamp.org/', 'type': 'course'},
-            {'title': 'Codecademy', 'url': 'https://www.codecademy.com/', 'type': 'course'},
-        ]
+        'react': [
+            {'title': 'React Full Course - freeCodeCamp', 'url': 'https://www.youtube.com/watch?v=bMknfKXIFA8', 'type': 'video'},
+            {'title': 'React in 100 Seconds - Fireship', 'url': 'https://www.youtube.com/watch?v=Tn6-PIqc4UM', 'type': 'video'},
+            {'title': 'React Official Docs', 'url': 'https://react.dev/', 'type': 'documentation'},
+        ],
+        'angular': [
+            {'title': 'Angular Full Course - freeCodeCamp', 'url': 'https://www.youtube.com/watch?v=3qBXWUpoPHo', 'type': 'video'},
+            {'title': 'Angular Official Docs', 'url': 'https://angular.io/docs', 'type': 'documentation'},
+        ],
+        'vue': [
+            {'title': 'Vue.js Course - freeCodeCamp', 'url': 'https://www.youtube.com/watch?v=FXpIoQ_rT_c', 'type': 'video'},
+            {'title': 'Vue.js Official Guide', 'url': 'https://vuejs.org/guide/', 'type': 'documentation'},
+        ],
+        'node': [
+            {'title': 'Node.js Full Course - freeCodeCamp', 'url': 'https://www.youtube.com/watch?v=Oe421EPjeBE', 'type': 'video'},
+            {'title': 'Node.js Crash Course - Traversy Media', 'url': 'https://www.youtube.com/watch?v=fBNz5xF-Kx4', 'type': 'video'},
+            {'title': 'Node.js Documentation', 'url': 'https://nodejs.org/en/docs/', 'type': 'documentation'},
+        ],
+        'express': [
+            {'title': 'Express.js Crash Course - Traversy Media', 'url': 'https://www.youtube.com/watch?v=L72fhGm1tfE', 'type': 'video'},
+            {'title': 'Express.js Docs', 'url': 'https://expressjs.com/', 'type': 'documentation'},
+        ],
+        'python': [
+            {'title': 'Python Full Course - freeCodeCamp', 'url': 'https://www.youtube.com/watch?v=rfscVS0vtbw', 'type': 'video'},
+            {'title': 'Python Tutorial - Code With Harry (Hindi)', 'url': 'https://www.youtube.com/watch?v=7wnove7K-ZQ', 'type': 'video'},
+            {'title': 'Python Official Docs', 'url': 'https://docs.python.org/3/', 'type': 'documentation'},
+        ],
+        'django': [
+            {'title': 'Django Full Course - freeCodeCamp', 'url': 'https://www.youtube.com/watch?v=F5mRW0jo-U4', 'type': 'video'},
+            {'title': 'Django Official Tutorial', 'url': 'https://docs.djangoproject.com/en/stable/intro/tutorial01/', 'type': 'documentation'},
+        ],
+        'flask': [
+            {'title': 'Flask Course - freeCodeCamp', 'url': 'https://www.youtube.com/watch?v=Z1RJmh_OqeA', 'type': 'video'},
+            {'title': 'Flask Official Docs', 'url': 'https://flask.palletsprojects.com/', 'type': 'documentation'},
+        ],
+        'java': [
+            {'title': 'Java Full Course - freeCodeCamp', 'url': 'https://www.youtube.com/watch?v=grEKMHGYyns', 'type': 'video'},
+            {'title': 'Java Tutorial - Apna College', 'url': 'https://www.youtube.com/watch?v=UmnCZ7-9yDY', 'type': 'video'},
+            {'title': 'Java Documentation', 'url': 'https://docs.oracle.com/javase/tutorial/', 'type': 'documentation'},
+        ],
+        'spring': [
+            {'title': 'Spring Boot Tutorial - freeCodeCamp', 'url': 'https://www.youtube.com/watch?v=9SGDpanrc8U', 'type': 'video'},
+            {'title': 'Spring Official Guides', 'url': 'https://spring.io/guides', 'type': 'documentation'},
+        ],
+        'c#': [
+            {'title': 'C# Full Course - freeCodeCamp', 'url': 'https://www.youtube.com/watch?v=GhQdlMFjVpI', 'type': 'video'},
+            {'title': 'C# Tutorial - Code With Harry (Hindi)', 'url': 'https://www.youtube.com/watch?v=SuLiu5AK9Ps', 'type': 'video'},
+            {'title': 'C# Documentation', 'url': 'https://learn.microsoft.com/en-us/dotnet/csharp/', 'type': 'documentation'},
+        ],
+        '.net': [
+            {'title': '.NET Full Course - freeCodeCamp', 'url': 'https://www.youtube.com/watch?v=hZ1DASYd9rk', 'type': 'video'},
+            {'title': '.NET Documentation', 'url': 'https://learn.microsoft.com/en-us/dotnet/', 'type': 'documentation'},
+        ],
+        'c++': [
+            {'title': 'C++ Full Course - freeCodeCamp', 'url': 'https://www.youtube.com/watch?v=vLnPwxZdW4Y', 'type': 'video'},
+            {'title': 'C++ Tutorial - Apna College', 'url': 'https://www.youtube.com/watch?v=z9bZufPHFLU', 'type': 'video'},
+            {'title': 'C++ Reference', 'url': 'https://cppreference.com/', 'type': 'documentation'},
+        ],
+        'rust': [
+            {'title': 'Rust Full Course - freeCodeCamp', 'url': 'https://www.youtube.com/watch?v=BpPEoZW5IiY', 'type': 'video'},
+            {'title': 'The Rust Book', 'url': 'https://doc.rust-lang.org/book/', 'type': 'documentation'},
+        ],
+        'go': [
+            {'title': 'Go Full Course - freeCodeCamp', 'url': 'https://www.youtube.com/watch?v=un6ZyFkqFKo', 'type': 'video'},
+            {'title': 'Go by Example', 'url': 'https://gobyexample.com/', 'type': 'documentation'},
+        ],
+        'kotlin': [
+            {'title': 'Kotlin Full Course - freeCodeCamp', 'url': 'https://www.youtube.com/watch?v=F9UC9DY-vIU', 'type': 'video'},
+            {'title': 'Kotlin Official Docs', 'url': 'https://kotlinlang.org/docs/', 'type': 'documentation'},
+        ],
+        'swift': [
+            {'title': 'Swift Full Course - freeCodeCamp', 'url': 'https://www.youtube.com/watch?v=comQ1-x2a1Q', 'type': 'video'},
+            {'title': 'Swift Documentation', 'url': 'https://developer.apple.com/swift/', 'type': 'documentation'},
+        ],
+        'flutter': [
+            {'title': 'Flutter Course - freeCodeCamp', 'url': 'https://www.youtube.com/watch?v=VPvVD8t02U8', 'type': 'video'},
+            {'title': 'Flutter Official Docs', 'url': 'https://docs.flutter.dev/', 'type': 'documentation'},
+        ],
+        'docker': [
+            {'title': 'Docker Full Course - TechWorld with Nana', 'url': 'https://www.youtube.com/watch?v=3c-iBn73dDE', 'type': 'video'},
+            {'title': 'Docker Crash Course - Traversy Media', 'url': 'https://www.youtube.com/watch?v=pTFZFxd4hOI', 'type': 'video'},
+            {'title': 'Docker Documentation', 'url': 'https://docs.docker.com/', 'type': 'documentation'},
+        ],
+        'kubernetes': [
+            {'title': 'Kubernetes Course - TechWorld with Nana', 'url': 'https://www.youtube.com/watch?v=X48VuDVv0do', 'type': 'video'},
+            {'title': 'Kubernetes Official Docs', 'url': 'https://kubernetes.io/docs/', 'type': 'documentation'},
+        ],
+        'devops': [
+            {'title': 'DevOps Full Course - freeCodeCamp', 'url': 'https://www.youtube.com/watch?v=j5Zsa_eOXeY', 'type': 'video'},
+            {'title': 'DevOps Roadmap - TechWorld with Nana', 'url': 'https://www.youtube.com/watch?v=9pZ2xmsSDdo', 'type': 'video'},
+        ],
+        'aws': [
+            {'title': 'AWS Certified Cloud Practitioner - freeCodeCamp', 'url': 'https://www.youtube.com/watch?v=SOTamWNgDKc', 'type': 'video'},
+            {'title': 'AWS Documentation', 'url': 'https://docs.aws.amazon.com/', 'type': 'documentation'},
+        ],
+        'mongodb': [
+            {'title': 'MongoDB Full Course - freeCodeCamp', 'url': 'https://www.youtube.com/watch?v=ofme2o29ngU', 'type': 'video'},
+            {'title': 'MongoDB Documentation', 'url': 'https://www.mongodb.com/docs/', 'type': 'documentation'},
+        ],
+        'sql': [
+            {'title': 'SQL Full Course - freeCodeCamp', 'url': 'https://www.youtube.com/watch?v=HXV3zeQKqGY', 'type': 'video'},
+            {'title': 'SQL Tutorial - Apna College', 'url': 'https://www.youtube.com/watch?v=hlGoQC332VM', 'type': 'video'},
+        ],
+        'git': [
+            {'title': 'Git & GitHub Full Course - freeCodeCamp', 'url': 'https://www.youtube.com/watch?v=RGOj5yH7evk', 'type': 'video'},
+            {'title': 'Git Documentation', 'url': 'https://git-scm.com/doc', 'type': 'documentation'},
+        ],
+        'linux': [
+            {'title': 'Linux Full Course - freeCodeCamp', 'url': 'https://www.youtube.com/watch?v=sWbUDq4S6Y8', 'type': 'video'},
+            {'title': 'Linux Command Line - Traversy Media', 'url': 'https://www.youtube.com/watch?v=cBokz0LTizk', 'type': 'video'},
+        ],
+        'machine learning': [
+            {'title': 'Machine Learning Course - freeCodeCamp', 'url': 'https://www.youtube.com/watch?v=NWONeJKn6kc', 'type': 'video'},
+            {'title': 'ML Course - Code With Harry (Hindi)', 'url': 'https://www.youtube.com/watch?v=7uwa9aPbBRU', 'type': 'video'},
+        ],
+        'data science': [
+            {'title': 'Data Science Full Course - freeCodeCamp', 'url': 'https://www.youtube.com/watch?v=ua-CiDNNj30', 'type': 'video'},
+        ],
+        'autocad': [
+            {'title': 'AutoCAD Full Course for Beginners', 'url': 'https://www.youtube.com/watch?v=VtLXsKBgUXo', 'type': 'video'},
+            {'title': 'AutoCAD Documentation', 'url': 'https://help.autodesk.com/view/ACD/2024/ENU/', 'type': 'documentation'},
+        ],
+        'solidworks': [
+            {'title': 'SolidWorks Full Tutorial', 'url': 'https://www.youtube.com/watch?v=qtgmGkEPXs0', 'type': 'video'},
+        ],
+        'matlab': [
+            {'title': 'MATLAB Full Course - freeCodeCamp', 'url': 'https://www.youtube.com/watch?v=7f50sQYjNRA', 'type': 'video'},
+            {'title': 'MATLAB Documentation', 'url': 'https://www.mathworks.com/help/matlab/', 'type': 'documentation'},
+        ],
+        'blender': [
+            {'title': 'Blender Beginner Tutorial - Blender Guru', 'url': 'https://www.youtube.com/watch?v=nIoXOplUvAw', 'type': 'video'},
+        ],
+        'cyber security': [
+            {'title': 'Cybersecurity Full Course - freeCodeCamp', 'url': 'https://www.youtube.com/watch?v=U_P23SqJaDc', 'type': 'video'},
+        ],
+        'blockchain': [
+            {'title': 'Blockchain Full Course - freeCodeCamp', 'url': 'https://www.youtube.com/watch?v=gyMwXuJrbJQ', 'type': 'video'},
+        ],
+        'tailwind': [
+            {'title': 'Tailwind CSS Course - Traversy Media', 'url': 'https://www.youtube.com/watch?v=dFgzHOX84xQ', 'type': 'video'},
+            {'title': 'Tailwind CSS Docs', 'url': 'https://tailwindcss.com/docs', 'type': 'documentation'},
+        ],
+        'next': [
+            {'title': 'Next.js Full Course - freeCodeCamp', 'url': 'https://www.youtube.com/watch?v=mTz0GXj8NN0', 'type': 'video'},
+            {'title': 'Next.js Official Docs', 'url': 'https://nextjs.org/docs', 'type': 'documentation'},
+        ],
+        'php': [
+            {'title': 'PHP Full Course - freeCodeCamp', 'url': 'https://www.youtube.com/watch?v=OK_JCtrrv-c', 'type': 'video'},
+            {'title': 'PHP Documentation', 'url': 'https://www.php.net/docs.php', 'type': 'documentation'},
+        ],
+        'ruby': [
+            {'title': 'Ruby Full Course - freeCodeCamp', 'url': 'https://www.youtube.com/watch?v=t_ispmWmdjY', 'type': 'video'},
+        ],
     }
     
-    topic_resources = resources.get(topic.lower(), resources['default'])
+    # Smart matching: check if any key is contained in the topic
+    topic_lower = topic.lower().strip()
+    topic_resources = resources.get(topic_lower)
+    
+    if not topic_resources:
+        # Try partial matching - e.g. "Node.js" matches "node", "React Native" matches "react"
+        for key in resources:
+            if key in topic_lower or topic_lower in key:
+                topic_resources = resources[key]
+                break
+    
+    if not topic_resources:
+        # Build a YouTube search URL as smart fallback
+        import re
+        safe_query = re.sub(r'[^a-zA-Z0-9 ]', '', topic).replace(' ', '+')
+        topic_resources = [
+            {'title': f'{topic} - Full Tutorial (YouTube)', 'url': f'https://www.youtube.com/results?search_query={safe_query}+full+course+tutorial', 'type': 'video'},
+            {'title': f'freeCodeCamp', 'url': 'https://www.freecodecamp.org/', 'type': 'course'},
+            {'title': f'Search Google for {topic}', 'url': f'https://www.google.com/search?q={safe_query}+tutorial', 'type': 'article'},
+        ]
     
     return jsonify({
         'topic': topic,
