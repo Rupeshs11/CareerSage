@@ -38,6 +38,10 @@ on:
           - build-deploy
           - full
 
+concurrency:
+  group: careersage-pipeline
+  cancel-in-progress: true
+
 jobs:
   # ==========================================
   # Job 1: Terraform (Infrastructure)
@@ -47,6 +51,7 @@ jobs:
   terraform:
     name: "🏗️ Terraform"
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     if: >-
       github.event_name == 'workflow_dispatch' &&
       contains(fromJSON('["terraform-plan","terraform-apply","terraform-destroy","full"]'), github.event.inputs.action)
@@ -136,6 +141,7 @@ jobs:
   build:
     name: "🐳 Build & Push Image"
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     needs: [terraform]
     if: >-
       always() &&
@@ -172,6 +178,7 @@ jobs:
   deploy:
     name: "🚀 Deploy to EC2"
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     needs: [terraform, build]
     if: >-
       always() &&
