@@ -173,8 +173,9 @@ function initRoadmapsPage() {
       if (typeof API !== "undefined" && API.Roadmaps) {
         const response = await API.Roadmaps.getAll();
         allRoadmaps = response.roadmaps || [];
-      } else {
-        console.warn("API not available, using fallback data");
+      }
+      // If API unavailable or returned empty, use fallback
+      if (allRoadmaps.length === 0) {
         allRoadmaps = getFallbackRoadmaps();
       }
       renderNav();
