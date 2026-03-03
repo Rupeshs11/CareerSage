@@ -442,6 +442,7 @@ Rules:
 - Include a brief explanation for each answer
 - Cover different aspects of {skill}
 - Make questions practical and applied, not just theoretical
+- IMPORTANT: Randomize the position of the correct answer across questions. Do NOT always put the correct answer at the same index.
 
 Generate the test now."""
         
@@ -455,6 +456,7 @@ Generate the test now."""
         if not data or 'questions' not in data:
             return None
         
+        import random
         for q in data['questions']:
             if 'options' not in q or len(q['options']) != 4:
                 continue
@@ -462,6 +464,14 @@ Generate the test now."""
                 q['correct'] = 0
             if 'explanation' not in q:
                 q['explanation'] = ''
+            # Shuffle options so correct answer position is random
+            correct_idx = q['correct']
+            if 0 <= correct_idx < len(q['options']):
+                correct_answer = q['options'][correct_idx]
+                shuffled = list(q['options'])
+                random.shuffle(shuffled)
+                q['options'] = shuffled
+                q['correct'] = shuffled.index(correct_answer)
         
         current_app.logger.info(f"Generated {len(data['questions'])} questions for {skill}")
         return data

@@ -65,20 +65,29 @@ Rules:
 - Keep questions concise (rapid-fire style)
 - Cover different aspects of {topic}
 - Exactly 4 options per question
-- Exactly 10 questions"""
+- Exactly 10 questions
+- IMPORTANT: Randomize the position of the correct answer across questions. Do NOT always put the correct answer at the same index."""
 
     content = ai.call_nvidia_api(prompt)
     if content:
         data = ai.parse_json_response(content)
         if data and 'questions' in data:
             questions = data['questions'][:10]
-            # Ensure each question has required fields
+            # Ensure each question has required fields and shuffle options
             for i, q in enumerate(questions):
                 q['id'] = i + 1
                 if 'correct' not in q:
                     q['correct'] = 0
                 if len(q.get('options', [])) != 4:
                     q['options'] = q.get('options', ['A', 'B', 'C', 'D'])[:4]
+                # Shuffle options so correct answer position is random
+                correct_idx = q['correct']
+                if 0 <= correct_idx < len(q['options']):
+                    correct_answer = q['options'][correct_idx]
+                    shuffled = list(q['options'])
+                    random.shuffle(shuffled)
+                    q['options'] = shuffled
+                    q['correct'] = shuffled.index(correct_answer)
             return questions
 
     # Fallback: generate generic questions
