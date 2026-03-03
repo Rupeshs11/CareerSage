@@ -105,8 +105,7 @@
     </style>
 </head>
 
-<body
-    class="bg-[#0a0f1e] text-gray-300 min-h-screen flex items-center justify-center py-10 pb-16 relative overflow-x-hidden">
+<body class="bg-[#0a0f1e] text-gray-300 min-h-screen flex items-center justify-center py-6 relative overflow-hidden">
     <!-- Background effects -->
     <div class="auth-glow absolute inset-0 pointer-events-none"></div>
     <div class="floating-shape w-96 h-96 bg-purple-500 -top-20 -left-20" style="position:absolute"></div>
@@ -129,7 +128,7 @@
             <h2 class="text-xl font-bold text-white mb-1">Create Account</h2>
             <p class="text-gray-500 text-sm mb-6">Fill in your details to get started</p>
 
-            <form id="register-form" class="space-y-4">
+            <form id="register-form" class="space-y-3.5">
                 <!-- Full Name -->
                 <div>
                     <label for="name"
@@ -201,25 +200,6 @@
                             <p id="req-symbol" class="req-badge text-gray-500 flex items-center gap-2"><span
                                     class="req-dot"></span> One symbol (!@#$%^&*)</p>
                         </div>
-                    </div>
-                </div>
-
-                <!-- Confirm Password -->
-                <div>
-                    <label for="confirm-password"
-                        class="block text-xs font-semibold text-gray-400 mb-2 uppercase tracking-wider">Confirm
-                        Password</label>
-                    <div class="relative">
-                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-                            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
-                                </path>
-                            </svg>
-                        </div>
-                        <input type="password" id="confirm-password" name="confirm-password" required
-                            class="input-field w-full rounded-xl pl-10 pr-4 py-3 text-white text-sm placeholder-gray-600 focus:outline-none"
-                            placeholder="••••••••">
                     </div>
                 </div>
 
@@ -299,13 +279,7 @@
             const name = document.getElementById('name').value;
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirm-password').value;
             const submitBtn = document.getElementById('register-btn');
-
-            if (password !== confirmPassword) {
-                alert('Passwords do not match!');
-                return;
-            }
 
             if (!validatePassword(password)) {
                 alert('Password does not meet all requirements!');
