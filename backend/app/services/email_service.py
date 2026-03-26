@@ -76,7 +76,7 @@ def send_friend_request_email(to_email, to_name, from_name):
         <p><span class="highlight">{from_name}</span> wants to be your friend on CareerSage.</p>
         <p>Log in to accept the request, start learning together, and challenge each other to skill battles!</p>
         <p style="text-align:center;margin-top:24px;">
-          <a class="btn" href="#">Open CareerSage</a>
+          <a class="btn" href="13.233.214.175/login.html">Open CareerSage</a>
         </p>"""
     )
     msg = Message(
@@ -96,7 +96,7 @@ def send_battle_invite_email(to_email, to_name, from_name, topic):
         <p>Topic: <span class="topic-badge">{topic}</span></p>
         <p>Jump in now before the challenge expires. Show them what you've got! 🔥</p>
         <p style="text-align:center;margin-top:24px;">
-          <a class="btn" href="#">Join Battle</a>
+          <a class="btn" href="13.233.214.175/login.html">Join Battle</a>
         </p>"""
     )
     msg = Message(
