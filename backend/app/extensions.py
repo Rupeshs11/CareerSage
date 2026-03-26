@@ -22,6 +22,7 @@ flask_mongoengine.json.override_json_encoder = lambda app: None
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
 from flask_socketio import SocketIO
+from flask_mail import Mail
 
 # Database (MongoDB)
 db = MongoEngine()
@@ -34,3 +35,6 @@ cors = CORS()
 
 # Socket.IO for real-time battles
 socketio = SocketIO()
+
+# Email
+mail = Mail()

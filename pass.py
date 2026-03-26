@@ -1,6 +1,6 @@
 import bcrypt
 
-password = "Rupesh@256"
+password = "Pass@123"
 
 # Convert password to bytes
 password_bytes = password.encode('utf-8')

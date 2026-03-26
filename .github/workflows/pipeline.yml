@@ -322,6 +322,9 @@ jobs:
           NVIDIA_API_KEY=${{ secrets.NVIDIA_API_KEY }}
           JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}
           SECRET_KEY=${{ secrets.SECRET_KEY }}
+          MAIL_USERNAME=${{ secrets.MAIL_USERNAME }}
+          MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}
+          MAIL_DEFAULT_SENDER=${{ secrets.MAIL_DEFAULT_SENDER }}
           ENVFILE
           EOF
 

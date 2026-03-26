@@ -101,6 +101,10 @@ def send_friend_request():
     if target_sid:
         socketio.emit('notification', notif.to_dict(), to=target_sid, namespace='/')
 
+    # Send email notification (async, won't block response)
+    from ..services.email_service import send_friend_request_email
+    send_friend_request_email(target.email, target.name, user.name)
+
     return jsonify({'message': 'Friend request sent', 'notification_id': str(notif.id)})
 
 
@@ -271,3 +275,9 @@ def handle_battle_invite(data):
     target_sid = user_sid_map.get(to_user_id)
     if target_sid:
         socketio.emit('notification', notif.to_dict(), to=target_sid, namespace='/')
+
+    # Send email notification (async, won't block response)
+    receiver = User.objects(id=safe_oid(to_user_id)).first()
+    if receiver:
+        from ..services.email_service import send_battle_invite_email
+        send_battle_invite_email(receiver.email, receiver.name, sender.name, topic)
