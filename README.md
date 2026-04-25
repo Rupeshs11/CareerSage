@@ -23,7 +23,7 @@
 
 ## 🚀 What is CareerSage?
 
-CareerSage is a full-stack AI-powered platform that transforms how developers learn, practice, and compete. Instead of passively following tutorials, users get **personalized AI-generated roadmaps**, test their skills with **adaptive quizzes**, and challenge friends to **real-time 1v1 quiz battles** — all powered by NVIDIA's Llama 3.1 Nemotron model.
+CareerSage is a full-stack AI-powered platform that transforms how developers learn, practice, and compete. Instead of passively following tutorials, users get **personalized AI-generated roadmaps**, test their skills with **adaptive quizzes**, and challenge friends to **real-time 1v1 quiz battles** — all powered by NVIDIA's Google Gemma model.
 
 ---
 
@@ -103,7 +103,7 @@ CareerSage/
 │   │   │   ├── battle.py        #   /api/battle — 1v1 matchmaking + SocketIO
 │   │   │   └── friends.py       #   /api/friends — Social features
 │   │   ├── services/            # Business logic
-│   │   │   ├── ai_service.py    #   NVIDIA Llama 3.1 integration
+│   │   │   ├── ai_service.py    #   NVIDIA Google Gemma integration
 │   │   │   └── search_service.py#   DuckDuckGo web search for resources
 │   │   ├── data/                # Seed data (official roadmaps)
 │   │   └── Dataset/             # Training / reference datasets
@@ -155,7 +155,7 @@ CareerSage/
 | **Frontend**         | HTML5, TailwindCSS, Vanilla JavaScript                   |
 | **Backend**          | Python 3.11, Flask 3.0, Flask-RESTful                    |
 | **Database**         | MongoDB (via MongoEngine ODM)                            |
-| **AI Engine**        | NVIDIA Llama 3.1 Nemotron Ultra 253B                     |
+| **AI Engine**        | NVIDIA Google Gemma 4 31B IT                             |
 | **Real-time**        | Flask-SocketIO + Eventlet (WebSocket)                    |
 | **Auth**             | JWT (Flask-JWT-Extended) + bcrypt                        |
 | **Search**           | DuckDuckGo Search API                                    |

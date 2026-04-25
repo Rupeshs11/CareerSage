@@ -42,7 +42,7 @@ class Config:
     # NVIDIA AI Configuration
     NVIDIA_API_KEY = os.getenv('NVIDIA_API_KEY', '')
     NVIDIA_BASE_URL = os.getenv('NVIDIA_BASE_URL', 'https://integrate.api.nvidia.com/v1')
-    NVIDIA_MODEL = os.getenv('NVIDIA_MODEL', 'nvidia/llama-3.1-nemotron-ultra-253b-v1')
+    NVIDIA_MODEL = os.getenv('NVIDIA_MODEL', 'google/gemma-4-31b-it')
     
     # Email (SMTP)
     MAIL_SERVER = os.getenv('MAIL_SERVER', 'smtp.gmail.com')
