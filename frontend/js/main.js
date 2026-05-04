@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const sidebarTemplate = `
         <nav class="w-72 bg-white p-5 flex flex-col border-r h-screen">
             <div class="mb-8">
-                <a href="index.html" class="flex items-center gap-3 mb-2"><div class="bg-black text-white font-bold text-xl rounded-md w-10 h-10 flex items-center justify-center">C</div><h1 class="text-xl font-bold text-gray-900">AI Tutor</h1></a>
+                <a href="index.html" class="flex items-center gap-3 mb-2"><div class="bg-black text-slate-800 font-bold text-xl rounded-md w-10 h-10 flex items-center justify-center">C</div><h1 class="text-xl font-bold text-gray-900">AI Tutor</h1></a>
                 <p class="text-sm text-gray-500">Your personalized learning companion</p>
             </div>
             <ul class="flex flex-col gap-1">
@@ -50,7 +50,7 @@ function initAuthUI() {
     const iconDiv = accountBtn ? accountBtn.querySelector("div") : null;
     if (iconDiv) {
       const initial = user.name ? user.name.charAt(0).toUpperCase() : "U";
-      iconDiv.innerHTML = `<span class="text-white font-bold text-sm">${initial}</span>`;
+      iconDiv.innerHTML = `<span class="text-slate-800 font-bold text-sm">${initial}</span>`;
       iconDiv.classList.remove("text-purple-400");
       iconDiv.classList.add(
         "bg-gradient-to-br",
@@ -61,14 +61,14 @@ function initAuthUI() {
     }
 
     accountDropdown.innerHTML = `
-      <div class="p-4 border-b border-white/[0.08]">
+      <div class="p-4 border-b border-black/[0.08]">
         <div class="flex items-center gap-3">
-          <div class="w-11 h-11 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-lg shadow-indigo-500/20 ring-2 ring-white/10">
-            <span class="text-white font-bold text-lg">${user.name ? user.name.charAt(0).toUpperCase() : "U"}</span>
+          <div class="w-11 h-11 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center shadow-lg shadow-indigo-500/20 ring-2 ring-emerald-100">
+            <span class="text-slate-800 font-bold text-lg">${user.name ? user.name.charAt(0).toUpperCase() : "U"}</span>
           </div>
           <div class="flex-1 min-w-0">
-            <p class="text-white font-semibold text-sm truncate">${user.name}</p>
-            <p class="text-gray-400 text-xs truncate">${user.email}</p>
+            <p class="text-slate-800 font-semibold text-sm truncate">${user.name}</p>
+            <p class="text-slate-500 text-xs truncate">${user.email}</p>
           </div>
         </div>
         <div class="mt-3 flex items-center gap-1.5">
@@ -82,27 +82,27 @@ function initAuthUI() {
           <div class="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center group-hover:bg-blue-500/20 transition-colors">
             <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
           </div>
-          <span class="text-sm text-gray-300 group-hover:text-white font-medium">Dashboard</span>
+          <span class="text-sm text-slate-600 group-hover:text-slate-700 font-medium">Dashboard</span>
         </a>
         <a href="#" onclick="openChangePasswordModal()" class="flex items-center gap-3 mx-2 px-3 py-2.5 rounded-lg hover:bg-white/[0.06] transition-all group">
           <div class="w-8 h-8 rounded-lg bg-amber-500/10 flex items-center justify-center group-hover:bg-amber-500/20 transition-colors">
             <svg class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path></svg>
           </div>
-          <span class="text-sm text-gray-300 group-hover:text-white font-medium">Change Password</span>
+          <span class="text-sm text-slate-600 group-hover:text-slate-700 font-medium">Change Password</span>
         </a>
         <a href="#" onclick="openHelpModal()" class="flex items-center gap-3 mx-2 px-3 py-2.5 rounded-lg hover:bg-white/[0.06] transition-all group">
           <div class="w-8 h-8 rounded-lg bg-cyan-500/10 flex items-center justify-center group-hover:bg-cyan-500/20 transition-colors">
             <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
           </div>
-          <span class="text-sm text-gray-300 group-hover:text-white font-medium">Help & Support</span>
+          <span class="text-sm text-slate-600 group-hover:text-slate-700 font-medium">Help & Support</span>
         </a>
       </div>
-      <div class="border-t border-white/[0.08] py-1.5">
+      <div class="border-t border-black/[0.08] py-1.5">
         <a href="#" onclick="logoutUser()" class="flex items-center gap-3 mx-2 px-3 py-2.5 rounded-lg hover:bg-red-500/10 transition-all group">
           <div class="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center group-hover:bg-red-500/20 transition-colors">
-            <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+            <svg class="w-4 h-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
           </div>
-          <span class="text-sm text-red-400 group-hover:text-red-300 font-medium">Sign Out</span>
+          <span class="text-sm text-rose-500 group-hover:text-red-300 font-medium">Sign Out</span>
         </a>
       </div>
     `;
@@ -110,16 +110,16 @@ function initAuthUI() {
     accountDropdown.innerHTML = `
       <div class="py-2">
         <a href="./login.html" class="flex items-center gap-3 mx-2 px-3 py-2.5 rounded-lg hover:bg-white/[0.06] transition-all group">
-          <div class="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center group-hover:bg-indigo-500/20 transition-colors">
+          <div class="w-8 h-8 rounded-lg bg-indigo-500/10 flex items-center justify-center group-hover:bg-emerald-100 transition-colors">
             <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"></path></svg>
           </div>
-          <span class="text-sm text-gray-300 group-hover:text-white font-medium">Login</span>
+          <span class="text-sm text-slate-600 group-hover:text-slate-700 font-medium">Login</span>
         </a>
         <a href="./register.html" class="flex items-center gap-3 mx-2 px-3 py-2.5 rounded-lg hover:bg-white/[0.06] transition-all group">
           <div class="w-8 h-8 rounded-lg bg-green-500/10 flex items-center justify-center group-hover:bg-green-500/20 transition-colors">
-            <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
           </div>
-          <span class="text-sm text-gray-300 group-hover:text-white font-medium">Register</span>
+          <span class="text-sm text-slate-600 group-hover:text-slate-700 font-medium">Register</span>
         </a>
       </div>
     `;
@@ -308,13 +308,13 @@ function initRoadmapsPage() {
               .map(
                 (roadmap) => `
               <a href="./roadmap-visual.html?topic=${roadmap.slug}" 
-                 class="bg-white/[0.04] border border-white/[0.06] p-4 rounded-lg flex flex-col hover:border-blue-500 transition-colors">
+                 class="bg-white/60 border border-black/[0.06] p-4 rounded-lg flex flex-col hover:border-blue-500 transition-colors">
                 <div class="flex justify-between items-start mb-2">
-                  <span class="font-semibold text-white">${roadmap.title}</span>
+                  <span class="font-semibold text-slate-800">${roadmap.title}</span>
                   ${roadmap.is_official ? '<span class="text-xs bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded">Official</span>' : ""}
                 </div>
                 <p class="text-gray-500 text-sm flex-1">${roadmap.description || ""}</p>
-                <div class="flex items-center justify-between mt-3 pt-3 border-t border-white/[0.06]">
+                <div class="flex items-center justify-between mt-3 pt-3 border-t border-black/[0.06]">
                   <span class="text-gray-600 text-xs">${roadmap.view_count || 0} views</span>
                   <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -343,7 +343,7 @@ function initRoadmapsPage() {
     navContainer.innerHTML = Object.entries(categories)
       .map(
         ([label, value]) =>
-          `<a href="#" class="side-nav-link text-gray-400 font-medium py-2 px-3 rounded-md hover:bg-gray-700" data-category="${value || "all"}">${label}</a>`,
+          `<a href="#" class="side-nav-link text-slate-500 font-medium py-2 px-3 rounded-md hover:bg-slate-100" data-category="${value || "all"}">${label}</a>`,
       )
       .join("");
 
@@ -411,7 +411,7 @@ function initAisensiePage() {
         (skill) => `
       <span class="inline-flex items-center gap-1 bg-blue-500/20 text-blue-400 px-3 py-1 rounded-full text-sm font-medium">
         ${skill}
-        <button onclick="removeSkill('${skill}')" class="hover:text-red-400 ml-1">&times;</button>
+        <button onclick="removeSkill('${skill}')" class="hover:text-rose-500 ml-1">&times;</button>
       </span>
     `,
       )
@@ -1979,7 +1979,7 @@ function initRoadmapVisualPage() {
 
       if (!currentRoadmap.nodes || currentRoadmap.nodes.length === 0) {
         sidebarContainer.innerHTML =
-          '<p class="text-gray-400 text-sm">No sections available</p>';
+          '<p class="text-slate-500 text-sm">No sections available</p>';
         return;
       }
 
@@ -2265,6 +2265,13 @@ function initRoadmapVisualPage() {
         nodeEl.id = node.id;
         nodeEl.style.left = `${node.x}px`;
         nodeEl.style.top = `${node.y}px`;
+        nodeEl.style.setProperty('--node-index', nodeIdx);
+
+        // Add cascade animation for AI-generated roadmaps
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('ai') === 'true') {
+          nodeEl.classList.add('just-generated');
+        }
 
         // Apply states
         if (completedNodes.has(node.id)) {
@@ -2447,8 +2454,8 @@ function initRoadmapVisualPage() {
         topicsContainer.innerHTML = node.topics
           .map(
             (t) => `
-        <li class="flex items-center gap-2 text-gray-300">
-          <svg class="w-4 h-4 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <li class="flex items-center gap-2 text-slate-600">
+          <svg class="w-4 h-4 text-emerald-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
           </svg>
           ${t}
@@ -2476,10 +2483,10 @@ function initRoadmapVisualPage() {
           .map(
             (r) => `
         <a href="${r.url}" target="_blank" rel="noopener" 
-           class="flex items-center gap-3 p-3 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 transition group">
+           class="flex items-center gap-3 p-3 bg-slate-100/50 rounded-lg hover:bg-slate-100/50 transition group">
           <span class="text-2xl">${resourceIcons[r.type] || "🔗"}</span>
           <div class="flex-1">
-            <p class="text-white font-medium group-hover:text-blue-400 transition">${r.title}</p>
+            <p class="text-slate-800 font-medium group-hover:text-blue-400 transition">${r.title}</p>
             <p class="text-xs text-gray-500 capitalize">${r.type}</p>
           </div>
           <svg class="w-5 h-5 text-gray-500 group-hover:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2521,7 +2528,7 @@ function initRoadmapVisualPage() {
         Mark as Incomplete
       `;
         completeBtn.classList.remove("bg-green-600", "hover:bg-green-700");
-        completeBtn.classList.add("bg-gray-600", "hover:bg-gray-700");
+        completeBtn.classList.add("bg-gray-600", "hover:bg-slate-100");
       } else {
         completeBtn.innerHTML = `
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2529,7 +2536,7 @@ function initRoadmapVisualPage() {
         </svg>
         Mark as Complete
       `;
-        completeBtn.classList.remove("bg-gray-600", "hover:bg-gray-700");
+        completeBtn.classList.remove("bg-gray-600", "hover:bg-slate-100");
         completeBtn.classList.add("bg-green-600", "hover:bg-green-700");
       }
 
@@ -2565,10 +2572,10 @@ function initRoadmapVisualPage() {
               .map(
                 (r) => `
               <a href="${r.url}" target="_blank" rel="noopener"
-                 class="flex items-center gap-3 p-3 bg-gray-800/50 rounded-lg hover:bg-gray-700/50 transition group">
+                 class="flex items-center gap-3 p-3 bg-slate-100/50 rounded-lg hover:bg-slate-100/50 transition group">
                 <span class="text-2xl">${resourceIcons[r.type] || "🔗"}</span>
                 <div class="flex-1 min-w-0">
-                  <p class="text-white font-medium group-hover:text-blue-400 transition text-sm truncate">${r.title}</p>
+                  <p class="text-slate-800 font-medium group-hover:text-blue-400 transition text-sm truncate">${r.title}</p>
                   <p class="text-xs text-gray-500 truncate">${r.snippet || r.type}</p>
                 </div>
                 <svg class="w-4 h-4 text-gray-500 group-hover:text-blue-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -2585,7 +2592,7 @@ function initRoadmapVisualPage() {
         }
       } catch (e) {
         resultsContainer.innerHTML =
-          '<p class="text-red-400 text-sm text-center py-2">Search failed. Please try again.</p>';
+          '<p class="text-rose-500 text-sm text-center py-2">Search failed. Please try again.</p>';
       }
 
       btn.innerHTML = `
@@ -2647,7 +2654,7 @@ function initRoadmapVisualPage() {
 
       if (!currentRoadmap.faqs || currentRoadmap.faqs.length === 0) {
         faqContainer.innerHTML =
-          '<p class="text-center text-gray-400">No FAQs available</p>';
+          '<p class="text-center text-slate-500">No FAQs available</p>';
         return;
       }
 
@@ -2768,28 +2775,28 @@ function openChangePasswordModal() {
   modal.className =
     "fixed inset-0 z-[9999] flex items-center justify-center p-4";
   modal.innerHTML = `
-    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeChangePasswordModal()"></div>
-    <div class="relative bg-[#0f172a] border border-white/[0.08] rounded-2xl p-6 w-full max-w-sm shadow-2xl shadow-black/40" style="animation: modalIn 0.2s ease-out">
+    <div class="absolute inset-0 bg-black/20 backdrop-blur-sm" onclick="closeChangePasswordModal()"></div>
+    <div class="relative bg-white/90 backdrop-blur-xl border border-black/[0.06] rounded-2xl p-6 w-full max-w-sm shadow-2xl" style="animation: modalIn 0.2s ease-out">
       <style>@keyframes modalIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}</style>
       <div class="flex items-center justify-between mb-5">
         <div class="flex items-center gap-3">
           <div class="w-9 h-9 rounded-lg bg-amber-500/15 flex items-center justify-center">
             <svg class="w-4.5 h-4.5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path></svg>
           </div>
-          <h3 class="text-white font-semibold text-lg">Change Password</h3>
+          <h3 class="text-slate-800 font-semibold text-lg">Change Password</h3>
         </div>
-        <button onclick="closeChangePasswordModal()" class="text-gray-500 hover:text-white transition p-1 rounded-lg hover:bg-white/5">
+        <button onclick="closeChangePasswordModal()" class="text-slate-400 hover:text-slate-700 transition p-1 rounded-lg hover:bg-black/5">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
       </div>
       <form id="change-password-form" class="space-y-4">
         <div>
-          <label class="block text-xs font-semibold text-gray-400 mb-1.5 uppercase tracking-wider">Current Password</label>
-          <input type="password" id="cp-current" required class="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-2.5 text-white text-sm placeholder-gray-600 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/20 transition" placeholder="••••••••">
+          <label class="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wider">Current Password</label>
+          <input type="password" id="cp-current" required class="w-full bg-white/60 border border-black/[0.06] rounded-xl px-4 py-2.5 text-slate-800 text-sm placeholder-slate-400 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/20 transition" placeholder="••••••••">
         </div>
         <div>
-          <label class="block text-xs font-semibold text-gray-400 mb-1.5 uppercase tracking-wider">New Password</label>
-          <input type="password" id="cp-new" required minlength="8" class="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-2.5 text-white text-sm placeholder-gray-600 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/20 transition" placeholder="Min 8 characters">
+          <label class="block text-xs font-semibold text-slate-500 mb-1.5 uppercase tracking-wider">New Password</label>
+          <input type="password" id="cp-new" required minlength="8" class="w-full bg-white/60 border border-black/[0.06] rounded-xl px-4 py-2.5 text-slate-800 text-sm placeholder-slate-400 focus:outline-none focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/20 transition" placeholder="Min 8 characters">
         </div>
         <div id="cp-message" class="hidden text-xs p-2.5 rounded-lg text-center"></div>
         <button type="submit" id="cp-submit" class="w-full py-2.5 rounded-xl text-white font-semibold text-sm transition" style="background:linear-gradient(135deg,#f59e0b,#d97706)">
@@ -2811,7 +2818,7 @@ function openChangePasswordModal() {
 
       if (newPw.length < 8) {
         msg.className =
-          "text-xs p-2.5 rounded-lg text-center bg-red-500/10 border border-red-500/20 text-red-400";
+          "text-xs p-2.5 rounded-lg text-center bg-red-500/10 border border-red-500/20 text-rose-500";
         msg.textContent = "New password must be at least 8 characters";
         msg.classList.remove("hidden");
         return;
@@ -2838,7 +2845,7 @@ function openChangePasswordModal() {
 
         if (resp.ok) {
           msg.className =
-            "text-xs p-2.5 rounded-lg text-center bg-green-500/10 border border-green-500/20 text-green-400";
+            "text-xs p-2.5 rounded-lg text-center bg-green-500/10 border border-green-500/20 text-emerald-600";
           msg.textContent = "Password updated successfully!";
           msg.classList.remove("hidden");
           btn.textContent = "✓ Done";
@@ -2847,7 +2854,7 @@ function openChangePasswordModal() {
           }, 1500);
         } else {
           msg.className =
-            "text-xs p-2.5 rounded-lg text-center bg-red-500/10 border border-red-500/20 text-red-400";
+            "text-xs p-2.5 rounded-lg text-center bg-red-500/10 border border-red-500/20 text-rose-500";
           msg.textContent = data.error || "Failed to update password";
           msg.classList.remove("hidden");
           btn.disabled = false;
@@ -2855,7 +2862,7 @@ function openChangePasswordModal() {
         }
       } catch (err) {
         msg.className =
-          "text-xs p-2.5 rounded-lg text-center bg-red-500/10 border border-red-500/20 text-red-400";
+          "text-xs p-2.5 rounded-lg text-center bg-red-500/10 border border-red-500/20 text-rose-500";
         msg.textContent = "Network error. Please try again.";
         msg.classList.remove("hidden");
         btn.disabled = false;
@@ -2879,51 +2886,51 @@ function openHelpModal() {
   modal.className =
     "fixed inset-0 z-[9999] flex items-center justify-center p-4";
   modal.innerHTML = `
-    <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeHelpModal()"></div>
-    <div class="relative bg-[#0f172a] border border-white/[0.08] rounded-2xl p-6 w-full max-w-md shadow-2xl shadow-black/40 max-h-[85vh] overflow-y-auto" style="animation: modalIn 0.2s ease-out">
+    <div class="absolute inset-0 bg-black/20 backdrop-blur-sm" onclick="closeHelpModal()"></div>
+    <div class="relative bg-white/90 backdrop-blur-xl border border-black/[0.06] rounded-2xl p-6 w-full max-w-md shadow-2xl max-h-[85vh] overflow-y-auto" style="animation: modalIn 0.2s ease-out">
       <div class="flex items-center justify-between mb-5">
         <div class="flex items-center gap-3">
           <div class="w-9 h-9 rounded-lg bg-cyan-500/15 flex items-center justify-center">
             <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
           </div>
-          <h3 class="text-white font-semibold text-lg">Help & Support</h3>
+          <h3 class="text-slate-800 font-semibold text-lg">Help & Support</h3>
         </div>
-        <button onclick="closeHelpModal()" class="text-gray-500 hover:text-white transition p-1 rounded-lg hover:bg-white/5">
+        <button onclick="closeHelpModal()" class="text-slate-400 hover:text-slate-700 transition p-1 rounded-lg hover:bg-black/5">
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
       </div>
 
       <div class="space-y-3 mb-6">
-        <div class="p-4 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:border-cyan-500/20 transition">
-          <h4 class="text-white text-sm font-semibold mb-1.5 flex items-center gap-2">
+        <div class="p-4 rounded-xl bg-white/50 border border-black/[0.06] hover:border-emerald-300 transition">
+          <h4 class="text-slate-800 text-sm font-semibold mb-1.5 flex items-center gap-2">
             <span class="text-cyan-400">●</span> How do I generate a roadmap?
           </h4>
-          <p class="text-gray-400 text-xs leading-relaxed">Go to the Roadmaps page, enter your career goal or technology, and click Generate. Our AI will create a personalized learning path for you.</p>
+          <p class="text-slate-500 text-xs leading-relaxed">Go to the Roadmaps page, enter your career goal or technology, and click Generate. Our AI will create a personalized learning path for you.</p>
         </div>
-        <div class="p-4 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:border-cyan-500/20 transition">
-          <h4 class="text-white text-sm font-semibold mb-1.5 flex items-center gap-2">
+        <div class="p-4 rounded-xl bg-white/50 border border-black/[0.06] hover:border-emerald-300 transition">
+          <h4 class="text-slate-800 text-sm font-semibold mb-1.5 flex items-center gap-2">
             <span class="text-emerald-400">●</span> How do skill tests work?
           </h4>
-          <p class="text-gray-400 text-xs leading-relaxed">Select a topic, and our AI generates adaptive questions based on your skill level. You get instant results with detailed explanations.</p>
+          <p class="text-slate-500 text-xs leading-relaxed">Select a topic, and our AI generates adaptive questions based on your skill level. You get instant results with detailed explanations.</p>
         </div>
-        <div class="p-4 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:border-cyan-500/20 transition">
-          <h4 class="text-white text-sm font-semibold mb-1.5 flex items-center gap-2">
+        <div class="p-4 rounded-xl bg-white/50 border border-black/[0.06] hover:border-emerald-300 transition">
+          <h4 class="text-slate-800 text-sm font-semibold mb-1.5 flex items-center gap-2">
             <span class="text-amber-400">●</span> How do 1v1 battles work?
           </h4>
-          <p class="text-gray-400 text-xs leading-relaxed">Create or join a battle room, select a topic, and compete against another player in a timed quiz. The player with the highest score wins!</p>
+          <p class="text-slate-500 text-xs leading-relaxed">Create or join a battle room, select a topic, and compete against another player in a timed quiz. The player with the highest score wins!</p>
         </div>
-        <div class="p-4 rounded-xl bg-white/[0.03] border border-white/[0.06] hover:border-cyan-500/20 transition">
-          <h4 class="text-white text-sm font-semibold mb-1.5 flex items-center gap-2">
+        <div class="p-4 rounded-xl bg-white/50 border border-black/[0.06] hover:border-cyan-500/20 transition">
+          <h4 class="text-slate-800 text-sm font-semibold mb-1.5 flex items-center gap-2">
             <span class="text-purple-400">●</span> Is CareerSage free to use?
           </h4>
-          <p class="text-gray-400 text-xs leading-relaxed">Yes! CareerSage is completely free. Create an account and start your learning journey today.</p>
+          <p class="text-slate-500 text-xs leading-relaxed">Yes! CareerSage is completely free. Create an account and start your learning journey today.</p>
         </div>
       </div>
 
       <div class="p-4 rounded-xl bg-indigo-500/5 border border-indigo-500/15">
-        <h4 class="text-white text-sm font-semibold mb-2">Still need help?</h4>
-        <p class="text-gray-400 text-xs mb-3">Reach out to us and we'll get back to you as soon as possible.</p>
-        <a href="mailto:support@knoxcloud.tech" class="inline-flex items-center gap-2 text-xs font-medium text-indigo-400 hover:text-indigo-300 transition">
+        <h4 class="text-slate-800 text-sm font-semibold mb-2">Still need help?</h4>
+        <p class="text-slate-500 text-xs mb-3">Reach out to us and we'll get back to you as soon as possible.</p>
+        <a href="mailto:support@knoxcloud.tech" class="inline-flex items-center gap-2 text-xs font-medium text-emerald-600 hover:text-emerald-700 transition">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
           support@knoxcloud.tech
         </a>

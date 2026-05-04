@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 
-<body class="bg-[#0f172a] text-gray-300">
+<body class="bg-[#FFF8F0] text-slate-800">
 
     <!-- Header -->
     <div id="header-placeholder"></div>
@@ -19,47 +19,47 @@
     <!-- Main Content Area -->
     <main class="px-4 md:px-8 pb-8">
         <div class="max-w-3xl mx-auto text-center mt-6">
-            <h1 class="text-3xl md:text-5xl font-extrabold text-white">What can I help you learn?</h1>
-            <p class="mt-3 md:mt-4 text-base md:text-lg text-gray-400">Enter a topic below to generate a personalized
+            <h1 class="text-3xl md:text-5xl font-extrabold text-slate-800">What can I help you learn?</h1>
+            <p class="mt-3 md:mt-4 text-base md:text-lg text-slate-500">Enter a topic below to generate a personalized
                 roadmap for it</p>
 
-            <div class="mt-6 md:mt-10 bg-white/[0.04] p-4 md:p-8 rounded-xl border border-white/[0.06] text-left">
+            <div class="mt-6 md:mt-10 p-4 md:p-8 rounded-xl text-left" style="background:rgba(255,255,255,0.65);backdrop-filter:blur(20px);border:1px solid rgba(0,0,0,0.06);box-shadow:0 8px 32px rgba(0,0,0,0.06)">
                 <!-- Topic Input with Trending Dropdown -->
                 <div class="mb-6">
-                    <label for="ai-topic" class="block mb-2 font-semibold text-gray-300">What do you want to
+                    <label for="ai-topic" class="block mb-2 font-semibold text-slate-700">What do you want to
                         learn?</label>
                     <div class="relative">
                         <input type="text" id="ai-topic" autocomplete="off"
-                            class="w-full bg-[#0f172a] border border-white/[0.08] rounded-lg p-3 pr-10 focus:ring-2 focus:ring-blue-500 focus:outline-none text-white"
+                            class="w-full bg-white/80 border border-black/[0.08] rounded-lg p-3 pr-10 focus:ring-2 focus:ring-emerald-500 focus:outline-none text-slate-800 placeholder-slate-400"
                             placeholder="Type or select a topic...">
                         <button type="button"
                             onclick="document.getElementById('topic-dropdown').classList.toggle('hidden')"
-                            class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white">
+                            class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M19 9l-7 7-7-7"></path>
                             </svg>
                         </button>
                         <div id="topic-dropdown"
-                            class="hidden absolute z-50 w-full mt-1 bg-[#1e293b] backdrop-blur-xl border border-white/[0.08] rounded-lg max-h-60 overflow-y-auto shadow-xl">
+                            class="hidden absolute z-50 w-full mt-1 bg-white/90 backdrop-blur-xl border border-black/[0.08] rounded-lg max-h-60 overflow-y-auto shadow-xl">
                             <!-- Populated by JS -->
                         </div>
                     </div>
                     <div class="flex flex-wrap gap-2 mt-3">
-                        <span class="text-gray-500 text-sm">Trending:</span>
+                        <span class="text-slate-400 text-sm">Trending:</span>
                         <button type="button" onclick="selectTopic('Frontend Development')"
-                            class="text-xs bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 px-2.5 py-1 rounded-full border border-blue-500/30">Frontend
+                            class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-full border border-emerald-200">Frontend
                             Development</button>
                         <button type="button" onclick="selectTopic('Backend Development')"
-                            class="text-xs bg-green-600/20 hover:bg-green-600/30 text-green-300 px-2.5 py-1 rounded-full border border-green-500/30">Backend
+                            class="text-xs bg-teal-50 hover:bg-teal-100 text-teal-700 px-2.5 py-1 rounded-full border border-teal-200">Backend
                             Development</button>
                         <button type="button" onclick="selectTopic('DevOps Engineer')"
-                            class="text-xs bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 px-2.5 py-1 rounded-full border border-purple-500/30">DevOps</button>
+                            class="text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-2.5 py-1 rounded-full border border-indigo-200">DevOps</button>
                         <button type="button" onclick="selectTopic('Machine Learning')"
-                            class="text-xs bg-yellow-600/20 hover:bg-yellow-600/30 text-yellow-300 px-2.5 py-1 rounded-full border border-yellow-500/30">Machine
+                            class="text-xs bg-amber-50 hover:bg-amber-100 text-amber-700 px-2.5 py-1 rounded-full border border-amber-200">Machine
                             Learning</button>
                         <button type="button" onclick="selectTopic('Cyber Security')"
-                            class="text-xs bg-red-600/20 hover:bg-red-600/30 text-red-300 px-2.5 py-1 rounded-full border border-red-500/30">Cyber
+                            class="text-xs bg-rose-50 hover:bg-rose-100 text-rose-700 px-2.5 py-1 rounded-full border border-rose-200">Cyber
                             Security</button>
                     </div>
                 </div>
@@ -68,37 +68,36 @@
 
                 <!-- Roadmap Mode -->
                 <div class="mb-6">
-                    <label for="roadmap-mode" class="block mb-2 font-semibold text-gray-300">Roadmap Detail
+                    <label for="roadmap-mode" class="block mb-2 font-semibold text-slate-700">Roadmap Detail
                         Level</label>
                     <select id="roadmap-mode"
-                        class="w-full bg-[#0f172a] border border-white/[0.08] rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:outline-none text-white appearance-none cursor-pointer">
-                        <option value="beginner">🟢 Beginner — Quick overview (7-8 nodes, no resources)</option>
+                        class="w-full bg-white/80 border border-black/[0.08] rounded-lg p-3 focus:ring-2 focus:ring-emerald-500 focus:outline-none text-slate-800 appearance-none cursor-pointer">
+                        <option value="beginner">🟢 Beginner — Quick overview (7-8 nodes)</option>
                         <option value="advanced">🔵 Advanced — Full roadmap (12-15 nodes with resources)</option>
                     </select>
                 </div>
 
                 <!-- Generate Button -->
                 <button id="generate-btn"
-                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-lg text-lg flex items-center justify-center gap-2 mt-6 transition-transform transform hover:scale-[1.02]">
+                    class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-4 px-6 rounded-lg text-lg flex items-center justify-center gap-2 mt-6 transition-transform transform hover:scale-[1.02] shadow-lg shadow-emerald-600/20">
                     <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                         stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456z" />
                     </svg>
-                    Generate My Roadmap
-                </button>
+                    Generate My Roadmap</button>
 
                 <!-- Loading State (Hidden initially) -->
                 <div id="loading-state" class="hidden mt-6 text-center">
                     <div
-                        class="inline-flex flex-col items-center gap-3 bg-blue-900/30 border border-blue-800 rounded-lg px-6 py-5 min-w-[320px]">
-                        <svg class="animate-spin w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24">
+                        class="inline-flex flex-col items-center gap-3 bg-emerald-50 border border-emerald-200 rounded-lg px-6 py-5 min-w-[320px]">
+                        <svg class="animate-spin w-5 h-5 text-emerald-600" fill="none" viewBox="0 0 24 24">
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        <span id="progress-text" class="text-blue-300 font-medium">AI is generating your personalized roadmap...</span>
-                        <div class="w-full bg-gray-700 rounded-full h-2 mt-1">
-                            <div id="progress-bar" class="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-500" style="width: 5%"></div>
+                        <span id="progress-text" class="text-emerald-700 font-medium">AI is generating your personalized roadmap...</span>
+                        <div class="w-full bg-emerald-100 rounded-full h-2 mt-1">
+                            <div id="progress-bar" class="bg-gradient-to-r from-emerald-500 to-teal-500 h-2 rounded-full transition-all duration-500" style="width: 5%"></div>
                         </div>
                     </div>
                 </div>
@@ -164,7 +163,7 @@
                 dropdown.innerHTML = '<div class="p-3 text-gray-500 text-sm">No matching topics. You can type your own!</div>';
             } else {
                 dropdown.innerHTML = filtered.map(t => `
-                    <div class="px-4 py-2.5 hover:bg-gray-700 cursor-pointer text-gray-300 text-sm transition"
+                    <div class="px-4 py-2.5 hover:bg-slate-100 cursor-pointer text-slate-600 text-sm transition"
                          onclick="selectTopic('${t}')">${t}</div>
                 `).join('');
             }

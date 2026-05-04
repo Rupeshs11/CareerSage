@@ -18,13 +18,13 @@
         ======================================= */
 
         :root {
-            --accent: linear-gradient(135deg, #6366f1, #a855f7);
-            --accent-vivid: linear-gradient(135deg, #818cf8, #c084fc);
-            --glow-indigo: rgba(99, 102, 241, 0.08);
-            --glow-purple: rgba(168, 85, 247, 0.06);
-            --glass-bg: rgba(255, 255, 255, 0.04);
-            --glass-border: rgba(255, 255, 255, 0.06);
-            --glass-hover-border: rgba(255, 255, 255, 0.14);
+            --accent: linear-gradient(135deg, #059669, #10B981);
+            --accent-vivid: linear-gradient(135deg, #10B981, #059669);
+            --glow-indigo: rgba(5, 150, 105, 0.06);
+            --glow-purple: rgba(99, 102, 241, 0.04);
+            --glass-bg: rgba(255, 255, 255, 0.65);
+            --glass-border: rgba(0, 0, 0, 0.06);
+            --glass-hover-border: rgba(0, 0, 0, 0.12);
         }
 
         /* --- Hero Section --- */
@@ -34,7 +34,7 @@
             align-items: center;
             position: relative;
             overflow: hidden;
-            background: #0f172a;
+            background: #FFF8F0;
         }
 
         /* Ambient orb — top-left (blue) */
@@ -45,7 +45,7 @@
             left: -8%;
             width: 700px;
             height: 700px;
-            background: radial-gradient(circle, rgba(99, 102, 241, 0.13) 0%, transparent 60%);
+            background: radial-gradient(circle, rgba(5, 150, 105, 0.08) 0%, transparent 60%);
             border-radius: 50%;
             animation: driftOrb 14s ease-in-out infinite;
             filter: blur(80px);
@@ -59,7 +59,7 @@
             right: -8%;
             width: 600px;
             height: 600px;
-            background: radial-gradient(circle, rgba(168, 85, 247, 0.1) 0%, transparent 60%);
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.06) 0%, transparent 60%);
             border-radius: 50%;
             animation: driftOrb 18s ease-in-out infinite reverse;
             filter: blur(80px);
@@ -73,7 +73,7 @@
             transform: translate(-50%, -50%);
             width: 500px;
             height: 400px;
-            background: radial-gradient(ellipse, rgba(99, 102, 241, 0.09) 0%, transparent 65%);
+            background: radial-gradient(ellipse, rgba(5, 150, 105, 0.06) 0%, transparent 65%);
             pointer-events: none;
             z-index: 0;
             animation: breathe 6s ease-in-out infinite;
@@ -87,7 +87,7 @@
             transform: translate(-50%, -50%);
             width: 130%;
             height: 130%;
-            background: radial-gradient(ellipse, rgba(168, 85, 247, 0.08) 0%, rgba(99, 102, 241, 0.04) 40%, transparent 65%);
+            background: radial-gradient(ellipse, rgba(99, 102, 241, 0.05) 0%, rgba(5, 150, 105, 0.03) 40%, transparent 65%);
             pointer-events: none;
             animation: breathe 8s ease-in-out infinite 2s;
         }
@@ -124,8 +124,8 @@
             letter-spacing: -0.045em;
             line-height: 0.98;
             text-shadow:
-                0 2px 40px rgba(99, 102, 241, 0.08),
-                0 0 80px rgba(99, 102, 241, 0.03);
+                0 2px 40px rgba(5, 150, 105, 0.05),
+                0 0 80px rgba(5, 150, 105, 0.02);
         }
 
         .gradient-text {
@@ -133,11 +133,11 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            filter: drop-shadow(0 0 24px rgba(99, 102, 241, 0.18));
+            filter: drop-shadow(0 0 24px rgba(5, 150, 105, 0.15));
         }
 
         .hero-subtitle {
-            color: #94a3b8;
+            color: #64748B;
             font-weight: 400;
             line-height: 1.7;
             letter-spacing: 0.005em;
@@ -147,9 +147,9 @@
         .btn-primary {
             background: var(--accent);
             box-shadow:
-                0 0 20px rgba(99, 102, 241, 0.35),
-                0 0 50px rgba(168, 85, 247, 0.1),
-                0 4px 20px rgba(0, 0, 0, 0.3);
+                0 0 20px rgba(5, 150, 105, 0.25),
+                0 0 50px rgba(5, 150, 105, 0.08),
+                0 4px 20px rgba(0, 0, 0, 0.1);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
@@ -168,9 +168,9 @@
 
         .btn-primary:hover {
             box-shadow:
-                0 0 40px rgba(99, 102, 241, 0.5),
-                0 0 90px rgba(168, 85, 247, 0.15),
-                0 8px 30px rgba(0, 0, 0, 0.4);
+                0 0 40px rgba(5, 150, 105, 0.35),
+                0 0 90px rgba(5, 150, 105, 0.1),
+                0 8px 30px rgba(0, 0, 0, 0.15);
             transform: translateY(-2px) scale(1.03);
         }
 
@@ -183,18 +183,18 @@
         }
 
         .btn-secondary {
-            border: 1.5px solid rgba(148, 163, 184, 0.15);
-            background: rgba(15, 23, 42, 0.3);
+            border: 1.5px solid rgba(0, 0, 0, 0.08);
+            background: rgba(255, 255, 255, 0.5);
             backdrop-filter: blur(8px);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .btn-secondary:hover {
-            border-color: rgba(99, 102, 241, 0.35);
-            background: rgba(99, 102, 241, 0.06);
+            border-color: rgba(5, 150, 105, 0.3);
+            background: rgba(5, 150, 105, 0.06);
             box-shadow:
-                0 0 25px rgba(99, 102, 241, 0.08),
-                0 4px 16px rgba(0, 0, 0, 0.2);
+                0 0 25px rgba(5, 150, 105, 0.06),
+                0 4px 16px rgba(0, 0, 0, 0.06);
             transform: translateY(-2px) scale(1.03);
         }
 
@@ -210,10 +210,10 @@
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             box-shadow:
-                0 40px 80px rgba(0, 0, 0, 0.5),
-                0 0 0 1px rgba(255, 255, 255, 0.03),
-                0 0 100px rgba(168, 85, 247, 0.06),
-                0 0 40px rgba(99, 102, 241, 0.04);
+                0 40px 80px rgba(0, 0, 0, 0.08),
+                0 0 0 1px rgba(0, 0, 0, 0.03),
+                0 0 100px rgba(5, 150, 105, 0.04),
+                0 0 40px rgba(99, 102, 241, 0.03);
             overflow: hidden;
             position: relative;
             transform: perspective(1200px) rotateY(-2deg);
@@ -223,10 +223,10 @@
         .dashboard-preview:hover {
             transform: perspective(1200px) rotateY(0deg) translateY(-4px);
             box-shadow:
-                0 50px 100px rgba(0, 0, 0, 0.55),
-                0 0 0 1px rgba(255, 255, 255, 0.04),
-                0 0 120px rgba(168, 85, 247, 0.08),
-                0 0 50px rgba(99, 102, 241, 0.06);
+                0 50px 100px rgba(0, 0, 0, 0.1),
+                0 0 0 1px rgba(0, 0, 0, 0.04),
+                0 0 120px rgba(5, 150, 105, 0.06),
+                0 0 50px rgba(99, 102, 241, 0.04);
         }
 
         .dashboard-preview::before {
@@ -236,12 +236,12 @@
             left: 0;
             right: 0;
             height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.25), rgba(168, 85, 247, 0.2), transparent);
+            background: linear-gradient(90deg, transparent, rgba(5, 150, 105, 0.2), rgba(99, 102, 241, 0.15), transparent);
         }
 
         .progress-fill {
-            background: linear-gradient(90deg, #6366f1, #a855f7, #c084fc);
-            box-shadow: 0 0 14px rgba(99, 102, 241, 0.4);
+            background: linear-gradient(90deg, #059669, #10B981, #6366f1);
+            box-shadow: 0 0 14px rgba(5, 150, 105, 0.3);
             position: relative;
             animation: shimmer 2.5s ease-in-out infinite;
         }
@@ -250,11 +250,11 @@
 
             0%,
             100% {
-                box-shadow: 0 0 14px rgba(99, 102, 241, 0.4);
+                box-shadow: 0 0 14px rgba(5, 150, 105, 0.3);
             }
 
             50% {
-                box-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+                box-shadow: 0 0 20px rgba(5, 150, 105, 0.4);
             }
         }
 
@@ -267,11 +267,11 @@
             height: 7px;
             background: white;
             border-radius: 50%;
-            box-shadow: 0 0 8px rgba(168, 85, 247, 0.8), 0 0 16px rgba(99, 102, 241, 0.3);
+            box-shadow: 0 0 8px rgba(5, 150, 105, 0.6), 0 0 16px rgba(99, 102, 241, 0.2);
         }
 
         .inner-card {
-            background: rgba(15, 23, 42, 0.45);
+            background: rgba(255, 255, 255, 0.45);
             border: 1px solid var(--glass-border);
             transition: all 0.25s ease;
         }
@@ -301,7 +301,7 @@
             left: 0;
             right: 0;
             height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.3), transparent);
+            background: linear-gradient(90deg, transparent, rgba(5, 150, 105, 0.25), transparent);
             opacity: 0;
             transition: opacity 0.35s ease;
         }
@@ -310,7 +310,7 @@
             content: '';
             position: absolute;
             inset: 0;
-            background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.04) 0%, transparent 60%);
+            background: radial-gradient(circle at 50% 0%, rgba(5, 150, 105, 0.04) 0%, transparent 60%);
             opacity: 0;
             transition: opacity 0.35s ease;
             pointer-events: none;
@@ -320,8 +320,8 @@
             border-color: var(--glass-hover-border);
             transform: translateY(-8px);
             box-shadow:
-                0 30px 60px rgba(0, 0, 0, 0.3),
-                0 0 50px rgba(99, 102, 241, 0.05);
+                0 30px 60px rgba(0, 0, 0, 0.08),
+                0 0 50px rgba(5, 150, 105, 0.04);
         }
 
         .feature-card:hover::before,
@@ -383,7 +383,7 @@
             height: 3px;
             background: var(--accent);
             border-radius: 2px;
-            box-shadow: 0 0 16px rgba(99, 102, 241, 0.3);
+            box-shadow: 0 0 16px rgba(5, 150, 105, 0.2);
         }
 
         @media (max-width: 768px) {
@@ -435,7 +435,7 @@
     </style>
 </head>
 
-<body class="bg-[#0f172a] text-gray-300" style="font-family: 'Inter', sans-serif;">
+<body class="bg-[#FFF8F0] text-slate-700" style="font-family: 'Inter', sans-serif;">
 
     <!-- Header -->
     <div id="header-placeholder"></div>
@@ -454,10 +454,10 @@
                     <div class="text-center md:text-left fade-up">
 
                         <h1 class="hero-title text-[2.5rem] sm:text-[3rem] lg:text-[3.5rem] xl:text-[4rem]">
-                            <span class="text-white">Master Your Career</span><br>
-                            <span class="text-white">With </span><span class="gradient-text">AI-Driven</span><br>
-                            <span class="text-white">Roadmaps and</span><br>
-                            <span class="text-white">Competitive Growth</span>
+                            <span class="text-slate-800">Master Your Career</span><br>
+                            <span class="text-slate-800">With </span><span class="gradient-text">AI-Driven</span><br>
+                            <span class="text-slate-800">Roadmaps and</span><br>
+                            <span class="text-slate-800">Competitive Growth</span>
                         </h1>
 
                         <p class="hero-subtitle mt-5 text-[15px] max-w-[22rem] mx-auto md:mx-0">
@@ -475,7 +475,7 @@
                                 Generate My Roadmap
                             </a>
                             <a href="./roadmaps.html"
-                                class="btn-secondary text-slate-300 font-semibold py-3.5 px-8 rounded-xl text-[15px] inline-flex items-center justify-center gap-2.5">
+                                class="btn-secondary text-slate-600 font-semibold py-3.5 px-8 rounded-xl text-[15px] inline-flex items-center justify-center gap-2.5">
                                 Explore Roadmaps
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -502,11 +502,11 @@
                                 <!-- Progress -->
                                 <div class="inner-card rounded-xl p-5 mb-4">
                                     <div class="flex items-center justify-between mb-3">
-                                        <span class="text-[13px] font-bold text-white">Your Progress</span>
+                                        <span class="text-[13px] font-bold text-slate-800">Your Progress</span>
                                         <span
-                                            class="text-[11px] text-emerald-400 font-extrabold bg-emerald-400/10 px-2.5 py-0.5 rounded-md">72%</span>
+                                            class="text-[11px] text-emerald-600 font-extrabold bg-emerald-50 px-2.5 py-0.5 rounded-md">72%</span>
                                     </div>
-                                    <div class="w-full bg-slate-800/60 rounded-full h-2.5 overflow-hidden">
+                                    <div class="w-full bg-slate-200/60 rounded-full h-2.5 overflow-hidden">
                                         <div class="h-2.5 rounded-full progress-fill" style="width:72%"></div>
                                     </div>
                                 </div>
@@ -534,13 +534,13 @@
                                 <!-- Stats -->
                                 <div class="grid grid-cols-2 gap-3">
                                     <div class="inner-card rounded-xl p-4">
-                                        <div class="text-xl font-black text-white tracking-tight">1,247</div>
+                                        <div class="text-xl font-black text-slate-800 tracking-tight">1,247</div>
                                         <div
                                             class="text-[9px] text-slate-500 uppercase tracking-[0.1em] font-semibold mt-1">
                                             Battle Rating</div>
                                     </div>
                                     <div class="inner-card rounded-xl p-4">
-                                        <div class="text-xl font-black text-white tracking-tight">89<span
+                                        <div class="text-xl font-black text-slate-800 tracking-tight">89<span
                                                 class="text-indigo-400">%</span></div>
                                         <div
                                             class="text-[9px] text-slate-500 uppercase tracking-[0.1em] font-semibold mt-1">
@@ -555,15 +555,15 @@
         </section>
 
         <!-- ===== FEATURES ===== -->
-        <section id="features" class="pt-12 md:pt-16 pb-8 px-4 md:px-8 bg-[#0f172a] relative">
+        <section id="features" class="pt-12 md:pt-16 pb-8 px-4 md:px-8 bg-[#FFF8F0] relative">
             <div
-                class="absolute top-0 left-1/2 -translate-x-1/2 w-2/3 h-px bg-gradient-to-r from-transparent via-indigo-500/10 to-transparent">
+                class="absolute top-0 left-1/2 -translate-x-1/2 w-2/3 h-px bg-gradient-to-r from-transparent via-emerald-500/15 to-transparent">
             </div>
 
             <div class="container mx-auto max-w-7xl">
                 <div class="text-center mb-20 fade-up">
                     <div class="section-accent mx-auto mb-5"></div>
-                    <h2 class="text-3xl md:text-[2.5rem] font-extrabold text-white tracking-tight">Everything You Need
+                    <h2 class="text-3xl md:text-[2.5rem] font-extrabold text-slate-800 tracking-tight">Everything You Need
                         to Succeed</h2>
                     <p class="mt-5 text-slate-400 max-w-lg mx-auto text-[15px] leading-relaxed">
                         From personalized plans to skill tracking, our platform is designed to guide you at every step.
@@ -579,7 +579,7 @@
                                     d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
                             </svg>
                         </div>
-                        <h3 class="text-[15px] font-bold text-white mb-2 tracking-tight">AI Roadmap Generation</h3>
+                        <h3 class="text-[15px] font-bold text-slate-800 mb-2 tracking-tight">AI Roadmap Generation</h3>
                         <p class="text-[13px] text-slate-400 leading-relaxed">Tell us your career goal, and our AI will
                             generate a personalized, step-by-step learning path.</p>
                     </div>
@@ -592,7 +592,7 @@
                                     d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>
-                        <h3 class="text-[15px] font-bold text-white mb-2 tracking-tight">AI Skill Test</h3>
+                        <h3 class="text-[15px] font-bold text-slate-800 mb-2 tracking-tight">AI Skill Test</h3>
                         <p class="text-[13px] text-slate-400 leading-relaxed">Test your knowledge with AI-generated
                             quizzes and get instant results with detailed explanations.</p>
                     </div>
@@ -605,7 +605,7 @@
                                     d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
                             </svg>
                         </div>
-                        <h3 class="text-[15px] font-bold text-white mb-2 tracking-tight">Resource Recommendation</h3>
+                        <h3 class="text-[15px] font-bold text-slate-800 mb-2 tracking-tight">Resource Recommendation</h3>
                         <p class="text-[13px] text-slate-400 leading-relaxed">Get curated links to the best articles,
                             tutorials, and courses for every step of your roadmap.</p>
                     </div>
@@ -618,7 +618,7 @@
                                     d="M13 10V3L4 14h7v7l9-11h-7z" />
                             </svg>
                         </div>
-                        <h3 class="text-[15px] font-bold text-white mb-2 tracking-tight">1v1 Rapid Fire Battle</h3>
+                        <h3 class="text-[15px] font-bold text-slate-800 mb-2 tracking-tight">1v1 Rapid Fire Battle</h3>
                         <p class="text-[13px] text-slate-400 leading-relaxed">Challenge friends to real-time quiz
                             battles, climb the leaderboard, and prove your skills.</p>
                     </div>
@@ -627,19 +627,19 @@
         </section>
 
         <!-- ===== LIVE STATS ===== -->
-        <section class="pt-4 md:pt-8 pb-16 md:pb-20 px-4 md:px-8 bg-[#0f172a] relative">
+        <section class="pt-4 md:pt-8 pb-16 md:pb-20 px-4 md:px-8 bg-[#FFF8F0] relative">
 
             <div class="container mx-auto max-w-7xl">
                 <div class="text-center mb-12 fade-up">
                     <div class="section-accent mx-auto mb-5"></div>
-                    <h2 class="text-2xl md:text-3xl font-extrabold text-white tracking-tight">Platform at a Glance</h2>
+                    <h2 class="text-2xl md:text-3xl font-extrabold text-slate-800 tracking-tight">Platform at a Glance</h2>
                     <p class="mt-3 text-slate-400 text-sm">Our growing community of learners and competitors</p>
                 </div>
 
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-7">
                     <!-- Learners -->
                     <div
-                        class="fade-up fade-up-delay-1 text-center p-6 md:p-8 rounded-2xl border border-white/[0.04] bg-white/[0.02] hover:bg-white/[0.04] hover:border-indigo-500/20 transition-all duration-300 group">
+                        class="fade-up fade-up-delay-1 text-center p-6 md:p-8 rounded-2xl border border-white/[0.04] bg-white/[0.02] hover:bg-white/60 hover:border-emerald-300/20 transition-all duration-300 group">
                         <div
                             class="w-12 h-12 rounded-xl bg-indigo-500/10 flex items-center justify-center mx-auto mb-4 group-hover:bg-indigo-500/15 transition-colors">
                             <svg class="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -647,7 +647,7 @@
                                     d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
                             </svg>
                         </div>
-                        <div class="text-2xl md:text-3xl font-black text-white tracking-tight mb-1">850<span
+                        <div class="text-2xl md:text-3xl font-black text-slate-800 tracking-tight mb-1">850<span
                                 class="text-indigo-400">+</span></div>
                         <div class="text-[11px] text-slate-500 uppercase tracking-[0.12em] font-semibold">Active
                             Learners</div>
@@ -655,7 +655,7 @@
 
                     <!-- Battles -->
                     <div
-                        class="fade-up fade-up-delay-2 text-center p-6 md:p-8 rounded-2xl border border-white/[0.04] bg-white/[0.02] hover:bg-white/[0.04] hover:border-amber-500/20 transition-all duration-300 group">
+                        class="fade-up fade-up-delay-2 text-center p-6 md:p-8 rounded-2xl border border-white/[0.04] bg-white/[0.02] hover:bg-white/60 hover:border-amber-500/20 transition-all duration-300 group">
                         <div
                             class="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center mx-auto mb-4 group-hover:bg-amber-500/15 transition-colors">
                             <svg class="w-6 h-6 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -663,7 +663,7 @@
                                     d="M13 10V3L4 14h7v7l9-11h-7z" />
                             </svg>
                         </div>
-                        <div class="text-2xl md:text-3xl font-black text-white tracking-tight mb-1">3,200<span
+                        <div class="text-2xl md:text-3xl font-black text-slate-800 tracking-tight mb-1">3,200<span
                                 class="text-amber-400">+</span></div>
                         <div class="text-[11px] text-slate-500 uppercase tracking-[0.12em] font-semibold">Battles Fought
                         </div>
@@ -671,7 +671,7 @@
 
                     <!-- AI Tests -->
                     <div
-                        class="fade-up fade-up-delay-3 text-center p-6 md:p-8 rounded-2xl border border-white/[0.04] bg-white/[0.02] hover:bg-white/[0.04] hover:border-emerald-500/20 transition-all duration-300 group">
+                        class="fade-up fade-up-delay-3 text-center p-6 md:p-8 rounded-2xl border border-white/[0.04] bg-white/[0.02] hover:bg-white/60 hover:border-emerald-500/20 transition-all duration-300 group">
                         <div
                             class="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center mx-auto mb-4 group-hover:bg-emerald-500/15 transition-colors">
                             <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -679,7 +679,7 @@
                                     d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
                             </svg>
                         </div>
-                        <div class="text-2xl md:text-3xl font-black text-white tracking-tight mb-1">12,500<span
+                        <div class="text-2xl md:text-3xl font-black text-slate-800 tracking-tight mb-1">12,500<span
                                 class="text-emerald-400">+</span></div>
                         <div class="text-[11px] text-slate-500 uppercase tracking-[0.12em] font-semibold">AI Tests Taken
                         </div>
@@ -687,7 +687,7 @@
 
                     <!-- Competitors -->
                     <div
-                        class="fade-up fade-up-delay-4 text-center p-6 md:p-8 rounded-2xl border border-white/[0.04] bg-white/[0.02] hover:bg-white/[0.04] hover:border-purple-500/20 transition-all duration-300 group">
+                        class="fade-up fade-up-delay-4 text-center p-6 md:p-8 rounded-2xl border border-white/[0.04] bg-white/[0.02] hover:bg-white/60 hover:border-purple-500/20 transition-all duration-300 group">
                         <div
                             class="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center mx-auto mb-4 group-hover:bg-purple-500/15 transition-colors">
                             <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -695,7 +695,7 @@
                                     d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
                             </svg>
                         </div>
-                        <div class="text-2xl md:text-3xl font-black text-white tracking-tight mb-1">180<span
+                        <div class="text-2xl md:text-3xl font-black text-slate-800 tracking-tight mb-1">180<span
                                 class="text-purple-400">+</span></div>
                         <div class="text-[11px] text-slate-500 uppercase tracking-[0.12em] font-semibold">Active
                             Competitors</div>

@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 
-<body class="bg-[#0f172a] text-gray-300">
+<body class="bg-[#FFF8F0] text-slate-700">
 
     <div class="flex flex-col min-h-screen">
         <!-- Header -->
@@ -22,17 +22,17 @@
 
                 <!-- Welcome Section -->
                 <section class="mb-6 md:mb-8">
-                    <h1 class="text-2xl md:text-3xl font-bold text-white" id="welcome-message">Welcome back!</h1>
-                    <p class="text-gray-400 mt-1">Track your progress and continue your learning journey.</p>
+                    <h1 class="text-2xl md:text-3xl font-bold text-slate-800" id="welcome-message">Welcome back!</h1>
+                    <p class="text-slate-500 mt-1">Track your progress and continue your learning journey.</p>
                 </section>
 
                 <!-- Stats Cards -->
                 <section class="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-10">
                     <!-- Total Progress -->
                     <div
-                        class="bg-white/[0.04] border border-white/[0.06] rounded-xl p-6 hover:border-blue-500 transition-colors">
+                        class="bg-white/70 backdrop-blur-xl border border-black/[0.06] shadow-sm rounded-xl p-6 hover:border-emerald-300 transition-colors">
                         <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-gray-400 font-medium">Total Progress</h3>
+                            <h3 class="text-slate-500 font-medium">Total Progress</h3>
                             <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center">
                                 <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
@@ -41,15 +41,15 @@
                                 </svg>
                             </div>
                         </div>
-                        <p class="text-3xl font-bold text-white" id="stat-progress">0%</p>
+                        <p class="text-3xl font-bold text-slate-800" id="stat-progress">0%</p>
                         <p class="text-sm text-green-400 mt-1">↑ Keep going!</p>
                     </div>
 
                     <!-- Active Roadmaps -->
                     <div
-                        class="bg-white/[0.04] border border-white/[0.06] rounded-xl p-6 hover:border-purple-500 transition-colors">
+                        class="bg-white/70 backdrop-blur-xl border border-black/[0.06] shadow-sm rounded-xl p-6 hover:border-indigo-300 transition-colors">
                         <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-gray-400 font-medium">Active Roadmaps</h3>
+                            <h3 class="text-slate-500 font-medium">Active Roadmaps</h3>
                             <div class="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center">
                                 <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
@@ -59,15 +59,15 @@
                                 </svg>
                             </div>
                         </div>
-                        <p class="text-3xl font-bold text-white" id="stat-roadmaps">0</p>
+                        <p class="text-3xl font-bold text-slate-800" id="stat-roadmaps">0</p>
                         <p class="text-sm text-gray-500 mt-1">Roadmaps in progress</p>
                     </div>
 
                     <!-- Skills Acquired -->
                     <div
-                        class="bg-white/[0.04] border border-white/[0.06] rounded-xl p-6 hover:border-green-500 transition-colors">
+                        class="bg-white/70 backdrop-blur-xl border border-black/[0.06] shadow-sm rounded-xl p-6 hover:border-emerald-300 transition-colors">
                         <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-gray-400 font-medium">Skills Acquired</h3>
+                            <h3 class="text-slate-500 font-medium">Skills Acquired</h3>
                             <div class="w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center">
                                 <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
@@ -77,15 +77,15 @@
                                 </svg>
                             </div>
                         </div>
-                        <p class="text-3xl font-bold text-white" id="stat-skills">0</p>
+                        <p class="text-3xl font-bold text-slate-800" id="stat-skills">0</p>
                         <p class="text-sm text-gray-500 mt-1" id="stat-skills-sub">Skills completed</p>
                     </div>
 
                     <!-- Quizzes Taken -->
                     <div
-                        class="bg-white/[0.04] border border-white/[0.06] rounded-xl p-6 hover:border-yellow-500 transition-colors">
+                        class="bg-white/70 backdrop-blur-xl border border-black/[0.06] shadow-sm rounded-xl p-6 hover:border-amber-300 transition-colors">
                         <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-gray-400 font-medium">Quizzes Taken</h3>
+                            <h3 class="text-slate-500 font-medium">Quizzes Taken</h3>
                             <div class="w-10 h-10 bg-yellow-500/20 rounded-lg flex items-center justify-center">
                                 <svg class="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor"
                                     viewBox="0 0 24 24">
@@ -95,7 +95,7 @@
                                 </svg>
                             </div>
                         </div>
-                        <p class="text-3xl font-bold text-white" id="stat-quizzes">0</p>
+                        <p class="text-3xl font-bold text-slate-800" id="stat-quizzes">0</p>
                         <p class="text-sm text-gray-500 mt-1">Assessments completed</p>
                     </div>
                 </section>
@@ -106,15 +106,40 @@
                     <!-- Left Column: Current Roadmaps -->
                     <div class="lg:col-span-2 space-y-6">
                         <!-- Current Roadmaps -->
-                        <div class="bg-white/[0.04] border border-white/[0.06] rounded-xl p-6">
+                        <div class="bg-white/70 backdrop-blur-xl border border-black/[0.06] shadow-sm rounded-xl p-6">
                             <div class="flex items-center justify-between mb-6">
-                                <h2 class="text-xl font-bold text-white">My Roadmaps</h2>
+                                <h2 class="text-xl font-bold text-slate-800">My Roadmaps</h2>
                                 <a href="./aisensie.html"
                                     class="text-blue-500 hover:text-blue-400 text-sm font-medium">+ Create New</a>
                             </div>
                             <div id="my-roadmaps-list" class="space-y-4 max-h-[400px] overflow-y-auto pr-1">
-                                <!-- Roadmaps will be dynamically inserted here -->
-                                <div class="text-center py-8 text-gray-500" id="no-roadmaps-message">
+                                <!-- Skeleton loading cards -->
+                                <div id="roadmap-skeletons">
+                                    <div class="p-4 rounded-lg bg-white/80 border border-black/[0.06]">
+                                        <div class="flex items-center gap-4">
+                                            <div class="skeleton skeleton-circle w-12 h-12 flex-shrink-0"></div>
+                                            <div class="flex-1">
+                                                <div class="skeleton skeleton-text medium"></div>
+                                                <div class="skeleton skeleton-text tiny"></div>
+                                            </div>
+                                            <div class="skeleton skeleton-text" style="width:40px;height:20px"></div>
+                                        </div>
+                                        <div class="skeleton mt-3" style="height:6px;border-radius:999px"></div>
+                                    </div>
+                                    <div class="p-4 rounded-lg bg-white/80 border border-black/[0.06] mt-3">
+                                        <div class="flex items-center gap-4">
+                                            <div class="skeleton skeleton-circle w-12 h-12 flex-shrink-0"></div>
+                                            <div class="flex-1">
+                                                <div class="skeleton skeleton-text medium"></div>
+                                                <div class="skeleton skeleton-text tiny"></div>
+                                            </div>
+                                            <div class="skeleton skeleton-text" style="width:40px;height:20px"></div>
+                                        </div>
+                                        <div class="skeleton mt-3" style="height:6px;border-radius:999px"></div>
+                                    </div>
+                                </div>
+                                <!-- Shown when no roadmaps exist -->
+                                <div class="text-center py-8 text-gray-500 hidden" id="no-roadmaps-message">
                                     <svg class="w-12 h-12 mx-auto mb-4 text-gray-600" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -130,10 +155,10 @@
                         </div>
 
                         <!-- Recent Activity (Collapsible) -->
-                        <div class="bg-white/[0.04] border border-white/[0.06] rounded-xl overflow-hidden">
+                        <div class="bg-white/70 backdrop-blur-xl border border-black/[0.06] shadow-sm rounded-xl overflow-hidden">
                             <button
                                 onclick="document.getElementById('activity-body').classList.toggle('hidden'); this.querySelector('#activity-arrow').classList.toggle('rotate-180')"
-                                class="w-full flex items-center justify-between p-5 hover:bg-gray-800/30 transition cursor-pointer">
+                                class="w-full flex items-center justify-between p-5 hover:bg-black/5 transition cursor-pointer">
                                 <div class="flex items-center gap-3">
                                     <div class="w-8 h-8 bg-blue-500/20 rounded-lg flex items-center justify-center">
                                         <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor"
@@ -142,9 +167,9 @@
                                                 d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                                         </svg>
                                     </div>
-                                    <h2 class="text-lg font-bold text-white">Recent Activity</h2>
+                                    <h2 class="text-lg font-bold text-slate-800">Recent Activity</h2>
                                     <span id="activity-count"
-                                        class="text-xs bg-gray-700 text-gray-400 px-2 py-0.5 rounded-full">0</span>
+                                        class="text-xs bg-gray-700 text-slate-500 px-2 py-0.5 rounded-full">0</span>
                                 </div>
                                 <svg id="activity-arrow" class="w-5 h-5 text-gray-500 transition-transform duration-200"
                                     fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -152,7 +177,7 @@
                                         d="M19 9l-7 7-7-7"></path>
                                 </svg>
                             </button>
-                            <div id="activity-body" class="hidden border-t border-white/[0.06]">
+                            <div id="activity-body" class="hidden border-t border-black/[0.06]">
                                 <div id="recent-activity" class="max-h-80 overflow-y-auto p-4 space-y-2">
                                     <div class="flex items-center gap-4 p-3 rounded-lg">
                                         <div class="flex-1">
@@ -167,11 +192,11 @@
                     <!-- Right Column: Quick Actions & Skills -->
                     <div class="space-y-6">
                         <!-- Quick Actions -->
-                        <div class="bg-white/[0.04] border border-white/[0.06] rounded-xl p-6">
-                            <h2 class="text-xl font-bold text-white mb-4">Quick Actions</h2>
+                        <div class="bg-white/70 backdrop-blur-xl border border-black/[0.06] shadow-sm rounded-xl p-6">
+                            <h2 class="text-xl font-bold text-slate-800 mb-4">Quick Actions</h2>
                             <div class="space-y-3">
                                 <a href="./aisensie.html"
-                                    class="flex items-center gap-3 p-3 rounded-lg bg-blue-600 hover:bg-blue-700 transition text-white font-medium">
+                                    class="flex items-center gap-3 p-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 transition text-slate-800 font-medium shadow-sm">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z">
@@ -180,7 +205,7 @@
                                     Generate AI Roadmap
                                 </a>
                                 <a href="./skill-battle.html"
-                                    class="flex items-center gap-3 p-3 rounded-lg bg-[#0f172a] border border-white/[0.08] hover:border-purple-500 transition text-white font-medium">
+                                    class="flex items-center gap-3 p-3 rounded-lg bg-white/80 border border-black/[0.06] hover:border-indigo-300 transition text-slate-700 font-medium">
                                     <svg class="w-5 h-5 text-purple-500" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -190,7 +215,7 @@
                                     Battle
                                 </a>
                                 <a href="./roadmaps.html"
-                                    class="flex items-center gap-3 p-3 rounded-lg bg-[#0f172a] border border-white/[0.08] hover:border-green-500 transition text-white font-medium">
+                                    class="flex items-center gap-3 p-3 rounded-lg bg-white/80 border border-black/[0.06] hover:border-emerald-300 transition text-slate-700 font-medium">
                                     <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor"
                                         viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -203,9 +228,9 @@
                         </div>
 
                         <!-- Weekly Activity Chart -->
-                        <div class="bg-white/[0.04] border border-white/[0.06] rounded-xl p-6">
+                        <div class="bg-white/70 backdrop-blur-xl border border-black/[0.06] shadow-sm rounded-xl p-6">
                             <div class="flex items-center justify-between mb-4">
-                                <h2 class="text-xl font-bold text-white">Weekly Activity</h2>
+                                <h2 class="text-xl font-bold text-slate-800">Weekly Activity</h2>
                                 <span class="text-xs text-gray-500" id="weekly-total">0 activities</span>
                             </div>
                             <div class="h-44">
@@ -215,7 +240,7 @@
 
                         <!-- Learning Streak -->
                         <div
-                            class="bg-gradient-to-br from-purple-900/50 to-blue-900/50 border border-purple-800 rounded-xl p-6">
+                            class="bg-gradient-to-br from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl p-6">
                             <div class="flex items-center gap-4">
                                 <div class="w-14 h-14 bg-yellow-500 rounded-full flex items-center justify-center">
                                     <svg class="w-7 h-7 text-yellow-900" fill="currentColor" viewBox="0 0 20 20">
@@ -225,8 +250,8 @@
                                     </svg>
                                 </div>
                                 <div>
-                                    <p class="text-white font-bold text-lg" id="streak-text">Start your streak!</p>
-                                    <p class="text-gray-400 text-sm" id="streak-sub">Learn daily to build momentum</p>
+                                    <p class="text-slate-800 font-bold text-lg" id="streak-text">Start your streak!</p>
+                                    <p class="text-slate-500 text-sm" id="streak-sub">Learn daily to build momentum</p>
                                 </div>
                             </div>
                         </div>
@@ -320,6 +345,10 @@
                 const roadmapsResponse = await API.Dashboard.getRoadmaps();
                 const savedRoadmaps = roadmapsResponse.roadmaps || [];
 
+                // Hide skeleton loaders
+                const skeletons = document.getElementById('roadmap-skeletons');
+                if (skeletons) skeletons.remove();
+
                 if (savedRoadmaps.length > 0) {
                     document.getElementById('no-roadmaps-message').style.display = 'none';
                     const roadmapsList = document.getElementById('my-roadmaps-list');
@@ -327,14 +356,14 @@
                     savedRoadmaps.forEach(roadmap => {
                         const progress = roadmap.progress || 0;
                         const roadmapCard = document.createElement('div');
-                        roadmapCard.className = 'p-4 rounded-lg bg-[#0f172a] border border-white/[0.08] hover:border-blue-500 transition cursor-pointer';
+                        roadmapCard.className = 'p-4 rounded-lg bg-white/80 border border-black/[0.06] hover:border-blue-500 transition cursor-pointer';
                         roadmapCard.innerHTML = `
                             <div class="flex items-center gap-4">
-                                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
+                                <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-teal-500 rounded-lg flex items-center justify-center text-slate-800 font-bold text-lg flex-shrink-0">
                                     ${roadmap.title ? roadmap.title.charAt(0).toUpperCase() : 'R'}
                                 </div>
                                 <div class="flex-1 min-w-0">
-                                    <h3 class="text-white font-semibold truncate">${roadmap.title || 'Custom Roadmap'}</h3>
+                                    <h3 class="text-slate-800 font-semibold truncate">${roadmap.title || 'Custom Roadmap'}</h3>
                                     <p class="text-gray-500 text-sm">${roadmap.is_ai_generated ? 'AI Generated' : 'Saved roadmap'}</p>
                                 </div>
                                 <div class="text-right flex-shrink-0">
@@ -342,7 +371,7 @@
                                     <p class="text-gray-500 text-sm">Complete</p>
                                 </div>
                             </div>
-                            <div class="mt-3 w-full bg-gray-800 rounded-full h-1.5">
+                            <div class="mt-3 w-full bg-slate-100 rounded-full h-1.5">
                                 <div class="h-1.5 rounded-full transition-all duration-500 ${progress >= 80 ? 'bg-green-500' : progress >= 40 ? 'bg-blue-500' : 'bg-purple-500'}" style="width: ${progress}%"></div>
                             </div>
                         `;
@@ -351,6 +380,8 @@
                         };
                         roadmapsList.appendChild(roadmapCard);
                     });
+                } else {
+                    document.getElementById('no-roadmaps-message').classList.remove('hidden');
                 }
 
                 // 3. Fetch activity
@@ -362,10 +393,10 @@
                 if (activities.length > 0) {
                     activityCount.textContent = activities.length;
                     activityContainer.innerHTML = activities.map(a => `
-                        <div class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-gray-800/50 transition">
+                        <div class="flex items-center gap-3 p-2.5 rounded-lg hover:bg-slate-100/50 transition">
                             ${activityIcon(a.type)}
                             <div class="flex-1 min-w-0">
-                                <p class="text-white font-medium text-sm truncate">${a.description}</p>
+                                <p class="text-slate-800 font-medium text-sm truncate">${a.description}</p>
                                 <p class="text-gray-500 text-xs">${timeAgo(a.timestamp)}</p>
                             </div>
                         </div>
@@ -382,7 +413,7 @@
                     if (!testHistoryCard) {
                         testHistoryCard = document.createElement('div');
                         testHistoryCard.id = 'test-history-card';
-                        testHistoryCard.className = 'bg-white/[0.04] border border-white/[0.06] rounded-xl p-6';
+                        testHistoryCard.className = 'bg-white/60 border border-black/[0.06] rounded-xl p-6';
                         // Insert after recent activity
                         const activityParent = document.getElementById('recent-activity').parentElement;
                         activityParent.parentElement.appendChild(testHistoryCard);
@@ -390,19 +421,19 @@
 
                     testHistoryCard.innerHTML = `
                         <div class="flex items-center justify-between mb-6">
-                            <h2 class="text-xl font-bold text-white">Test History</h2>
+                            <h2 class="text-xl font-bold text-slate-800">Test History</h2>
                             <a href="./skill-test.html" class="text-purple-500 hover:text-purple-400 text-sm font-medium">Take Test →</a>
                         </div>
                         <div class="space-y-3 max-h-[350px] overflow-y-auto pr-1">
                             ${history.map(t => `
-                                <div class="flex items-center gap-3 p-3 rounded-lg bg-[#0f172a] border border-white/[0.08]/50">
+                                <div class="flex items-center gap-3 p-3 rounded-lg bg-white/80 border border-black/[0.06]/50">
                                     <div class="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
                                         <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
                                         </svg>
                                     </div>
                                     <div class="flex-1 min-w-0">
-                                        <p class="text-white font-medium text-sm truncate">${t.skill}</p>
+                                        <p class="text-slate-800 font-medium text-sm truncate">${t.skill}</p>
                                         <p class="text-gray-500 text-xs">${t.score}/${t.total} correct · ${timeAgo(t.date)}</p>
                                     </div>
                                     <span class="px-2.5 py-1 rounded-full text-xs font-bold ${scoreBadge(t.percentage)}">${t.percentage}%</span>

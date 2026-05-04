@@ -9,23 +9,23 @@
     <link rel="stylesheet" href="css/style.css">
     <style>
         .auth-glow {
-            background: radial-gradient(ellipse at 50% 0%, rgba(99, 102, 241, 0.12) 0%, transparent 60%);
+            background: radial-gradient(ellipse at 50% 0%, rgba(5, 150, 105, 0.08) 0%, transparent 60%);
         }
 
         .input-field {
-            background: rgba(15, 23, 42, 0.6);
+            background: rgba(255, 255, 255, 0.7);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(0, 0, 0, 0.08);
             transition: all 0.3s ease;
         }
 
         .input-field:focus {
-            border-color: rgba(99, 102, 241, 0.5);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1), 0 0 20px rgba(99, 102, 241, 0.05);
+            border-color: rgba(5, 150, 105, 0.5);
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            background: linear-gradient(135deg, #059669 0%, #10B981 100%);
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
@@ -38,7 +38,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
             transition: left 0.5s;
         }
 
@@ -48,19 +48,19 @@
 
         .btn-primary:hover {
             transform: translateY(-1px);
-            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
+            box-shadow: 0 8px 25px rgba(5, 150, 105, 0.3);
         }
 
         .auth-card {
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.65);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(0, 0, 0, 0.06);
         }
 
         .floating-shape {
             position: absolute;
             border-radius: 50%;
-            opacity: 0.04;
+            opacity: 0.06;
             animation: float 20s ease-in-out infinite;
         }
 
@@ -78,33 +78,33 @@
     </style>
 </head>
 
-<body class="bg-[#0a0f1e] text-gray-300 min-h-screen flex items-center justify-center relative overflow-hidden">
+<body class="bg-[#FFF8F0] text-slate-700 min-h-screen flex items-center justify-center relative overflow-hidden">
     <!-- Background effects -->
     <div class="auth-glow absolute inset-0 pointer-events-none"></div>
-    <div class="floating-shape w-96 h-96 bg-indigo-500 -top-20 -right-20" style="position:absolute"></div>
-    <div class="floating-shape w-72 h-72 bg-purple-500 -bottom-16 -left-16"
+    <div class="floating-shape w-96 h-96 bg-emerald-300 -top-20 -right-20" style="position:absolute"></div>
+    <div class="floating-shape w-72 h-72 bg-teal-300 -bottom-16 -left-16"
         style="position:absolute; animation-delay: -10s"></div>
 
     <div class="w-full max-w-md px-5 relative z-10">
         <!-- Logo -->
         <div class="text-center mb-10">
             <a href="./index.html" class="inline-flex items-center gap-1 group">
-                <span class="text-white font-extrabold text-3xl tracking-tight">Career<span
-                        style="background:linear-gradient(135deg,#818cf8,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Sage</span></span>
+                <span class="text-slate-800 font-extrabold text-3xl tracking-tight">Career<span
+                        style="background:linear-gradient(135deg,#059669,#10B981);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Sage</span></span>
             </a>
-            <p class="text-gray-500 mt-3 text-sm">Welcome back! Sign in to continue your journey.</p>
+            <p class="text-slate-500 mt-3 text-sm">Welcome back! Sign in to continue your journey.</p>
         </div>
 
         <!-- Login Form Card -->
         <div class="auth-card rounded-2xl p-6 md:p-8 shadow-2xl shadow-black/20">
-            <h2 class="text-xl font-bold text-white mb-1">Sign In</h2>
-            <p class="text-gray-500 text-sm mb-6">Enter your credentials to access your account</p>
+            <h2 class="text-xl font-bold text-slate-800 mb-1">Sign In</h2>
+            <p class="text-slate-500 text-sm mb-6">Enter your credentials to access your account</p>
 
             <form id="login-form" class="space-y-5">
                 <!-- Email -->
                 <div>
                     <label for="email"
-                        class="block text-xs font-semibold text-gray-400 mb-2 uppercase tracking-wider">Email</label>
+                        class="block text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wider">Email</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                             <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -114,7 +114,7 @@
                             </svg>
                         </div>
                         <input type="email" id="email" name="email" required
-                            class="input-field w-full rounded-xl pl-10 pr-4 py-3 text-white text-sm placeholder-gray-600 focus:outline-none"
+                            class="input-field w-full rounded-xl pl-10 pr-4 py-3 text-slate-800 text-sm placeholder-slate-400 focus:outline-none"
                             placeholder="you@example.com">
                     </div>
                 </div>
@@ -122,7 +122,7 @@
                 <!-- Password -->
                 <div>
                     <label for="password"
-                        class="block text-xs font-semibold text-gray-400 mb-2 uppercase tracking-wider">Password</label>
+                        class="block text-xs font-semibold text-slate-500 mb-2 uppercase tracking-wider">Password</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                             <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -132,7 +132,7 @@
                             </svg>
                         </div>
                         <input type="password" id="password" name="password" required
-                            class="input-field w-full rounded-xl pl-10 pr-4 py-3 text-white text-sm placeholder-gray-600 focus:outline-none"
+                            class="input-field w-full rounded-xl pl-10 pr-4 py-3 text-slate-800 text-sm placeholder-slate-400 focus:outline-none"
                             placeholder="••••••••">
                     </div>
                 </div>
@@ -146,14 +146,14 @@
 
             <!-- Divider -->
             <div class="flex items-center gap-3 my-6">
-                <div class="flex-1 h-px bg-white/[0.06]"></div>
-                <span class="text-xs text-gray-600 uppercase tracking-wider">New here?</span>
-                <div class="flex-1 h-px bg-white/[0.06]"></div>
+                <div class="flex-1 h-px bg-black/[0.06]"></div>
+                <span class="text-xs text-slate-400 uppercase tracking-wider">New here?</span>
+                <div class="flex-1 h-px bg-black/[0.06]"></div>
             </div>
 
             <!-- Register Link -->
             <a href="./register.html"
-                class="block w-full text-center py-3 rounded-xl border border-white/[0.08] text-gray-400 hover:text-white hover:border-white/[0.15] hover:bg-white/[0.03] transition-all text-sm font-medium">
+                class="block w-full text-center py-3 rounded-xl border border-black/[0.08] text-slate-500 hover:text-slate-700 hover:border-black/[0.15] hover:bg-black/50 transition-all text-sm font-medium">
                 Create an account
             </a>
         </div>
