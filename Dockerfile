@@ -53,13 +53,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
     CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:5000/api/health')" || exit 1
 
 # Production server with eventlet for SocketIO support
+# Uses gunicorn.conf.py which runs eventlet.monkey_patch() before app loads
 CMD ["gunicorn", \
-     "--bind", "0.0.0.0:5000", \
-     "--worker-class", "eventlet", \
-     "--workers", "1", \
-     "--timeout", "120", \
-     "--keep-alive", "65", \
-     "--access-logfile", "-", \
-     "--error-logfile", "-", \
-     "--log-level", "info", \
+     "--config", "gunicorn.conf.py", \
      "run:app"]

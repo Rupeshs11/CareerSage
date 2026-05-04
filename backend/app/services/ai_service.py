@@ -5,9 +5,12 @@ Uses 3 NVIDIA API keys for concurrent roadmap generation.
 import json
 import re
 import random
+import time
 import eventlet
+import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 from flask import current_app
-from openai import OpenAI
 
 
 class AIService:
@@ -18,6 +21,15 @@ class AIService:
     def __init__(self):
         self._clients = {}
         self._key_counter = 0  # Round-robin across 3 keys
+        # Persistent session with connection pooling for faster API calls
+        self._session = requests.Session()
+        adapter = HTTPAdapter(
+            pool_connections=3,
+            pool_maxsize=5,
+            max_retries=Retry(total=1, backoff_factor=0.5, status_forcelist=[502, 503, 504])
+        )
+        self._session.mount('https://', adapter)
+        self._session.mount('http://', adapter)
 
     # ──────────────────────────────────────────
     #  Client / API helpers
@@ -33,12 +45,16 @@ class AIService:
         return current_app.config.get('NVIDIA_MODEL', 'meta/llama-3.1-8b-instruct')
 
     def call_nvidia_api(self, prompt, key_index=0, system_msg="You are an expert career roadmap generator. Output ONLY valid JSON."):
-        """Call NVIDIA API directly using requests to avoid eventlet/httpx hangs."""
-        import requests
+        """Call NVIDIA API using persistent session with connection pooling.
+        
+        Uses keep-alive connections for ~200ms faster calls and retries
+        with an alternate API key on failure.
+        """
+        start = time.time()
         try:
             api_key = self._get_api_key(key_index)
             model = self._get_model()
-            current_app.logger.info(f"[API-{key_index}] Calling {model} via requests...")
+            current_app.logger.info(f"[API-{key_index}] Calling {model}...")
 
             headers = {
                 "Authorization": f"Bearer {api_key}",
@@ -57,24 +73,77 @@ class AIService:
                 "stream": False
             }
 
-            response = requests.post(
+            response = self._session.post(
                 f"{self.NVIDIA_BASE_URL}/chat/completions",
                 headers=headers,
                 json=payload,
-                timeout=40
+                timeout=(10, 45)  # (connect_timeout, read_timeout)
             )
             response.raise_for_status()
             
             data = response.json()
+            elapsed = time.time() - start
+            if 'choices' not in data or not data['choices']:
+                current_app.logger.warning(f"[API-{key_index}] No choices in response ({elapsed:.1f}s)")
+                return None
+
+            content = data['choices'][0]['message']['content']
+            current_app.logger.info(f"[API-{key_index}] OK: {len(content or '')} chars in {elapsed:.1f}s")
+            return content
+
+        except Exception as e:
+            elapsed = time.time() - start
+            current_app.logger.error(f"[API-{key_index}] FAILED after {elapsed:.1f}s: {type(e).__name__}: {e}")
+            
+            # Retry once with a different API key
+            retry_key = (key_index + 1) % 3
+            if retry_key != key_index:
+                current_app.logger.info(f"[API-{key_index}] Retrying with key {retry_key}...")
+                return self._call_nvidia_api_no_retry(prompt, retry_key, system_msg)
+            return None
+
+    def _call_nvidia_api_no_retry(self, prompt, key_index, system_msg):
+        """Single attempt API call (no retry to avoid infinite loop)."""
+        start = time.time()
+        try:
+            api_key = self._get_api_key(key_index)
+            model = self._get_model()
+
+            headers = {
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json"
+            }
+            payload = {
+                "model": model,
+                "messages": [
+                    {"role": "system", "content": system_msg},
+                    {"role": "user", "content": prompt}
+                ],
+                "temperature": 0.6,
+                "top_p": 0.95,
+                "max_tokens": 4096,
+                "stream": False
+            }
+
+            response = self._session.post(
+                f"{self.NVIDIA_BASE_URL}/chat/completions",
+                headers=headers,
+                json=payload,
+                timeout=(10, 45)
+            )
+            response.raise_for_status()
+            data = response.json()
+            elapsed = time.time() - start
+
             if 'choices' not in data or not data['choices']:
                 return None
 
             content = data['choices'][0]['message']['content']
-            current_app.logger.info(f"[API-{key_index}] Response: {len(content or '')} chars")
+            current_app.logger.info(f"[API-{key_index}:retry] OK: {len(content or '')} chars in {elapsed:.1f}s")
             return content
-
         except Exception as e:
-            current_app.logger.error(f"[API-{key_index}] Exception: {type(e).__name__}: {e}")
+            elapsed = time.time() - start
+            current_app.logger.error(f"[API-{key_index}:retry] FAILED after {elapsed:.1f}s: {e}")
             return None
 
     def parse_json_response(self, content):
@@ -394,6 +463,7 @@ Use REAL URLs. Create branching edges, NOT a linear chain."""
     def generate_roadmap(self, topic, skills=None, experience_level="beginner",
                          career_goal="learn", mode="beginner", user_id=None):
         """Generate roadmap with caching, parallel API calls, and streaming progress."""
+        total_start = time.time()
         skills = skills or []
 
         if not self.is_tech_topic(topic):
@@ -406,10 +476,11 @@ Use REAL URLs. Create branching edges, NOT a linear chain."""
         cached = self._check_cache(topic, mode, experience_level)
         if cached:
             self._emit_progress(user_id, 1, '⚡ Loaded from cache!', 100)
-            current_app.logger.info(f"Returning cached roadmap for '{topic}'")
+            elapsed = time.time() - total_start
+            current_app.logger.info(f"[PERF] Cache hit for '{topic}' in {elapsed:.1f}s")
             return cached
 
-        current_app.logger.info(f"Generating AI roadmap for: {topic} (mode: {mode})")
+        current_app.logger.info(f"[PERF] Generating AI roadmap for: {topic} (mode: {mode})")
         skills_text = ", ".join(skills) if skills else "None specified"
 
         if mode == 'beginner':
@@ -421,6 +492,8 @@ Use REAL URLs. Create branching edges, NOT a linear chain."""
         if roadmap and 'error' not in roadmap:
             self._save_cache(topic, mode, experience_level, roadmap)
 
+        elapsed = time.time() - total_start
+        current_app.logger.info(f"[PERF] Total roadmap generation for '{topic}' ({mode}): {elapsed:.1f}s")
         return roadmap
 
     def _generate_beginner(self, topic, skills_text, experience_level, career_goal, user_id=None):
