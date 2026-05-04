@@ -468,7 +468,7 @@ Use REAL URLs. Create branching edges, NOT a linear chain."""
     def _fetch_ddg_resources(self, nodes, topic):
         """Fetch real resources using the existing SearchService (proven to work)."""
         from .search_service import search_service
-        import concurrent.futures
+        import eventlet
         
         app = current_app._get_current_object()
 
@@ -483,12 +483,13 @@ Use REAL URLs. Create branching edges, NOT a linear chain."""
                     app.logger.warning(f"[RES] Failed for '{title}': {e}")
                     node['resources'] = []
 
-        # Run DuckDuckGo searches in parallel (5 at a time) to prevent timeouts
-        with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
-            list(executor.map(fetch_for_node, nodes))
+        # Run DuckDuckGo searches in parallel using Eventlet GreenPool (since the app uses eventlet)
+        pool = eventlet.GreenPool(size=10)
+        for _ in pool.imap(fetch_for_node, nodes):
+            pass
 
         matched = sum(1 for n in nodes if n.get('resources'))
-        current_app.logger.info(f"[RES] Total: {matched}/{len(nodes)} nodes have resources")
+        app.logger.info(f"[RES] Total: {matched}/{len(nodes)} nodes have resources")
 
     def _generate_advanced_fallback(self, topic, skills_text, experience_level, career_goal, user_id=None):
         """Fallback: single full API call if parallel fails."""
