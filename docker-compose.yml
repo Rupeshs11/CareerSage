@@ -41,7 +41,7 @@ services:
       - NVIDIA_API_KEY=${NVIDIA_API_KEY:-}
       - NVIDIA_API_KEY_2=${NVIDIA_API_KEY_2:-}
       - NVIDIA_API_KEY_3=${NVIDIA_API_KEY_3:-}
-      - NVIDIA_MODEL=${NVIDIA_MODEL:-meta/llama-3.1-70b-instruct}
+      - NVIDIA_MODEL=${NVIDIA_MODEL:-meta/llama-3.1-8b-instruct}
     depends_on:
       mongodb:
         condition: service_healthy

@@ -77,7 +77,7 @@ class AIService:
                 f"{self.NVIDIA_BASE_URL}/chat/completions",
                 headers=headers,
                 json=payload,
-                timeout=(10, 45)  # (connect_timeout, read_timeout)
+                timeout=(10, 180)  # (connect_timeout, read_timeout)
             )
             response.raise_for_status()
             
@@ -129,7 +129,7 @@ class AIService:
                 f"{self.NVIDIA_BASE_URL}/chat/completions",
                 headers=headers,
                 json=payload,
-                timeout=(10, 45)
+                timeout=(10, 180)
             )
             response.raise_for_status()
             data = response.json()
