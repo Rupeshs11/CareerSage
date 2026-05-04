@@ -17,6 +17,7 @@ class AIService:
 
     def __init__(self):
         self._clients = {}
+        self._key_counter = 0  # Round-robin across 3 keys
 
     # ──────────────────────────────────────────
     #  Client / API helpers
@@ -96,8 +97,8 @@ class AIService:
         if not user_id:
             return
         try:
-            from .routes.battle import user_sid_map
-            from .extensions import socketio
+            from ..routes.battle import user_sid_map
+            from ..extensions import socketio
             sid = user_sid_map.get(user_id)
             if sid:
                 socketio.emit('roadmap_progress', {
@@ -114,7 +115,7 @@ class AIService:
 
     def _check_cache(self, topic, mode, experience_level):
         """Return cached roadmap or None."""
-        from .models.cache import RoadmapCache
+        from ..models.cache import RoadmapCache
         key = RoadmapCache.make_key(topic, mode, experience_level)
         cached = RoadmapCache.objects(cache_key=key).first()
         if cached:
@@ -125,7 +126,7 @@ class AIService:
 
     def _save_cache(self, topic, mode, experience_level, roadmap_data):
         """Upsert roadmap into cache."""
-        from .models.cache import RoadmapCache
+        from ..models.cache import RoadmapCache
         key = RoadmapCache.make_key(topic, mode, experience_level)
         try:
             RoadmapCache.objects(cache_key=key).update_one(
@@ -414,11 +415,13 @@ Use REAL URLs. Create branching edges, NOT a linear chain."""
         return roadmap
 
     def _generate_beginner(self, topic, skills_text, experience_level, career_goal, user_id=None):
-        """Beginner mode — single API call (no resources, fast)."""
+        """Beginner mode — single API call + DuckDuckGo resources."""
         self._emit_progress(user_id, 1, '🧠 Generating roadmap...', 30)
 
         prompt = self._build_beginner_prompt(topic, skills_text, experience_level, career_goal)
-        content = self.call_nvidia_api(prompt, key_index=0)
+        key_idx = self._key_counter % 3
+        self._key_counter += 1
+        content = self.call_nvidia_api(prompt, key_index=key_idx)
         if not content:
             return None
 
@@ -426,21 +429,26 @@ Use REAL URLs. Create branching edges, NOT a linear chain."""
         if not data:
             return None
 
-        self._emit_progress(user_id, 2, '✅ Finalizing...', 90)
+        # Fetch real resources via DuckDuckGo
+        self._emit_progress(user_id, 2, '🔍 Finding learning resources...', 60)
+        self._fetch_ddg_resources(data.get('nodes', []), topic)
+
+        self._emit_progress(user_id, 3, '✅ Finalizing...', 90)
         return self.validate_roadmap(data, topic)
 
     def _generate_advanced_parallel(self, topic, skills_text, experience_level, career_goal, user_id=None):
-        """Advanced mode — Step 1: structure (Key 1), Step 2: resources (Key 2 + Key 3 parallel)."""
+        """Advanced mode — Step 1: AI structure, Step 2: DuckDuckGo resources (real URLs)."""
 
-        # ── Step 1: Generate structure with Key 1 ──
+        # ── Step 1: Generate structure with AI ──
         self._emit_progress(user_id, 1, '🏗️ Building roadmap structure...', 15)
 
         structure_prompt = self._build_structure_prompt(topic, skills_text, experience_level, career_goal)
-        content = self.call_nvidia_api(structure_prompt, key_index=0)
+        key_idx = self._key_counter % 3
+        self._key_counter += 1
+        content = self.call_nvidia_api(structure_prompt, key_index=key_idx)
 
         if not content:
-            # Fallback: try full single-call with Key 1
-            current_app.logger.warning("Structure call failed, trying full single-call fallback")
+            current_app.logger.warning("Structure call failed, trying fallback")
             return self._generate_advanced_fallback(topic, skills_text, experience_level, career_goal, user_id)
 
         data = self.parse_json_response(content)
@@ -448,64 +456,31 @@ Use REAL URLs. Create branching edges, NOT a linear chain."""
             return self._generate_advanced_fallback(topic, skills_text, experience_level, career_goal, user_id)
 
         nodes = data['nodes']
-        mid = len(nodes) // 2
-        first_titles = [n.get('title', f'Topic {i+1}') for i, n in enumerate(nodes[:mid])]
-        second_titles = [n.get('title', f'Topic {i+mid+1}') for i, n in enumerate(nodes[mid:])]
+        current_app.logger.info(f"Structure ready: {len(nodes)} nodes. Fetching resources via DuckDuckGo...")
+        self._emit_progress(user_id, 2, f'🔍 Searching real resources for {len(nodes)} nodes...', 50)
 
-        current_app.logger.info(f"Structure ready: {len(nodes)} nodes. Fetching resources in parallel...")
-        self._emit_progress(user_id, 2, f'📚 Fetching resources for {len(nodes)} nodes (2 parallel calls)...', 40)
+        # ── Step 2: Fetch REAL resources via DuckDuckGo (parallel) ──
+        self._fetch_ddg_resources(data['nodes'], topic)
 
-        # ── Step 2: Fetch resources in parallel with Key 2 + Key 3 ──
-        prompt_r1 = self._build_resources_prompt(topic, first_titles)
-        prompt_r2 = self._build_resources_prompt(topic, second_titles)
-
-        app = current_app._get_current_object()
-        results = [None, None]
-
-        def fetch_r1():
-            with app.app_context():
-                results[0] = self.call_nvidia_api(prompt_r1, key_index=1)
-
-        def fetch_r2():
-            with app.app_context():
-                results[1] = self.call_nvidia_api(prompt_r2, key_index=2)
-
-        g1 = eventlet.spawn(fetch_r1)
-        g2 = eventlet.spawn(fetch_r2)
-        g1.wait()
-        g2.wait()
-
-        self._emit_progress(user_id, 3, '🔗 Merging resources into roadmap...', 75)
-
-        # ── Merge resources into nodes ──
-        resource_map = {}
-        for raw in results:
-            if raw:
-                parsed = self.parse_json_response(raw)
-                if parsed and 'resources' in parsed:
-                    for item in parsed['resources']:
-                        title_key = item.get('node_title', '').strip().lower()
-                        if title_key:
-                            resource_map[title_key] = item.get('resources', [])
-
-        matched = 0
-        for node in data['nodes']:
-            node_title = node.get('title', '').strip().lower()
-            # Try exact match, then fuzzy
-            res = resource_map.get(node_title)
-            if not res:
-                for key, val in resource_map.items():
-                    if key in node_title or node_title in key:
-                        res = val
-                        break
-            if res:
-                node['resources'] = res
-                matched += 1
-
-        current_app.logger.info(f"Matched resources for {matched}/{len(nodes)} nodes")
-        self._emit_progress(user_id, 4, '✅ Roadmap ready!', 95)
-
+        self._emit_progress(user_id, 3, '✅ Roadmap ready!', 95)
         return self.validate_roadmap(data, topic)
+
+    def _fetch_ddg_resources(self, nodes, topic):
+        """Fetch real resources using the existing SearchService (proven to work)."""
+        from .search_service import search_service
+
+        for node in nodes:
+            title = node.get('title', '')
+            try:
+                results = search_service.search_resources(f"{title} {topic}", max_results=3)
+                node['resources'] = results
+                current_app.logger.info(f"[RES] {title}: {len(results)} resources found")
+            except Exception as e:
+                current_app.logger.warning(f"[RES] Failed for '{title}': {e}")
+                node['resources'] = []
+
+        matched = sum(1 for n in nodes if n.get('resources'))
+        current_app.logger.info(f"[RES] Total: {matched}/{len(nodes)} nodes have resources")
 
     def _generate_advanced_fallback(self, topic, skills_text, experience_level, career_goal, user_id=None):
         """Fallback: single full API call if parallel fails."""
