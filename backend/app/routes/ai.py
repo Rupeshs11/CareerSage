@@ -124,7 +124,8 @@ def generate_roadmap():
             skills=skills,
             experience_level=experience_level,
             career_goal=career_goal,
-            mode=mode
+            mode=mode,
+            user_id=user_id
         )
         
         if isinstance(roadmap_data, dict) and roadmap_data.get('error') == 'non_tech_topic':

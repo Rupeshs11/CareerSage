@@ -15,7 +15,7 @@
   <img src="https://img.shields.io/badge/MongoDB-latest-47A248?logo=mongodb&logoColor=white" alt="MongoDB" />
   <img src="https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white" alt="Docker" />
   <img src="https://img.shields.io/badge/Terraform-IaC-844FBA?logo=terraform&logoColor=white" alt="Terraform" />
-  <img src="https://img.shields.io/badge/NVIDIA_AI-Llama_3.1-76B900?logo=nvidia&logoColor=white" alt="NVIDIA AI" />
+  <img src="https://img.shields.io/badge/NVIDIA_AI-Llama_3.1_70B-76B900?logo=nvidia&logoColor=white" alt="NVIDIA AI" />
   <img src="https://img.shields.io/badge/CI%2FCD-GitHub_Actions-2088FF?logo=githubactions&logoColor=white" alt="CI/CD" />
 </p>
 
@@ -23,7 +23,7 @@
 
 ## 🚀 What is CareerSage?
 
-CareerSage is a full-stack AI-powered platform that transforms how developers learn, practice, and compete. Instead of passively following tutorials, users get **personalized AI-generated roadmaps**, test their skills with **adaptive quizzes**, and challenge friends to **real-time 1v1 quiz battles** — all powered by NVIDIA's Google Gemma model.
+CareerSage is a full-stack AI-powered platform that transforms how developers learn, practice, and compete. Instead of passively following tutorials, users get **personalized AI-generated roadmaps**, test their skills with **adaptive quizzes**, and challenge friends to **real-time 1v1 quiz battles** — all powered by NVIDIA's Llama 3.1 70B model with **3-key parallel generation** and **MongoDB caching** for sub-minute response times.
 
 ---
 
@@ -103,7 +103,7 @@ CareerSage/
 │   │   │   ├── battle.py        #   /api/battle — 1v1 matchmaking + SocketIO
 │   │   │   └── friends.py       #   /api/friends — Social features
 │   │   ├── services/            # Business logic
-│   │   │   ├── ai_service.py    #   NVIDIA Google Gemma integration
+│   │   │   ├── ai_service.py    #   NVIDIA AI (3-key parallel + cache)
 │   │   │   └── search_service.py#   DuckDuckGo web search for resources
 │   │   ├── data/                # Seed data (official roadmaps)
 │   │   └── Dataset/             # Training / reference datasets
@@ -155,7 +155,7 @@ CareerSage/
 | **Frontend**         | HTML5, TailwindCSS, Vanilla JavaScript                   |
 | **Backend**          | Python 3.11, Flask 3.0, Flask-RESTful                    |
 | **Database**         | MongoDB (via MongoEngine ODM)                            |
-| **AI Engine**        | NVIDIA Google Gemma 4 31B IT                             |
+| **AI Engine**        | NVIDIA Llama 3.1 70B (3-key parallel + MongoDB cache)    |
 | **Real-time**        | Flask-SocketIO + Eventlet (WebSocket)                    |
 | **Auth**             | JWT (Flask-JWT-Extended) + bcrypt                        |
 | **Search**           | DuckDuckGo Search API                                    |
@@ -258,9 +258,15 @@ Build Docker Image ──► Push to Docker Hub ──► SSH Deploy to EC2
 | `EC2_USER`              | SSH username (e.g., `ubuntu`)  |
 | `DOCKERHUB_USERNAME`    | Docker Hub username            |
 | `DOCKERHUB_TOKEN`       | Docker Hub access token        |
-| `NVIDIA_API_KEY`        | NVIDIA AI API key              |
+| `NVIDIA_API_KEY`        | NVIDIA AI API key (primary)    |
+| `NVIDIA_API_KEY_2`      | NVIDIA AI API key (parallel 2) |
+| `NVIDIA_API_KEY_3`      | NVIDIA AI API key (parallel 3) |
+| `NVIDIA_MODEL`          | AI model name                  |
 | `JWT_SECRET_KEY`        | JWT signing secret             |
 | `SECRET_KEY`            | Flask secret key               |
+| `MAIL_USERNAME`         | SMTP email address             |
+| `MAIL_PASSWORD`         | SMTP app password              |
+| `MAIL_DEFAULT_SENDER`   | Email sender display name      |
 
 ---
 

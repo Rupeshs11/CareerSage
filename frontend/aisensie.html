@@ -91,15 +91,15 @@
                 <!-- Loading State (Hidden initially) -->
                 <div id="loading-state" class="hidden mt-6 text-center">
                     <div
-                        class="inline-flex items-center gap-3 bg-blue-900/30 border border-blue-800 rounded-lg px-6 py-4">
+                        class="inline-flex flex-col items-center gap-3 bg-blue-900/30 border border-blue-800 rounded-lg px-6 py-5 min-w-[320px]">
                         <svg class="animate-spin w-5 h-5 text-blue-500" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
-                            </circle>
-                            <path class="opacity-75" fill="currentColor"
-                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                            </path>
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        <span class="text-blue-300 font-medium">AI is generating your personalized roadmap...</span>
+                        <span id="progress-text" class="text-blue-300 font-medium">AI is generating your personalized roadmap...</span>
+                        <div class="w-full bg-gray-700 rounded-full h-2 mt-1">
+                            <div id="progress-bar" class="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-500" style="width: 5%"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -109,9 +109,29 @@
     <!-- Footer -->
     <div id="footer-placeholder"></div>
 
+    <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
     <script src="js/load-header-footer.js"></script>
     <script src="js/api.js"></script>
     <script src="js/main.js?v=2" type="module"></script>
+    <script>
+        // Socket.IO progress listener for roadmap streaming
+        let progressSocket = null;
+        function initProgressSocket() {
+            if (progressSocket) return;
+            const token = localStorage.getItem('access_token');
+            if (!token) return;
+            try {
+                const base = window.location.origin;
+                progressSocket = io(base, { transports: ['websocket', 'polling'] });
+                progressSocket.on('roadmap_progress', function(data) {
+                    const textEl = document.getElementById('progress-text');
+                    const barEl = document.getElementById('progress-bar');
+                    if (textEl) textEl.textContent = data.message || 'Processing...';
+                    if (barEl) barEl.style.width = (data.progress || 5) + '%';
+                });
+            } catch(e) { console.warn('Progress socket failed:', e); }
+        }
+    </script>
     <script>
         // All suggested topics for dropdown
         const SUGGESTED_TOPICS = [
@@ -289,6 +309,13 @@
             // Show loading
             generateBtn.classList.add('hidden');
             loadingState.classList.remove('hidden');
+            // Reset progress bar
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
+            if (progressBar) progressBar.style.width = '5%';
+            if (progressText) progressText.textContent = 'AI is generating your personalized roadmap...';
+            // Start socket for live progress
+            initProgressSocket();
 
             // Clear previous roadmap data
             localStorage.removeItem('generated_roadmap');
