@@ -468,16 +468,24 @@ Use REAL URLs. Create branching edges, NOT a linear chain."""
     def _fetch_ddg_resources(self, nodes, topic):
         """Fetch real resources using the existing SearchService (proven to work)."""
         from .search_service import search_service
+        import concurrent.futures
+        
+        app = current_app._get_current_object()
 
-        for node in nodes:
-            title = node.get('title', '')
-            try:
-                results = search_service.search_resources(f"{title} {topic}", max_results=3)
-                node['resources'] = results
-                current_app.logger.info(f"[RES] {title}: {len(results)} resources found")
-            except Exception as e:
-                current_app.logger.warning(f"[RES] Failed for '{title}': {e}")
-                node['resources'] = []
+        def fetch_for_node(node):
+            with app.app_context():
+                title = node.get('title', '')
+                try:
+                    results = search_service.search_resources(f"{title} {topic}", max_results=3)
+                    node['resources'] = results
+                    app.logger.info(f"[RES] {title}: {len(results)} resources found")
+                except Exception as e:
+                    app.logger.warning(f"[RES] Failed for '{title}': {e}")
+                    node['resources'] = []
+
+        # Run DuckDuckGo searches in parallel (5 at a time) to prevent timeouts
+        with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+            list(executor.map(fetch_for_node, nodes))
 
         matched = sum(1 for n in nodes if n.get('resources'))
         current_app.logger.info(f"[RES] Total: {matched}/{len(nodes)} nodes have resources")
