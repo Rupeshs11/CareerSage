@@ -23,44 +23,53 @@ class AIService:
     #  Client / API helpers
     # ──────────────────────────────────────────
 
-    def _get_client(self, key_index=0):
-        """Get or create OpenAI client for a specific API key slot (0/1/2)."""
-        if key_index not in self._clients:
-            key_names = ['NVIDIA_API_KEY', 'NVIDIA_API_KEY_2', 'NVIDIA_API_KEY_3']
-            key_name = key_names[key_index] if key_index < len(key_names) else key_names[0]
-            api_key = current_app.config.get(key_name, '') or current_app.config.get('NVIDIA_API_KEY', '')
-            self._clients[key_index] = OpenAI(
-                base_url=self.NVIDIA_BASE_URL,
-                api_key=api_key
-            )
-        return self._clients[key_index]
+    def _get_api_key(self, key_index=0):
+        """Get API key for a specific slot (0/1/2)."""
+        key_names = ['NVIDIA_API_KEY', 'NVIDIA_API_KEY_2', 'NVIDIA_API_KEY_3']
+        key_name = key_names[key_index] if key_index < len(key_names) else key_names[0]
+        return current_app.config.get(key_name, '') or current_app.config.get('NVIDIA_API_KEY', '')
 
     def _get_model(self):
-        return current_app.config.get('NVIDIA_MODEL', 'meta/llama-3.1-70b-instruct')
+        return current_app.config.get('NVIDIA_MODEL', 'meta/llama-3.1-8b-instruct')
 
     def call_nvidia_api(self, prompt, key_index=0, system_msg="You are an expert career roadmap generator. Output ONLY valid JSON."):
-        """Call NVIDIA API with a specific key slot."""
+        """Call NVIDIA API directly using requests to avoid eventlet/httpx hangs."""
+        import requests
         try:
-            client = self._get_client(key_index)
+            api_key = self._get_api_key(key_index)
             model = self._get_model()
-            current_app.logger.info(f"[API-{key_index}] Calling {model}...")
+            current_app.logger.info(f"[API-{key_index}] Calling {model} via requests...")
 
-            response = client.chat.completions.create(
-                model=model,
-                messages=[
+            headers = {
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json"
+            }
+            
+            payload = {
+                "model": model,
+                "messages": [
                     {"role": "system", "content": system_msg},
                     {"role": "user", "content": prompt}
                 ],
-                temperature=0.6,
-                top_p=0.95,
-                max_tokens=8192,
-                stream=False
-            )
+                "temperature": 0.6,
+                "top_p": 0.95,
+                "max_tokens": 4096,
+                "stream": False
+            }
 
-            if not response or not response.choices:
+            response = requests.post(
+                f"{self.NVIDIA_BASE_URL}/chat/completions",
+                headers=headers,
+                json=payload,
+                timeout=40
+            )
+            response.raise_for_status()
+            
+            data = response.json()
+            if 'choices' not in data or not data['choices']:
                 return None
 
-            content = response.choices[0].message.content
+            content = data['choices'][0]['message']['content']
             current_app.logger.info(f"[API-{key_index}] Response: {len(content or '')} chars")
             return content
 
