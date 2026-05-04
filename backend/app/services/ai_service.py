@@ -42,7 +42,8 @@ class AIService:
         return current_app.config.get(key_name, '') or current_app.config.get('NVIDIA_API_KEY', '')
 
     def _get_model(self):
-        return current_app.config.get('NVIDIA_MODEL', 'meta/llama-3.1-8b-instruct')
+        # HARDCODE the 8b model to prevent the massive 4-minute delays caused by the 70b model on AWS
+        return 'meta/llama-3.1-8b-instruct'
 
     def call_nvidia_api(self, prompt, key_index=0, system_msg="You are an expert career roadmap generator. Output ONLY valid JSON."):
         """Call NVIDIA API using persistent session with connection pooling.
