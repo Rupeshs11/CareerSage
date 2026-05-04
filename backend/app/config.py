@@ -44,7 +44,7 @@ class Config:
     NVIDIA_API_KEY_2 = os.getenv('NVIDIA_API_KEY_2', '')
     NVIDIA_API_KEY_3 = os.getenv('NVIDIA_API_KEY_3', '')
     NVIDIA_BASE_URL = os.getenv('NVIDIA_BASE_URL', 'https://integrate.api.nvidia.com/v1')
-    NVIDIA_MODEL = os.getenv('NVIDIA_MODEL', 'meta/llama-3.1-70b-instruct')
+    NVIDIA_MODEL = os.getenv('NVIDIA_MODEL', 'meta/llama-3.1-8b-instruct')
     
     # Email (SMTP)
     MAIL_SERVER = os.getenv('MAIL_SERVER', 'smtp.gmail.com')
