@@ -19,7 +19,7 @@ provider "aws" {
 
 # -------- Security Group --------
 resource "aws_security_group" "careersage_sg" {
-  name        = "${var.instance_name}-sg"
+  name        = "${var.instance_name}-sg-v2"
   description = "Security group for CareerSage EC2 instance"
 
   # SSH
@@ -67,7 +67,7 @@ resource "aws_security_group" "careersage_sg" {
   }
 
   tags = {
-    Name    = "${var.instance_name}-sg"
+    Name    = "${var.instance_name}-sg-v2"
     Project = "CareerSage"
   }
 }
