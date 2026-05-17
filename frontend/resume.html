@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Builder - CareerSage</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/style.css">
+    <!-- html2pdf for PDF download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        .form-input {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: 1px solid rgba(0,0,0,0.1);
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(10px);
+            font-size: 14px;
+            color: #1E293B;
+            transition: all 0.2s ease;
+            font-family: 'Inter', sans-serif;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #059669;
+            box-shadow: 0 0 0 3px rgba(5,150,105,0.1);
+        }
+        .form-input::placeholder { color: #94A3B8; }
+        textarea.form-input { resize: vertical; min-height: 80px; }
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 6px;
+        }
+        .form-hint {
+            font-size: 11px;
+            color: #94A3B8;
+            margin-top: 4px;
+        }
+
+        /* Resume Preview Styles */
+        #resume-preview {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background: white;
+            color: #1a1a1a;
+            padding: 48px 56px;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }
+        #resume-preview h1 { font-size: 26px; font-weight: 700; margin: 0; color: #111; }
+        #resume-preview .r-subtitle { font-size: 15px; color: #444; margin-top: 2px; }
+        #resume-preview .r-contact { font-size: 12px; color: #555; margin-top: 6px; display: flex; flex-wrap: wrap; gap: 8px; }
+        #resume-preview .r-contact a { color: #1a6bb5; text-decoration: none; }
+        #resume-preview .r-section-title {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #111;
+            border-bottom: 1.5px solid #111;
+            padding-bottom: 3px;
+            margin: 20px 0 10px 0;
+        }
+        #resume-preview .r-summary { font-size: 13px; color: #333; }
+        #resume-preview .r-entry { margin-bottom: 12px; }
+        #resume-preview .r-entry-header { display: flex; justify-content: space-between; align-items: baseline; }
+        #resume-preview .r-entry-title { font-size: 14px; font-weight: 700; color: #111; }
+        #resume-preview .r-entry-sub { font-size: 13px; color: #555; font-style: italic; }
+        #resume-preview .r-entry-date { font-size: 12px; color: #666; white-space: nowrap; }
+        #resume-preview .r-bullets { list-style: disc; padding-left: 18px; margin: 4px 0 0 0; }
+        #resume-preview .r-bullets li { font-size: 13px; color: #333; margin-bottom: 2px; }
+        #resume-preview .r-skills-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 24px; }
+        #resume-preview .r-skill-cat { font-size: 13px; }
+        #resume-preview .r-skill-cat strong { color: #111; }
+        #resume-preview .r-cert-list { font-size: 13px; color: #333; margin: 0; padding-left: 18px; }
+
+        /* Loading spinner */
+        .spinner {
+            width: 20px; height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Section collapse animation */
+        .section-body { transition: max-height 0.3s ease; overflow: hidden; }
+    </style>
+</head>
+
+<body class="bg-[var(--bg-primary)] text-[var(--text-primary)]">
+
+    <!-- Header -->
+    <div id="header-placeholder"></div>
+
+    <main class="pt-20 pb-24">
+        <div class="container mx-auto px-4 md:px-6 max-w-7xl">
+
+            <!-- Page Title -->
+            <div class="text-center mb-10">
+                <h1 class="text-3xl md:text-4xl font-extrabold text-slate-800 tracking-tight">
+                    AI Resume Builder
+                </h1>
+                <p class="mt-2 text-slate-500 max-w-lg mx-auto">
+                    Fill in your details and let AI craft a professional, ATS-friendly resume for you.
+                </p>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-8">
+
+                <!-- LEFT: Form -->
+                <div class="space-y-5">
+
+                    <!-- Personal Info -->
+                    <div class="rounded-2xl border border-black/[0.06] p-5" style="background:var(--glass-bg);backdrop-filter:var(--glass-blur)">
+                        <h2 class="text-base font-bold text-slate-700 mb-4 flex items-center gap-2">
+                            <span class="w-7 h-7 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs font-bold">1</span>
+                            Personal Information
+                        </h2>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="form-label">Full Name *</label>
+                                <input type="text" id="r-name" class="form-input" placeholder="Rupesh Satale">
+                            </div>
+                            <div>
+                                <label class="form-label">Target Job Title *</label>
+                                <input type="text" id="r-jobTitle" class="form-input" placeholder="Full Stack Developer">
+                            </div>
+                            <div>
+                                <label class="form-label">Email</label>
+                                <input type="email" id="r-email" class="form-input" placeholder="you@example.com">
+                            </div>
+                            <div>
+                                <label class="form-label">Phone</label>
+                                <input type="tel" id="r-phone" class="form-input" placeholder="+91 98765 43210">
+                            </div>
+                            <div>
+                                <label class="form-label">LinkedIn</label>
+                                <input type="url" id="r-linkedin" class="form-input" placeholder="https://linkedin.com/in/yourname">
+                            </div>
+                            <div>
+                                <label class="form-label">GitHub</label>
+                                <input type="url" id="r-github" class="form-input" placeholder="https://github.com/yourname">
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label class="form-label">Portfolio Website</label>
+                                <input type="url" id="r-portfolio" class="form-input" placeholder="https://yoursite.com">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Experience -->
+                    <div class="rounded-2xl border border-black/[0.06] p-5" style="background:var(--glass-bg);backdrop-filter:var(--glass-blur)">
+                        <h2 class="text-base font-bold text-slate-700 mb-4 flex items-center gap-2">
+                            <span class="w-7 h-7 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold">2</span>
+                            Experience & Education
+                        </h2>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="form-label">Work Experience</label>
+                                <textarea id="r-experience" class="form-input" rows="4" placeholder="Software Intern at XYZ Corp (Jun 2024 - Dec 2024)&#10;- Built REST APIs using Flask&#10;- Deployed to AWS EC2&#10;&#10;Leave blank if fresher."></textarea>
+                                <p class="form-hint">Write each role on a new line. AI will structure it.</p>
+                            </div>
+                            <div>
+                                <label class="form-label">Education</label>
+                                <textarea id="r-education" class="form-input" rows="3" placeholder="B.Tech in Computer Science, SPPU (2021-2025)&#10;HSC, XYZ Junior College (2021)"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Skills & Projects -->
+                    <div class="rounded-2xl border border-black/[0.06] p-5" style="background:var(--glass-bg);backdrop-filter:var(--glass-blur)">
+                        <h2 class="text-base font-bold text-slate-700 mb-4 flex items-center gap-2">
+                            <span class="w-7 h-7 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center text-xs font-bold">3</span>
+                            Skills & Projects
+                        </h2>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="form-label">Skills</label>
+                                <textarea id="r-skills" class="form-input" rows="3" placeholder="Python, JavaScript, React, Flask, Docker, MongoDB, AWS, Git, Linux, HTML, CSS"></textarea>
+                                <p class="form-hint">Comma-separated. AI will categorize them automatically.</p>
+                            </div>
+                            <div>
+                                <label class="form-label">Projects</label>
+                                <textarea id="r-projects" class="form-input" rows="4" placeholder="CareerSage - AI career planning platform using Flask + MongoDB&#10;Knox Chat - Real-time chat app with Socket.IO&#10;&#10;Leave blank and AI will suggest projects for your role."></textarea>
+                            </div>
+                            <div>
+                                <label class="form-label">Certifications</label>
+                                <textarea id="r-certifications" class="form-input" rows="2" placeholder="AWS Cloud Practitioner, Docker Certified Associate"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Summary Hint -->
+                    <div class="rounded-2xl border border-black/[0.06] p-5" style="background:var(--glass-bg);backdrop-filter:var(--glass-blur)">
+                        <h2 class="text-base font-bold text-slate-700 mb-4 flex items-center gap-2">
+                            <span class="w-7 h-7 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-xs font-bold">4</span>
+                            Summary Hint (Optional)
+                        </h2>
+                        <textarea id="r-summaryHint" class="form-input" rows="2" placeholder="e.g. Emphasize my DevOps skills and cloud experience"></textarea>
+                        <p class="form-hint">Tell AI what to focus on in your professional summary.</p>
+                    </div>
+
+                    <!-- Generate Button -->
+                    <button id="generate-btn" onclick="generateResume()"
+                        class="w-full py-3.5 rounded-xl text-white font-bold text-base transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-lg"
+                        style="background: linear-gradient(135deg, #059669, #10B981); box-shadow: 0 4px 20px rgba(5,150,105,0.3);">
+                        Generate Resume with AI
+                    </button>
+
+                </div>
+
+                <!-- RIGHT: Preview -->
+                <div>
+                    <div class="sticky top-20">
+                        <!-- Preview Controls -->
+                        <div class="flex items-center justify-between mb-3">
+                            <h2 class="text-base font-bold text-slate-700">Preview</h2>
+                            <button id="download-btn" onclick="downloadPDF()" class="hidden items-center gap-2 px-4 py-2 rounded-lg bg-slate-800 text-white text-sm font-semibold hover:bg-slate-700 transition">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                Download PDF
+                            </button>
+                        </div>
+
+                        <!-- Resume Preview Container -->
+                        <div class="rounded-2xl border border-black/[0.06] overflow-hidden shadow-lg" style="background:white; max-height: calc(100vh - 120px); overflow-y: auto;">
+                            <div id="resume-preview">
+                                <!-- Empty State -->
+                                <div id="empty-state" class="text-center py-20">
+                                    <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-emerald-50 flex items-center justify-center">
+                                        <svg class="w-8 h-8 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                    </div>
+                                    <p class="text-slate-400 text-sm font-medium" style="font-family:'Inter',sans-serif;">Fill in the form and click Generate</p>
+                                    <p class="text-slate-300 text-xs mt-1" style="font-family:'Inter',sans-serif;">Your AI-generated resume will appear here</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Scripts -->
+    <script src="js/load-header-footer.js"></script>
+    <script src="js/api.js"></script>
+
+    <script>
+        // Check auth
+        (function() {
+            const token = localStorage.getItem('access_token');
+            if (!token) {
+                window.location.href = '/login.html?redirect=resume.html';
+            }
+        })();
+
+        async function generateResume() {
+            const btn = document.getElementById('generate-btn');
+            const name = document.getElementById('r-name').value.trim();
+            const jobTitle = document.getElementById('r-jobTitle').value.trim();
+
+            if (!name || !jobTitle) {
+                alert('Please fill in your Name and Target Job Title.');
+                return;
+            }
+
+            // Show loading state
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Generating...';
+
+            const payload = {
+                name,
+                jobTitle,
+                email: document.getElementById('r-email').value.trim(),
+                phone: document.getElementById('r-phone').value.trim(),
+                linkedin: document.getElementById('r-linkedin').value.trim(),
+                github: document.getElementById('r-github').value.trim(),
+                portfolio: document.getElementById('r-portfolio').value.trim(),
+                experience: document.getElementById('r-experience').value.trim(),
+                education: document.getElementById('r-education').value.trim(),
+                skills: document.getElementById('r-skills').value.trim(),
+                projects: document.getElementById('r-projects').value.trim(),
+                certifications: document.getElementById('r-certifications').value.trim(),
+                summaryHint: document.getElementById('r-summaryHint').value.trim()
+            };
+
+            try {
+                const res = await fetch('/api/resume/generate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...TokenManager.getAuthHeader()
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (res.status === 401) {
+                    window.location.href = '/login.html?redirect=resume.html';
+                    return;
+                }
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    alert(data.error || 'Failed to generate resume');
+                    return;
+                }
+
+                renderResume(data);
+                document.getElementById('download-btn').classList.remove('hidden');
+                document.getElementById('download-btn').classList.add('flex');
+
+            } catch (err) {
+                console.error(err);
+                alert('Something went wrong. Please try again.');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Generate Resume with AI';
+            }
+        }
+
+        function renderResume(d) {
+            const preview = document.getElementById('resume-preview');
+
+            // Build contact line
+            let contactParts = [];
+            if (d.email) contactParts.push(d.email);
+            if (d.phone) contactParts.push(d.phone);
+            if (d.linkedin) contactParts.push(`<a href="${d.linkedin}" target="_blank">LinkedIn</a>`);
+            if (d.github) contactParts.push(`<a href="${d.github}" target="_blank">GitHub</a>`);
+            if (d.portfolio) contactParts.push(`<a href="${d.portfolio}" target="_blank">Portfolio</a>`);
+
+            // Build experience section
+            let expHTML = '';
+            if (d.experience && d.experience.length > 0) {
+                expHTML = `<div class="r-section-title">Experience</div>`;
+                d.experience.forEach(e => {
+                    expHTML += `<div class="r-entry">
+                        <div class="r-entry-header">
+                            <span class="r-entry-title">${e.role || ''}</span>
+                            <span class="r-entry-date">${e.duration || ''}</span>
+                        </div>
+                        <div class="r-entry-sub">${e.company || ''}</div>
+                        ${e.bullets && e.bullets.length ? `<ul class="r-bullets">${e.bullets.map(b => `<li>${b}</li>`).join('')}</ul>` : ''}
+                    </div>`;
+                });
+            }
+
+            // Build education section
+            let eduHTML = '';
+            if (d.education && d.education.length > 0) {
+                eduHTML = `<div class="r-section-title">Education</div>`;
+                d.education.forEach(e => {
+                    eduHTML += `<div class="r-entry">
+                        <div class="r-entry-header">
+                            <span class="r-entry-title">${e.degree || ''}</span>
+                            <span class="r-entry-date">${e.year || ''}</span>
+                        </div>
+                        <div class="r-entry-sub">${e.institution || ''}</div>
+                    </div>`;
+                });
+            }
+
+            // Build skills section
+            let skillsHTML = '';
+            if (d.skills && Object.keys(d.skills).length > 0) {
+                skillsHTML = `<div class="r-section-title">Technical Skills</div><div class="r-skills-grid">`;
+                for (const [cat, items] of Object.entries(d.skills)) {
+                    if (Array.isArray(items) && items.length > 0) {
+                        skillsHTML += `<div class="r-skill-cat"><strong>${cat}:</strong> ${items.join(', ')}</div>`;
+                    }
+                }
+                skillsHTML += `</div>`;
+            }
+
+            // Build projects section
+            let projHTML = '';
+            if (d.projects && d.projects.length > 0) {
+                projHTML = `<div class="r-section-title">Projects</div>`;
+                d.projects.forEach(p => {
+                    projHTML += `<div class="r-entry">
+                        <div class="r-entry-header">
+                            <span class="r-entry-title">${p.name || ''}</span>
+                        </div>
+                        ${p.tech ? `<div class="r-entry-sub">${p.tech}</div>` : ''}
+                        ${p.bullets && p.bullets.length ? `<ul class="r-bullets">${p.bullets.map(b => `<li>${b}</li>`).join('')}</ul>` : ''}
+                    </div>`;
+                });
+            }
+
+            // Build certifications section
+            let certHTML = '';
+            if (d.certifications && d.certifications.length > 0) {
+                certHTML = `<div class="r-section-title">Certifications</div>
+                <ul class="r-cert-list">${d.certifications.map(c => `<li>${c}</li>`).join('')}</ul>`;
+            }
+
+            preview.innerHTML = `
+                <h1>${d.name || ''}</h1>
+                <div class="r-subtitle">${d.jobTitle || ''}</div>
+                <div class="r-contact">${contactParts.join(' · ')}</div>
+
+                ${d.summary ? `<div class="r-section-title">Summary</div><div class="r-summary">${d.summary}</div>` : ''}
+                ${expHTML}
+                ${eduHTML}
+                ${skillsHTML}
+                ${projHTML}
+                ${certHTML}
+            `;
+        }
+
+        function downloadPDF() {
+            const element = document.getElementById('resume-preview');
+            const name = document.getElementById('r-name').value.trim() || 'Resume';
+
+            const opt = {
+                margin: 0,
+                filename: `${name.replace(/\s+/g, '_')}_Resume.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).save();
+        }
+    </script>
+</body>
+
+</html>

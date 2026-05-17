@@ -32,6 +32,7 @@ def create_app(config_name='default'):
     from .routes.ai import ai_bp
     from .routes.battle import battle_bp
     from .routes.friends import friends_bp
+    from .routes.resume import resume_bp
     
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
     app.register_blueprint(roadmaps_bp, url_prefix='/api/roadmaps')
@@ -40,6 +41,7 @@ def create_app(config_name='default'):
     app.register_blueprint(ai_bp, url_prefix='/api/ai')
     app.register_blueprint(battle_bp, url_prefix='/api/battle')
     app.register_blueprint(friends_bp, url_prefix='/api/friends')
+    app.register_blueprint(resume_bp, url_prefix='/api/resume')
     
     # Add request logging
     @app.before_request

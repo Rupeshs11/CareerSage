@@ -32,6 +32,7 @@ export const headerHTML = `
                 </div>
             </div>
             <a href="./skill-battle.html" class="nav-link text-slate-500 hover:text-slate-700 font-medium text-[14px] px-3 py-1.5 rounded-full transition">Battle</a>
+            <a href="./resume.html" class="nav-link text-slate-500 hover:text-slate-700 font-medium text-[14px] px-3 py-1.5 rounded-full transition">Resume</a>
         </nav>
         <!-- Right side icons -->
         <div class="flex items-center gap-2">
@@ -69,6 +70,7 @@ export const headerHTML = `
         <a href="aisensie.html" class="block px-3 py-2.5 rounded-lg text-slate-600 hover:bg-emerald-50 font-medium text-sm">Create with AI</a>
         <div class="border-t border-black/5 my-2"></div>
         <a href="./skill-battle.html" class="block px-3 py-2.5 rounded-lg text-slate-600 hover:bg-emerald-50 font-medium text-sm">Battle</a>
+        <a href="./resume.html" class="block px-3 py-2.5 rounded-lg text-slate-600 hover:bg-emerald-50 font-medium text-sm">Resume</a>
     </div>
 </header>
 `;

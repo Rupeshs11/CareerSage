@@ -656,4 +656,116 @@ Generate the test now."""
         return data
 
 
+    # ──────────────────────────────────────────
+    #  Resume generation
+    # ──────────────────────────────────────────
+
+    def generate_resume(self, name, email, phone, linkedin, github, portfolio,
+                        job_title, experience, skills, education, projects,
+                        certifications, summary_hint):
+        """Generate a professional resume using AI."""
+
+        prompt = f"""Generate a professional resume for: **{name}**
+Target Role: {job_title}
+
+**User-provided information:**
+- Email: {email or 'Not provided'}
+- Phone: {phone or 'Not provided'}
+- LinkedIn: {linkedin or 'Not provided'}
+- GitHub: {github or 'Not provided'}
+- Portfolio: {portfolio or 'Not provided'}
+- Experience: {experience or 'Fresher / No experience listed'}
+- Skills: {skills or 'Not specified'}
+- Education: {education or 'Not specified'}
+- Projects: {projects or 'None listed'}
+- Certifications: {certifications or 'None listed'}
+- Summary hint from user: {summary_hint or 'None'}
+
+**Instructions:**
+1. Write a polished professional summary (3-4 lines) tailored for the target role.
+2. Parse the experience into structured entries with company, role, duration, and 3-4 bullet points each. If no experience, return an empty array.
+3. Parse education into structured entries with institution, degree, and year.
+4. Parse projects into structured entries with name, tech stack, and 2-3 bullet points. If the user listed projects, enhance descriptions. If none, generate 2 relevant project ideas for the target role.
+5. Split skills into categories (e.g. Languages, Frameworks, Tools, Databases).
+6. Parse certifications into a list. If none, return an empty array.
+
+**Output ONLY valid JSON in this exact format:**
+{{
+  "name": "{name}",
+  "jobTitle": "{job_title}",
+  "email": "{email}",
+  "phone": "{phone}",
+  "linkedin": "{linkedin}",
+  "github": "{github}",
+  "portfolio": "{portfolio}",
+  "summary": "Professional summary text here...",
+  "experience": [
+    {{
+      "company": "Company Name",
+      "role": "Job Title",
+      "duration": "Jan 2024 - Present",
+      "bullets": ["Achievement 1", "Achievement 2", "Achievement 3"]
+    }}
+  ],
+  "education": [
+    {{
+      "institution": "University Name",
+      "degree": "B.Tech in Computer Science",
+      "year": "2020 - 2024"
+    }}
+  ],
+  "skills": {{
+    "Languages": ["Python", "JavaScript"],
+    "Frameworks": ["React", "Flask"],
+    "Tools": ["Docker", "Git"],
+    "Databases": ["MongoDB", "PostgreSQL"]
+  }},
+  "projects": [
+    {{
+      "name": "Project Name",
+      "tech": "React, Node.js, MongoDB",
+      "bullets": ["What it does", "Key feature"]
+    }}
+  ],
+  "certifications": ["AWS Cloud Practitioner", "Docker Certified"]
+}}
+
+Output valid JSON only. No markdown, no explanation."""
+
+        current_app.logger.info(f"Generating resume for: {name} ({job_title})")
+
+        key_idx = self._key_counter % 3
+        self._key_counter += 1
+        content = self.call_nvidia_api(
+            prompt,
+            key_index=key_idx,
+            system_msg="You are an expert resume writer. Output ONLY valid JSON."
+        )
+
+        if not content:
+            return None
+
+        data = self.parse_json_response(content)
+        if not data:
+            return None
+
+        # Ensure all required fields exist
+        data.setdefault('name', name)
+        data.setdefault('jobTitle', job_title)
+        data.setdefault('email', email)
+        data.setdefault('phone', phone)
+        data.setdefault('linkedin', linkedin)
+        data.setdefault('github', github)
+        data.setdefault('portfolio', portfolio)
+        data.setdefault('summary', '')
+        data.setdefault('experience', [])
+        data.setdefault('education', [])
+        data.setdefault('skills', {})
+        data.setdefault('projects', [])
+        data.setdefault('certifications', [])
+
+        current_app.logger.info(f"Resume generated for {name}")
+        return data
+
+
 ai_service = AIService()
