@@ -11,7 +11,7 @@ variable "aws_region" {
 variable "instance_type" {
   description = "EC2 instance type"
   type        = string
-  default     = "m7i.xlarge"
+  default     = "m7i-flex.large"
 }
 
 variable "ami_id" {
