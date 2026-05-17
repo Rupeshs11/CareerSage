@@ -425,28 +425,30 @@
             const originalElement = document.getElementById('resume-preview');
             const name = document.getElementById('r-name').value.trim() || 'Resume';
             
-            // Clone the element and place it off-screen to avoid all CSS clipping/scroll issues
-            const clone = originalElement.cloneNode(true);
-            clone.style.position = 'absolute';
-            clone.style.left = '-9999px';
-            clone.style.top = '0';
-            clone.style.width = '800px';
-            clone.style.maxHeight = 'none';
-            clone.style.overflow = 'visible';
-            clone.style.backgroundColor = 'white';
+            // Create a wrapper at (0,0) so html2canvas doesn't capture blank space
+            const printContainer = document.createElement('div');
+            printContainer.style.position = 'absolute';
+            printContainer.style.top = '0';
+            printContainer.style.left = '0';
+            printContainer.style.width = '800px';
+            printContainer.style.zIndex = '-9999'; // hide behind main content
+            printContainer.style.backgroundColor = 'white';
             
-            document.body.appendChild(clone);
+            const clone = originalElement.cloneNode(true);
+            printContainer.appendChild(clone);
+            document.body.appendChild(printContainer);
 
             const opt = {
-                margin: [5, 0, 5, 0], // Small top/bottom margin
+                margin: [10, 0, 10, 0], // Top and bottom margins for a clean look
                 filename: `${name.replace(/\s+/g, '_')}_Resume.pdf`,
                 image: { type: 'jpeg', quality: 1.0 },
-                html2canvas: { scale: 2, useCORS: true, windowWidth: 800 },
+                html2canvas: { scale: 2, useCORS: true, scrollY: 0, scrollX: 0 },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
             html2pdf().set(opt).from(clone).save().then(() => {
-                document.body.removeChild(clone);
+                // Cleanup
+                document.body.removeChild(printContainer);
             });
         }
     </script>
