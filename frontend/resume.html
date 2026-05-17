@@ -422,29 +422,31 @@
         }
 
         function downloadPDF() {
-            const element = document.getElementById('resume-preview');
-            const container = element.parentElement;
-            
-            // Temporarily remove scroll restrictions so html2canvas captures full height
-            const origMaxHeight = container.style.maxHeight;
-            const origOverflow = container.style.overflowY;
-            container.style.maxHeight = 'none';
-            container.style.overflowY = 'visible';
-
+            const originalElement = document.getElementById('resume-preview');
             const name = document.getElementById('r-name').value.trim() || 'Resume';
+            
+            // Clone the element and place it off-screen to avoid all CSS clipping/scroll issues
+            const clone = originalElement.cloneNode(true);
+            clone.style.position = 'absolute';
+            clone.style.left = '-9999px';
+            clone.style.top = '0';
+            clone.style.width = '800px';
+            clone.style.maxHeight = 'none';
+            clone.style.overflow = 'visible';
+            clone.style.backgroundColor = 'white';
+            
+            document.body.appendChild(clone);
 
             const opt = {
-                margin: [10, 0, 10, 0], // Add top/bottom margin for multi-page
+                margin: [5, 0, 5, 0], // Small top/bottom margin
                 filename: `${name.replace(/\s+/g, '_')}_Resume.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
+                image: { type: 'jpeg', quality: 1.0 },
                 html2canvas: { scale: 2, useCORS: true, windowWidth: 800 },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
-            html2pdf().set(opt).from(element).save().then(() => {
-                // Restore original styles
-                container.style.maxHeight = origMaxHeight;
-                container.style.overflowY = origOverflow;
+            html2pdf().set(opt).from(clone).save().then(() => {
+                document.body.removeChild(clone);
             });
         }
     </script>
