@@ -74,8 +74,8 @@
         #resume-preview .r-entry-date { font-size: 12px; color: #666; white-space: nowrap; }
         #resume-preview .r-bullets { list-style: disc; padding-left: 18px; margin: 4px 0 0 0; }
         #resume-preview .r-bullets li { font-size: 13px; color: #333; margin-bottom: 2px; }
-        #resume-preview .r-skills-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 24px; }
-        #resume-preview .r-skill-cat { font-size: 13px; }
+        #resume-preview .r-skills-grid { display: flex; flex-wrap: wrap; column-gap: 24px; row-gap: 6px; }
+        #resume-preview .r-skill-cat { font-size: 13px; width: calc(50% - 12px); box-sizing: border-box; }
         #resume-preview .r-skill-cat strong { color: #111; }
         #resume-preview .r-cert-list { font-size: 13px; color: #333; margin: 0; padding-left: 18px; }
 
@@ -423,17 +423,29 @@
 
         function downloadPDF() {
             const element = document.getElementById('resume-preview');
+            const container = element.parentElement;
+            
+            // Temporarily remove scroll restrictions so html2canvas captures full height
+            const origMaxHeight = container.style.maxHeight;
+            const origOverflow = container.style.overflowY;
+            container.style.maxHeight = 'none';
+            container.style.overflowY = 'visible';
+
             const name = document.getElementById('r-name').value.trim() || 'Resume';
 
             const opt = {
-                margin: 0,
+                margin: [10, 0, 10, 0], // Add top/bottom margin for multi-page
                 filename: `${name.replace(/\s+/g, '_')}_Resume.pdf`,
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, useCORS: true },
+                html2canvas: { scale: 2, useCORS: true, windowWidth: 800 },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
-            html2pdf().set(opt).from(element).save();
+            html2pdf().set(opt).from(element).save().then(() => {
+                // Restore original styles
+                container.style.maxHeight = origMaxHeight;
+                container.style.overflowY = origOverflow;
+            });
         }
     </script>
 </body>
